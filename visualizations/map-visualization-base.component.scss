@@ -1,0 +1,12 @@
+agm-map {
+    /*
+    /deep/ allows this rule to ignore then
+    _ngcontent class added by angular (since this element is added by google.)
+    other wise the rule turns into something like
+    agm-map[_ngcontent-c4]   img[src*=usanpn][_ngcontent-c4] { ... }
+    */
+    /deep/ img[src*=usanpn] {
+        image-rendering: pixelated;
+        image-rendering: -moz-crisp-edges;
+    }
+}
