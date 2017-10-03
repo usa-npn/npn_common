@@ -3,7 +3,6 @@ import {Component, Input, ElementRef} from '@angular/core';
 import {Window,SpeciesTitlePipe} from '../../common';
 import {VisualizationMargins} from '../visualization-base.component';
 import {SvgVisualizationBaseComponent,DEFAULT_MARGINS,FONT_SIZE,FONT_SIZE_PX} from '../svg-visualization-base.component';
-import {VisSelection} from '../vis-selection';
 
 import {ScatterPlotSelection} from './scatter-plot-selection';
 
