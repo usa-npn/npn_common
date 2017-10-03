@@ -5,23 +5,24 @@ import * as d3 from 'd3';
 export class ActivityCurve {
     id:number;
 
-    interpolate:INTERPOLATE;
+    interpolate? :INTERPOLATE;
 
-    _species:Species;
-    _metric;
-    _phenophase:Phenophase;
-    _year:number;
+    private _species:Species;
+    private _metric;
+    private _phenophase:Phenophase;
+    private _year:number;
 
-    _metrics;
-    _phenophases;
+    private _metrics;
+    private _phenophases;
+
+    color:string;
+    orient:string;
 
     doyFocus:number;
-    dataPoints:any;
+    dataPoints:boolean = true;
 
     private $data:any;
     private $metricData:any;
-    private $color;
-    private $orient;
     private $x;
     private $y;
 
@@ -64,7 +65,7 @@ export class ActivityCurve {
     set species(s:Species) {
         this.reset();
         this._species = s;
-        this._metrics = this._species && this._species.kingdom  ? (KINGDOM_METRICS[this._species.kingdom]||[]) : [];
+        this._metrics = this._species && this._species.kingdom  ? (ACTIVITY_CURVE_KINGDOM_METRICS[this._species.kingdom]||[]) : [];
         if(this._metric && this._metrics.indexOf(this._metric) === -1) {
             // previous metric has become invalid
             delete this.metric;
@@ -185,26 +186,10 @@ export class ActivityCurve {
         return data;
     }
 
-    color(_?) {
-        if(arguments.length) {
-            this.$color = _;
-            return this;
-        }
-        return this.$color;
-    }
-
-    axisOrient(_?) {
-        if(arguments.length) {
-            this.$orient = _;
-            return this;
-        }
-        return this.$orient;
-    }
-
     axis() {
         var y = this.y(),
             ticks = y.ticks(), // default is ~10 ticks
-            orient = this.axisOrient()||'left',
+            orient = this.orient||'left',
             axis = orient === 'left' ? d3.axisLeft(y) : d3.axisRight(y);
         if(ticks.length) {
             // replace the final tick with the top of the y domain
@@ -315,7 +300,7 @@ export class ActivityCurve {
                         chart.append('circle')
                             .attr('class','curve-point curve-point-'+self.id)
                             .attr('r',r)
-                            .attr('fill',self.color())
+                            .attr('fill',self.color)
                             .attr('cx',x_functor(d))
                             .attr('cy',y_functor(d));
                     });
@@ -324,7 +309,7 @@ export class ActivityCurve {
                     chart.append('path')
                         .attr('class','curve curve-'+self.id)
                         .attr('fill','none')
-                        .attr('stroke',self.color())
+                        .attr('stroke',self.color)
                         .attr('stroke-linejoin','round')
                         .attr('stroke-linecap','round')
                         .attr('stroke-width',1.5)
@@ -361,7 +346,7 @@ const COMMON_METRICS = [{
             valueFormat: DECIMAL,
             proportion: true
         }];
-export const KINGDOM_METRICS = {
+export const ACTIVITY_CURVE_KINGDOM_METRICS = {
             Plantae: COMMON_METRICS.concat([{
                 id: 'numindividuals_with_yes_record',
                 sampleSize: 'individuals_sample_size',

@@ -21,12 +21,17 @@ export const enum VisSelectionEvent {
  * subscribed.
  */
 export abstract class VisSelection extends EventEmitter<VisSelectionEvent> {
+    debug:boolean = false;
     working:boolean = false;
 
     private firstSubscriberResolver:any;
     private firstSubscriber:Promise<any> = new Promise<any>((resolve) => {
         this.firstSubscriberResolver = resolve;
     });
+
+    get json() {
+        return {};
+    }
 
     /**
      * Instruct the visualization to go back to a "clean" slate

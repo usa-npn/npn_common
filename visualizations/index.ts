@@ -1,5 +1,5 @@
 import { NgModule } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { CommonModule,DatePipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 
 import {VisualizationDownloadComponent} from './visualization-download.component';
@@ -41,6 +41,7 @@ import {AgmCoreModule} from '@agm/core';
       VisualizationComponent
   ],
   providers: [
+      DatePipe,
       // can inject a specific type of factory
       ScatterPlotSelectionFactory,
       CalendarSelectionFactory,

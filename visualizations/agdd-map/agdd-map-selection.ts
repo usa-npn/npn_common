@@ -8,7 +8,7 @@ import {} from '@types/googlemaps';
 
 export class AgddMapSelection extends VisSelection {
     image: string;
-    box: string;
+    box: number[];
     boundary: string;
 
     constructor(protected http: Http,protected cacheService: CacheService) {
@@ -50,7 +50,7 @@ export class AgddMapSelection extends VisSelection {
                                 strokeOpacity: 0.8,
                                 strokeWeight: 2,
                                 fillColor: '#FF0000',
-                                fillOpacity: 0.35,
+                                fillOpacity: 0.15,
                             };
                         });
                     });
@@ -59,7 +59,16 @@ export class AgddMapSelection extends VisSelection {
     }
 
     getBounds(): google.maps.LatLngBounds {
-        if(this.box) {
+        if(this.box && this.box.length === 4) {
+            let sw_lng = this.box[0],
+                sw_lat = this.box[1],
+                ne_lng = this.box[2],
+                ne_lat = this.box[3];
+            return new google.maps.LatLngBounds(
+              new google.maps.LatLng(sw_lat,sw_lng),
+              new google.maps.LatLng(ne_lat,ne_lng)
+            );
+            /*
             let coords = /^BOX\(\s*(-?\d+\.\d+)\s+(-?\d+\.\d+),\s*(-?\d+\.\d+)\s+(-?\d+\.\d+)\s*\)/.exec(this.box);
             if(coords.length === 5) {
                 let sw_lng = parseFloat(coords[1]),
@@ -70,7 +79,7 @@ export class AgddMapSelection extends VisSelection {
                   new google.maps.LatLng(sw_lat,sw_lng),
                   new google.maps.LatLng(ne_lat,ne_lng)
                 );
-            }
+            }*/
         }
         return null;
     }
