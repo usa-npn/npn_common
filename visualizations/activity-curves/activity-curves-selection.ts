@@ -41,12 +41,18 @@ export class ActivityCurvesSelection extends VisSelection {
     @selectionProperty({
         ser: d => d.external,
         des: d => {
-            let ac = new ActivityCurve(-1);
+            let ac = new ActivityCurve();
             ac.external = d;
             return ac;
         }
     })
-    private _curves:ActivityCurve[];
+    private _curves:ActivityCurve[] = [{color:'#0000ff',orient:'left'},{color:'orange',orient:'right'}].map((o,i) => {
+        let c = new ActivityCurve();
+        c.id = i;
+        c.color = o.color;
+        c.orient = o.orient;
+        return c;
+    });
 
     constructor(protected http: Http,protected cacheService: CacheService,protected datePipe: DatePipe) {
         super();

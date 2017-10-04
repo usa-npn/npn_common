@@ -33,10 +33,6 @@ export class ActivityCurve {
     private $x;
     private $y;
 
-    constructor(id:number) {
-        this.id = id;
-    }
-
     get external() { return GET_EXTERNAL.apply(this,arguments); }
     set external(o) { SET_EXTERNAL.apply(this,arguments); }
 
