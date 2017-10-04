@@ -18,8 +18,21 @@ import {AgddMapSelection} from './agdd-map';
     <calendar *ngIf="calendar" [selection]="calendar"></calendar>
     <activity-curves *ngIf="activity" [selection]="activity"></activity-curves>
     <agdd-map *ngIf="agdd" [selection]="agdd"></agdd-map>
-    <pre *ngIf="selection.debug">{{selection.external | json}}</pre>
-    `
+    <md-expansion-panel *ngIf="selection.debug">
+        <md-expansion-panel-header>
+            <md-panel-title>Selection</md-panel-title>
+        </md-expansion-panel-header>
+        <pre>{{selection.external | json}}</pre>
+    </md-expansion-panel>
+    `,
+    styles: [`
+        pre {
+            font-family: "courier new";
+        }
+        md-expansion-panel {
+            margin-top: 10px;
+        }
+    `]
 })
 export class VisualizationComponent implements OnInit {
     @Input() selection: VisSelection;

@@ -13,7 +13,7 @@ import {VisualizationComponent} from './visualization.component';
 import {VisualizationSelectionFactory} from './visualization-selection-factory.service';
 
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
-import {MdButtonModule, MdCheckboxModule, MdSelectModule, MdProgressSpinnerModule} from '@angular/material';
+import {MdButtonModule, MdCheckboxModule, MdSelectModule, MdProgressSpinnerModule,MatExpansionModule} from '@angular/material';
 
 import {AgmCoreModule} from '@agm/core';
 
@@ -21,7 +21,7 @@ import {AgmCoreModule} from '@agm/core';
   imports: [
     CommonModule,
     FormsModule,
-    BrowserAnimationsModule, MdButtonModule, MdCheckboxModule, MdSelectModule, MdProgressSpinnerModule,
+    BrowserAnimationsModule, MdButtonModule, MdCheckboxModule, MdSelectModule, MdProgressSpinnerModule, MatExpansionModule,
     AgmCoreModule
   ],
   declarations: [
