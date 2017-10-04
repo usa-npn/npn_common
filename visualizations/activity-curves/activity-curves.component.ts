@@ -274,6 +274,7 @@ export class ActivityCurvesComponent extends SvgVisualizationBaseComponent {
             .text(selection.curves[0].axisLabel());
 
         if(!commonMetric) {
+            selection.curves[1].orient = 'right';
             chart.append('g')
                 .attr('class', 'y axis right')
                 .attr('transform','translate('+sizing.width+')')

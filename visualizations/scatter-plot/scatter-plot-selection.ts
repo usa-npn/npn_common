@@ -1,5 +1,5 @@
 import {environment} from '../../environments/environment';
-import {NULL_DATA,ONE_DAY_MILLIS} from '../vis-selection';
+import {NULL_DATA,ONE_DAY_MILLIS,selectionProperty} from '../vis-selection';
 import {SiteOrSummaryVisSelection} from '../site-or-summary-vis-selection';
 import {URLSearchParams} from '@angular/http';
 
@@ -44,7 +44,7 @@ export const AXIS = [
 // which would probably mean the entirety of this class should go there
 // but it's not clear if that's the case without another visualization
 // making use of the same service/s to drive it...
-export class ScatterPlotSelectionPlot {
+export interface ScatterPlotSelectionPlot {
     color: string;
     species: Species;
     phenophase: Phenophase;
@@ -52,10 +52,15 @@ export class ScatterPlotSelectionPlot {
 }
 
 export class ScatterPlotSelection extends SiteOrSummaryVisSelection {
+    @selectionProperty({des: d => new Date(d)})
     start: Date; // start year
+    @selectionProperty({des: d => new Date(d)})
     end: Date; // end year
+    @selectionProperty()
     regressionLines: boolean = false;
+    @selectionProperty()
     axis:any = AXIS[0];
+    @selectionProperty()
     plots:ScatterPlotSelectionPlot[] = [];
 
     private d3DateFormat = d3.timeFormat('%x');

@@ -1,20 +1,27 @@
+import {selectionProperty,GET_EXTERNAL,SET_EXTERNAL} from '../vis-selection';
 import {Species,Phenophase,SpeciesTitlePipe,DoyPipe} from '../../common';
 
 import * as d3 from 'd3';
 
 export class ActivityCurve {
+    @selectionProperty()
     id:number;
 
     interpolate? :INTERPOLATE;
 
+    @selectionProperty()
     private _species:Species;
+    @selectionProperty()
     private _metric;
+    @selectionProperty()
     private _phenophase:Phenophase;
+    @selectionProperty()
     private _year:number;
 
     private _metrics;
     private _phenophases;
 
+    @selectionProperty()
     color:string;
     orient:string;
 
@@ -29,6 +36,9 @@ export class ActivityCurve {
     constructor(id:number) {
         this.id = id;
     }
+
+    get external() { return GET_EXTERNAL.apply(this,arguments); }
+    set external(o) { SET_EXTERNAL.apply(this,arguments); }
 
     private reset() {
         delete this.$data;

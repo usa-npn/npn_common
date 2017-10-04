@@ -1,7 +1,7 @@
 import {Headers,Http,URLSearchParams} from '@angular/http';
 import 'rxjs/add/operator/toPromise';
 
-import {VisSelection} from './vis-selection';
+import {VisSelection,selectionProperty} from './vis-selection';
 import {CacheService,Species,Phenophase,SpeciesTitlePipe} from '../common';
 import {environment} from '../environments/environment';
 
@@ -26,9 +26,14 @@ export abstract class ObservationDateVisSelection extends VisSelection {
     private headers = new Headers({'Content-Type':'application/x-www-form-urlencoded'});
 
     requestSrc:string = 'observation-date-vis-selection';
+
+    @selectionProperty()
     negative:boolean = false;
+    @selectionProperty()
     negativeColor:string = '#aaa'
+    @selectionProperty({des: d => new Date(d)})
     years:Date[];
+    @selectionProperty()
     plots:ObservationDatePlot[];
 
     constructor(protected http: Http,protected cacheService: CacheService, protected speciesTitle: SpeciesTitlePipe) {

@@ -18,6 +18,7 @@ import {AgddMapSelection} from './agdd-map';
     <calendar *ngIf="calendar" [selection]="calendar"></calendar>
     <activity-curves *ngIf="activity" [selection]="activity"></activity-curves>
     <agdd-map *ngIf="agdd" [selection]="agdd"></agdd-map>
+    <pre *ngIf="selection.debug">{{selection.external | json}}</pre>
     `
 })
 export class VisualizationComponent implements OnInit {

@@ -3,12 +3,14 @@ import 'rxjs/add/operator/toPromise';
 
 import {CacheService} from '../common';
 import {environment} from '../environments/environment';
-import {VisSelection} from './vis-selection';
+import {VisSelection,selectionProperty} from './vis-selection';
 
 export abstract class SiteOrSummaryVisSelection extends VisSelection {
     private headers = new Headers({'Content-Type':'application/x-www-form-urlencoded'});
 
+    @selectionProperty()
     individualPhenometrics: boolean = false;
+    @selectionProperty()
     filterDisclaimer: string;
 
     constructor(protected http: Http,protected cacheService: CacheService) {

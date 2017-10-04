@@ -6,7 +6,7 @@ import {CacheService} from '../../common';
 import {environment} from '../../environments/environment';
 
 import {INTERPOLATE,ActivityCurve} from './activity-curve';
-import {VisSelection} from '../vis-selection';
+import {VisSelection,selectionProperty} from '../vis-selection';
 
 export class ActivityFrequency {
     value:string|number;
@@ -32,9 +32,20 @@ export const ACTIVITY_FREQUENCIES:ActivityFrequency[] = [
 
 export class ActivityCurvesSelection extends VisSelection {
     private headers = new Headers({'Content-Type':'application/x-www-form-urlencoded'});
+    @selectionProperty()
     private _interpolate: INTERPOLATE = INTERPOLATE.monotone;
+    @selectionProperty()
     private _dataPoints:boolean = true;
+    @selectionProperty()
     private _frequency:ActivityFrequency = ACTIVITY_FREQUENCIES[0];
+    @selectionProperty({
+        ser: d => d.external,
+        des: d => {
+            let ac = new ActivityCurve(-1);
+            ac.external = d;
+            return ac;
+        }
+    })
     private _curves:ActivityCurve[];
 
     constructor(protected http: Http,protected cacheService: CacheService,protected datePipe: DatePipe) {

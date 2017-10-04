@@ -1,4 +1,4 @@
-import {VisSelection} from '../vis-selection';
+import {VisSelection,selectionProperty} from '../vis-selection';
 import{CacheService} from '../../common';
 
 import {Http} from '@angular/http';
@@ -7,8 +7,11 @@ import 'rxjs/add/operator/toPromise';
 import {} from '@types/googlemaps';
 
 export class AgddMapSelection extends VisSelection {
+    @selectionProperty()
     image: string;
+    @selectionProperty()
     box: number[];
+    @selectionProperty()
     boundary: string;
 
     constructor(protected http: Http,protected cacheService: CacheService) {
