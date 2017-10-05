@@ -60,7 +60,15 @@ export class ScatterPlotSelection extends SiteOrSummaryVisSelection {
     regressionLines: boolean = false;
     @selectionProperty()
     axis:any = AXIS[0];
-    @selectionProperty()
+    @selectionProperty({
+        ser: d => {
+            return {
+                color: d.color,
+                species: d.species,
+                phenophase: d.phenophase
+            };
+        }
+    })
     plots:ScatterPlotSelectionPlot[] = [];
 
     private d3DateFormat = d3.timeFormat('%x');
