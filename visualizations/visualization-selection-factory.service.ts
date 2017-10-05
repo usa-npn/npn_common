@@ -39,6 +39,10 @@ export class VisualizationSelectionFactory {
         return this.agddMap.newSelection();
     }
 
+    cloneSelection(selection:VisSelection): VisSelection {
+        return this.newSelection(selection.external);
+    }
+
     newSelections(selections:any[]): VisSelection[] {
         return selections.map(s => this.newSelection(s));
     }
