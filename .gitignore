@@ -7,6 +7,8 @@
 
 # dependencies
 /node_modules
+# have to rename all the time and just to be safe
+/node_modules.bak
 
 # IDEs and editors
 /.idea
