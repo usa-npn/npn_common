@@ -1,6 +1,8 @@
 import { NgModule } from '@angular/core';
 
 import {CacheService} from './cache-service';
+import {SpeciesService} from './species.service';
+
 import {SpeciesTitlePipe} from './species-title.pipe';
 import {DoyPipe} from './doy.pipe';
 import {LegendDoyPipe} from './legend-doy.pipe';
@@ -9,10 +11,16 @@ import {DatePipe} from '@angular/common';
 
 @NgModule({
     declarations: [
-        SpeciesTitlePipe
+        SpeciesTitlePipe,
+        LegendDoyPipe
+    ],
+    exports: [
+        SpeciesTitlePipe,
+        LegendDoyPipe
     ],
     providers: [
         CacheService,
+        SpeciesService,
         SpeciesTitlePipe,
         DatePipe,
         DoyPipe,
@@ -25,6 +33,7 @@ export {Species} from './species';
 export {Phenophase} from './phenophase';
 
 export {CacheService} from './cache-service';
+export {SpeciesService} from './species.service';
 export {Window} from './window';
 
 export {SpeciesTitlePipe} from './species-title.pipe';

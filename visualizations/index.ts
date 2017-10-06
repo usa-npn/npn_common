@@ -1,6 +1,6 @@
 import { NgModule } from '@angular/core';
 import { CommonModule,DatePipe } from '@angular/common';
-import { FormsModule } from '@angular/forms';
+import { FormsModule,ReactiveFormsModule } from '@angular/forms';
 
 import {VisualizationDownloadComponent} from './visualization-download.component';
 
@@ -11,17 +11,21 @@ import {AgddMapComponent,AgddMapSelectionFactory} from './agdd-map';
 import {VisualizationComponent} from './visualization.component';
 
 import {VisualizationSelectionFactory} from './visualization-selection-factory.service';
+import {SpeciesPhenophaseInputComponent} from './common-controls';
 
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
-import {MdButtonModule, MdCheckboxModule, MdSelectModule, MdProgressSpinnerModule,MatExpansionModule} from '@angular/material';
+import {MdButtonModule, MdCheckboxModule, MdSelectModule, MdProgressSpinnerModule,MatExpansionModule,MatAutocompleteModule,MatInputModule} from '@angular/material';
 
 import {AgmCoreModule} from '@agm/core';
+
+import {NpnCommonModule} from '../common';
 
 @NgModule({
   imports: [
     CommonModule,
-    FormsModule,
-    BrowserAnimationsModule, MdButtonModule, MdCheckboxModule, MdSelectModule, MdProgressSpinnerModule, MatExpansionModule,
+    NpnCommonModule,
+    FormsModule,ReactiveFormsModule,
+    BrowserAnimationsModule, MdButtonModule, MdCheckboxModule, MdSelectModule, MdProgressSpinnerModule, MatExpansionModule,MatAutocompleteModule,MatInputModule,
     AgmCoreModule
   ],
   declarations: [
@@ -31,14 +35,16 @@ import {AgmCoreModule} from '@agm/core';
       ActivityCurvesComponent,
       AgddMapComponent,
       VisualizationDownloadComponent,
-      VisualizationComponent
+      VisualizationComponent,
+      SpeciesPhenophaseInputComponent
   ],
   exports: [
       ScatterPlotComponent,
       ScatterPlotControls,
       CalendarComponent,
       AgddMapComponent,
-      VisualizationComponent
+      VisualizationComponent,
+      SpeciesPhenophaseInputComponent
   ],
   providers: [
       DatePipe,

@@ -176,3 +176,10 @@ export abstract class VisSelection extends EventEmitter<VisSelectionEvent> {
         return super.subscribe.apply(this,arguments);
     }
 }
+
+export interface NetworkAwareVisSelection {
+    networkIds:any[];
+}
+export interface StationAwareVisSelection {
+    stationIds:any[];
+}
