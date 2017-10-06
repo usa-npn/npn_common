@@ -117,6 +117,9 @@ export function SET_EXTERNAL(o) {
  * functions can be called at any time, even before the selection has been wired to its
  * visualization.  Events will be held onto and delivered if/when the visualization has
  * subscribed.
+ *
+ * Note: EventEmitter does not have an unsubscribe (though it, today, extends RxJs Subject)
+ * so technically does.  Should perhaps consider not extending Angular's EventEmitter
  */
 export abstract class VisSelection extends EventEmitter<VisSelectionEvent> {
     debug:boolean = false;

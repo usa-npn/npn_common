@@ -1,4 +1,4 @@
-import { Component, Input, OnInit, OnChanges, DoCheck, SimpleChanges, AfterViewInit, HostListener, ElementRef } from '@angular/core';
+import { Component, Input, OnInit, OnChanges, DoCheck, SimpleChanges, AfterViewInit, HostListener, ElementRef, OnDestroy } from '@angular/core';
 
 import {Window} from '../common';
 import {VisSelection,VisSelectionEvent} from './vis-selection';
@@ -19,7 +19,7 @@ export const FONT_SIZE_PX:string = FONT_SIZE+'px';
   templateUrl: './visualization-base.component.html',
   styleUrls: ['./visualization-base.component.scss']
 })
-export abstract class VisualizationBaseComponent implements AfterViewInit {
+export abstract class VisualizationBaseComponent implements AfterViewInit, OnDestroy {
     @Input() selection: VisSelection;
 
     id: string = 'visualization-'+Math.floor(Math.random()*1000);
@@ -79,6 +79,7 @@ export abstract class VisualizationBaseComponent implements AfterViewInit {
     protected abstract resize(): void;
 
     ngAfterViewInit() {
+        console.debug('visualization.ngAfterViewInit');
         // redraw and update the visualization on window re-size, debounce
         // to avoid rapid redraws as the window is resized
         // NOTE: there may be some stupid issue with IE11 and the window
@@ -106,6 +107,11 @@ export abstract class VisualizationBaseComponent implements AfterViewInit {
                     return this.resize();
             }
         });
+    }
+
+    ngOnDestroy() {
+        console.debug('visualization.ngOnDestroy');
+        this.selection.unsubscribe();
     }
 
     /* a way of capturing window events...

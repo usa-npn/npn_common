@@ -48,7 +48,8 @@ export class CalendarComponent extends SvgVisualizationBaseComponent {
         // forces all text to 14 px
         super.commonUpdates();
         // labels are customizable in size
-        let dy = -1*((this.y.bandwidth()/2)+this.selection.labelOffset),
+        let bw = this.y.bandwidth();
+        let dy = -1*((bw/2)+this.selection.labelOffset),
             labelFontSize = (this.baseFontSize() as number)+this.selection.fontSizeDelta;
         this.chart.selectAll('.y.axis text')
             .attr('x', 0)
