@@ -22,7 +22,7 @@ import {Species,Phenophase,SpeciesService,SpeciesTitlePipe} from '../../common';
         </md-autocomplete>
     </md-form-field>
 
-    <md-select class="phenophase-input" placeholder="Phenophase" [(ngModel)]="phenophase">
+    <md-select class="phenophase-input" placeholder="Phenophase" [(ngModel)]="phenophase" [disabled]="!phenophaseList.length">
       <md-option *ngFor="let p of phenophaseList" [value]="p">{{p.phenophase_name}}</md-option>
     </md-select>
     `,
@@ -43,6 +43,7 @@ export class SpeciesPhenophaseInputComponent implements OnInit {
 
     @Output() speciesChange = new EventEmitter<Species>();
     speciesValue:Species;
+    @Output() onSpeciesChange = new EventEmitter<Species>();
 
     @Output() phenophaseChange = new EventEmitter<Phenophase>();
     phenophaseValue:Phenophase;
@@ -105,6 +106,7 @@ export class SpeciesPhenophaseInputComponent implements OnInit {
     set species(s:Species) {
         if(!s || typeof(s) === 'object') { // might as well use any
             this.speciesChange.emit(this.speciesValue = s);
+            this.onSpeciesChange.emit(this.speciesValue);
             this.phenophase = undefined;
             this.phenophaseList = [];
             if(s) {

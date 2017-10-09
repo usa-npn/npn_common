@@ -6,7 +6,7 @@ import {VisualizationDownloadComponent} from './visualization-download.component
 
 import {ScatterPlotSelectionFactory,ScatterPlotComponent,ScatterPlotControls} from './scatter-plot';
 import {CalendarSelectionFactory,CalendarComponent} from './calendar';
-import {ActivityCurvesSelectionFactory,ActivityCurvesComponent} from './activity-curves';
+import {ActivityCurvesSelectionFactory,ActivityCurvesComponent,CurveControlComponent,ActivityCurvesControlComponent} from './activity-curves';
 import {AgddMapComponent,AgddMapSelectionFactory} from './agdd-map';
 import {VisualizationComponent} from './visualization.component';
 
@@ -32,7 +32,7 @@ import {NpnCommonModule} from '../common';
       ScatterPlotComponent,
       ScatterPlotControls,
       CalendarComponent,
-      ActivityCurvesComponent,
+      ActivityCurvesComponent,CurveControlComponent,ActivityCurvesControlComponent,
       AgddMapComponent,
       VisualizationDownloadComponent,
       VisualizationComponent,
@@ -41,6 +41,7 @@ import {NpnCommonModule} from '../common';
   exports: [
       ScatterPlotComponent,
       ScatterPlotControls,
+      ActivityCurvesComponent,ActivityCurvesControlComponent,
       CalendarComponent,
       AgddMapComponent,
       VisualizationComponent,

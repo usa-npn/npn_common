@@ -46,32 +46,40 @@ export class ActivityCurvesSelection extends VisSelection {
             return ac;
         }
     })
-    private _curves:ActivityCurve[] = [{color:'#0000ff',orient:'left'},{color:'orange',orient:'right'}].map((o,i) => {
-        let c = new ActivityCurve();
-        c.id = i;
-        c.color = o.color;
-        c.orient = o.orient;
-        return c;
-    });
+    private _curves:ActivityCurve[];
 
     constructor(protected http: Http,protected cacheService: CacheService,protected datePipe: DatePipe) {
         super();
+        this.curves = [{color:'#0000ff',orient:'left'},{color:'orange',orient:'right'}].map((o,i) => {
+            let c = new ActivityCurve();
+            c.id = i;
+            c.color = o.color;
+            c.orient = o.orient;
+            return c;
+        });
     }
 
-    get json() {
-        return {
-            interpolate: this._interpolate,
-            dataPoints: this._dataPoints,
-            frequency: this._frequency,
-            curves: this._curves
-        };
+    private updateCheck(requiresUpdate?:boolean) {
+        let anyValid = this.curves[0].isValid() || this.curves[1].isValid(),
+            anyPlotted = this.curves[0].plotted() || this.curves[1].plotted();
+        if(requiresUpdate) {
+            if(anyValid) {
+                this.update();
+            }
+        } else {
+            if(anyValid && anyPlotted) {
+                this.redraw();
+            } else if (anyValid) {
+                this.update();
+            }
+        }
     }
 
     set frequency(f:ActivityFrequency) {
         this._frequency = f;
         // any change in frequency invalidates any data held by curves
         (this._curves||[]).forEach(c => c.data(null));
-        // this.update(); ?? existing logic doesn't do this
+        this.updateCheck(true);
     }
 
     get frequency():ActivityFrequency {
@@ -81,8 +89,7 @@ export class ActivityCurvesSelection extends VisSelection {
     set interpolate(i:INTERPOLATE) {
         this._interpolate = i;
         (this._curves||[]).forEach(c => c.interpolate = i);
-        // TODO
-        //this.redraw();
+        this.updateCheck();
     }
 
     get interpolate():INTERPOLATE {
@@ -97,6 +104,7 @@ export class ActivityCurvesSelection extends VisSelection {
     set curves(cs:ActivityCurve[]) {
         this._curves = cs;
         cs.forEach(c => {
+            c.selection = this;
             c.interpolate = this._interpolate;
             c.dataPoints = this._dataPoints;
         });

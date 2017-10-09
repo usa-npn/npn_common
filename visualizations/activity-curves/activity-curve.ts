@@ -1,5 +1,6 @@
 import {selectionProperty,GET_EXTERNAL,SET_EXTERNAL} from '../vis-selection';
 import {Species,Phenophase,SpeciesTitlePipe,DoyPipe} from '../../common';
+import {ActivityCurvesSelection} from './activity-curves-selection';
 
 import * as d3 from 'd3';
 
@@ -19,7 +20,6 @@ export class ActivityCurve {
     private _year:number;
 
     private _metrics;
-    private _phenophases;
 
     @selectionProperty()
     color:string;
@@ -33,6 +33,8 @@ export class ActivityCurve {
     private $x;
     private $y;
 
+    selection:ActivityCurvesSelection;
+
     get external() { return GET_EXTERNAL.apply(this,arguments); }
     set external(o) { SET_EXTERNAL.apply(this,arguments); }
 
@@ -41,12 +43,23 @@ export class ActivityCurve {
         delete this.$metricData;
     }
 
+    private updateCheck(requiresUpdate?:boolean) {
+        if(this.selection && this.isValid()) {
+            if(!this.plotted() || requiresUpdate) {
+                this.selection.update();
+            } else {
+                this.selection.redraw();
+            }
+        }
+    }
+
     get year() {
         return this._year;
     }
     set year(y) {
         this.reset();
         this._year = y;
+        this.updateCheck(true);
     }
 
     get phenophase():Phenophase {
@@ -55,6 +68,7 @@ export class ActivityCurve {
     set phenophase(p:Phenophase) {
         this.reset();
         this._phenophase = p;
+        this.updateCheck(true);
     }
 
     get metric() {
@@ -63,6 +77,7 @@ export class ActivityCurve {
     set metric(m) {
         this.reset();
         this._metric = m;
+        this.updateCheck();
     }
 
     get species():Species {
@@ -71,6 +86,7 @@ export class ActivityCurve {
     set species(s:Species) {
         this.reset();
         this._species = s;
+        this.phenophase = undefined;
         this._metrics = this._species && this._species.kingdom  ? (ACTIVITY_CURVE_KINGDOM_METRICS[this._species.kingdom]||[]) : [];
         if(this._metric && this._metrics.indexOf(this._metric) === -1) {
             // previous metric has become invalid
@@ -79,24 +95,11 @@ export class ActivityCurve {
         if(this._metrics.length && !this._metric) {
             this.metric = this._metrics[0];
         }
-        this._phenophases = undefined;
-        if(this._species) {
-            /** TODO phenophases for species
-            FilterService.getFilter().getPhenophasesForSpecies(_species.species_id).then(function(list){
-                _phenophases = list;
-                self.phenophase = _phenophases.length ? _phenophases[0] : undefined;
-            });
-            */
-        }
     }
 
     get validMetrics() {
         return this._metrics;
     }
-    get validPhenophases() {
-        return this._phenophases;
-    }
-
 
     /**
      * @return The metric label for the curve axis.
@@ -279,20 +282,22 @@ export class ActivityCurve {
                     datas.push([]); // there's a gap in the data, start another curve or point
                 }
             }
-
             x = self.x();
             y = self.y();
             let x_functor = (d) => x(d.start_doy+Math.round((d.end_doy-d.start_doy)/2)),
                 y_functor = (d) => y(d[self.metric.id]);
             line = d3.line();
-            switch(self.interpolate||INTERPOLATE.monotone) {
+            switch(self.interpolate) {
                 case INTERPOLATE.monotone:
+console.log('MONOTONE');
                     line.curve(d3.curveMonotoneX);
                     break;
                 case INTERPOLATE.stepAfter:
+console.log('STEP AFTER');
                     line.curve(d3.curveStepAfter);
                     break;
                 case INTERPOLATE.linear:
+console.log('LINEAR');
                     line.curve(d3.curveLinear);
                     break;
             }
