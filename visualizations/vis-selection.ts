@@ -20,6 +20,12 @@ export const enum VisSelectionEvent {
  * The virtual `external` property on a selection will produce a plain object representation
  * for a selection.  Assigning an object to the `external` property will deserialize it onto
  * the selection object.
+ *
+ * IMPORTANT: If a property key is prefixed with `_` it is assumed, by convention, that is the
+ * internal representation of a virtual property of the same name without the leading `_`.
+ * Such properties will be serialized without the leading `_` and when deserialized will be set
+ * directly without the leading `_` so that any logic defined in the corresponding property setter
+ * is run.
  */
 import 'reflect-metadata';
 const selectionPropertyMetadataKey = Symbol('npnSelectionProperty');
@@ -69,7 +75,11 @@ export const selectionProperty = (handler?:SelectionPropertyHandler) => {
     return Reflect.metadata(selectionPropertyMetadataKey,the_handler);
 };
 const isSelectionProperty = (target:any, propertyKey: string) => {
-    return Reflect.getMetadata(selectionPropertyMetadataKey,target,propertyKey);
+    let meta = Reflect.getMetadata(selectionPropertyMetadataKey,target,propertyKey);
+    if(!meta) {
+        meta = Reflect.getMetadata(selectionPropertyMetadataKey,target,`_${propertyKey}`);
+    }
+    return meta;
 };
 // these are exported functions so that other classes can use similar
 // s11n/des11n functionality.
@@ -81,6 +91,9 @@ export function GET_EXTERNAL() {
         let handler = isSelectionProperty(this,key);
         if(handler) {
             let v = this[key];
+            if(/^_/.test(key)) {
+                key = key.substring(1);
+            }
             if(Array.isArray(v)) {
                 ext[key] = v.map(d => handler.ser(d));
             } else {

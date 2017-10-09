@@ -48,6 +48,12 @@ export abstract class VisualizationBaseComponent implements AfterViewInit, OnDes
             ch = Math.round(cw*0.5376), // ration based on initial w/h of 930/500
             w = cw  - margin.left - margin.right,
             h = ch  - margin.top - margin.bottom;
+        if(isNaN(w)) {
+            w = 0;
+        }
+        if(isNaN(h)) {
+            h = 0;
+        }
         return (this.sizing={width: w, height : h, margin: margin});
     }
 
