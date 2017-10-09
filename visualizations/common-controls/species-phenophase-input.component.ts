@@ -80,6 +80,14 @@ export class SpeciesPhenophaseInputComponent implements OnInit {
             return (this.speciesList||[]).filter(sp => {
                 let title = this.speciesTitle.transform(sp).toLowerCase();;
                 return title.indexOf(s) !== -1;
+            }).sort((a,b) => {
+                if(a.number_observations < b.number_observations) {
+                    return 1;
+                }
+                if(a.number_observations > b.number_observations) {
+                    return -1;
+                }
+                return 0;
             });
         }
         return [s];
