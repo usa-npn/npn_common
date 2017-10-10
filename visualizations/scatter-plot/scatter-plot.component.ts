@@ -101,9 +101,10 @@ export class ScatterPlotComponent extends SvgVisualizationBaseComponent {
             return;
         }
         this.disclaimer = this.selection.filterDisclaimer;
-        let padding = 1,
+        let processedData = this.selection.postProcessData(this.data),
+            padding = 1,
             selection = this.selection,
-            nonNullData = selection.axisNonNull(this.data),
+            nonNullData = selection.axisNonNull(processedData),
             getX = d => selection.axisData(d),
             getY = d => selection.getDoy(d), // dataFunc
             extent = d3.extent(nonNullData,getX),
@@ -147,10 +148,10 @@ export class ScatterPlotComponent extends SvgVisualizationBaseComponent {
               .text(d => `${selection.doyDateFormat(d.day_in_range)} [${d.latitude},${d.longitude}]`);
 
         this.chart.selectAll('.regression').remove();
-        selection.plots.forEach(plot => delete plot.regressionLine);
+        selection.validPlots.forEach(plot => delete plot.regressionLine);
         if(this.selection.regressionLines) {
             let regressionLines = [];
-            selection.plots.forEach(plot => {
+            selection.validPlots.forEach(plot => {
                 let series = nonNullData.filter(d => d.color === plot.color);
                 if(series.length) {
                     regressionLines.push(plot.regressionLine = new RegressionLine(

@@ -44,6 +44,9 @@ export abstract class SiteOrSummaryVisSelection extends VisSelection {
     }
 
     getData(): Promise<Array<any>> {
+        if(!this.isValid()) {
+            return Promise.reject(this.INVALID_SELECTION);
+        }
         let params = this.toURLSearchParams(), // TODO "addCommonParams"
             url = `${environment.apiRoot}/npn_portal/observations/${this.individualPhenometrics ? 'getSummarizedData': 'getSiteLevelData'}.json`,
             cacheKey = {
@@ -94,12 +97,15 @@ export abstract class SiteOrSummaryVisSelection extends VisSelection {
             console.log('found in cache',data);
             return Promise.resolve(filterLqd(data));
         }
+        this.working = true;
         return this.http.post(url,params.toString(),{headers: this.headers})
             .toPromise()
             .then(response => {
                 let arr = response.json() as any[]
                 this.cacheService.set(cacheKey,arr);
-                return filterLqd(arr);
+                let filtered = filterLqd(arr);
+                this.working = false;
+                return filtered;
             })
             .catch(this.handleError);
     }

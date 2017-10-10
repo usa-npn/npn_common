@@ -191,7 +191,11 @@ export abstract class VisSelection extends EventEmitter<VisSelectionEvent> {
     emit(value?: VisSelectionEvent) {
         var self = this,
             emitArgs = arguments,
-            now = Date.now();
+            thisEmit = {
+                value: value,
+                when: Date.now(),
+                ext: JSON.stringify(this.external)
+            };
         // throttle events on emit rather than requiring subscribers to do this.
         // i.e. if the event being emitted differs from the last event emitted it
         // always gets through.  events get pruned out if they are not distinct
@@ -201,17 +205,14 @@ export abstract class VisSelection extends EventEmitter<VisSelectionEvent> {
         // only the first will get through
         // but selection.update() setTimeout(() => selection.update(),600);
         // both will get through
-        if(this.lastEmit.value !== value || this.lastEmit.when < (now-500) ) {
-            this.lastEmit = {
-                value: value,
-                when: now
-            };
-            console.log('letting event through',this.lastEmit);
+        if(this.lastEmit.value !== thisEmit.value || this.lastEmit.ext !== thisEmit.ext || this.lastEmit.when < (thisEmit.when-500)) {
+            this.lastEmit = thisEmit;
+            console.log('letting event through',thisEmit);
             this.firstSubscriber.then(() => {
                 super.emit.apply(self,emitArgs);
             });
         } else {
-            console.log('pruned out redundant event',this.lastEmit);
+            console.log('pruned out redundant event',thisEmit);
         }
     }
 
