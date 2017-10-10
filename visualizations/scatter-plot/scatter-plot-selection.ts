@@ -54,9 +54,9 @@ const TODAY = new Date();
 
 export class ScatterPlotSelection extends SiteOrSummaryVisSelection {
     @selectionProperty({des: d => new Date(d)})
-    start: Date = new Date (TODAY.getFullYear()-1,0,1); // start year
+    start: Date;// = new Date (TODAY.getFullYear()-1,0,1); // start year
     @selectionProperty({des: d => new Date(d)})
-    end: Date = new Date (TODAY.getFullYear(),0,1); // end year
+    end: Date;// = new Date (TODAY.getFullYear(),0,1); // end year
     @selectionProperty()
     regressionLines: boolean = false;
     @selectionProperty()

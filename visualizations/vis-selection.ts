@@ -142,7 +142,7 @@ export abstract class VisSelection extends EventEmitter<VisSelectionEvent> {
 
     readonly INVALID_SELECTION = REJECT_INVALID_SELECTION;
 
-    private lastEmit = {};
+    private lastEmit:any = {};
     private firstSubscriberResolver:any;
     private firstSubscriber:Promise<any> = new Promise<any>((resolve) => {
         this.firstSubscriberResolver = resolve;
@@ -191,7 +191,7 @@ export abstract class VisSelection extends EventEmitter<VisSelectionEvent> {
     emit(value?: VisSelectionEvent) {
         var self = this,
             emitArgs = arguments,
-            thisEmit = {
+            thisEmit:any = {
                 value: value,
                 when: Date.now(),
                 ext: JSON.stringify(this.external)

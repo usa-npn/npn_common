@@ -11,7 +11,7 @@ import {AgddMapComponent,AgddMapSelectionFactory} from './agdd-map';
 import {VisualizationComponent} from './visualization.component';
 
 import {VisualizationSelectionFactory} from './visualization-selection-factory.service';
-import {SpeciesPhenophaseInputComponent} from './common-controls';
+import {SpeciesPhenophaseInputComponent,YearRangeInputComponent} from './common-controls';
 
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import {MdButtonModule, MdCheckboxModule, MdSelectModule, MdProgressSpinnerModule,MatExpansionModule,MatAutocompleteModule,MatInputModule} from '@angular/material';
@@ -36,7 +36,8 @@ import {NpnCommonModule} from '../common';
       AgddMapComponent,
       VisualizationDownloadComponent,
       VisualizationComponent,
-      SpeciesPhenophaseInputComponent
+      SpeciesPhenophaseInputComponent,
+      YearRangeInputComponent
   ],
   exports: [
       ScatterPlotComponent,
