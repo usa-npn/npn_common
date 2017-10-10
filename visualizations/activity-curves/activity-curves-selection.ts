@@ -59,6 +59,10 @@ export class ActivityCurvesSelection extends VisSelection {
         });
     }
 
+    isValid(): boolean {
+        return this.curves[0].isValid();
+    }
+
     private updateCheck(requiresUpdate?:boolean) {
         let anyValid = this.curves[0].isValid() || this.curves[1].isValid(),
             anyPlotted = this.curves[0].plotted() || this.curves[1].plotted();

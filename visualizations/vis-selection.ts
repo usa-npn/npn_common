@@ -121,6 +121,8 @@ export function SET_EXTERNAL(o) {
     });
 };
 
+export const REJECT_INVALID_SELECTION = 'invalid selection';
+
 /**
  * Base class for visualization selection (user input).  A VisSelection is attached
  * to a specific visualization and the selection itself sends events to the visualization
@@ -138,6 +140,9 @@ export abstract class VisSelection extends EventEmitter<VisSelectionEvent> {
     debug:boolean = false;
     working:boolean = false;
 
+    readonly INVALID_SELECTION = REJECT_INVALID_SELECTION;
+
+    private lastEmit = {};
     private firstSubscriberResolver:any;
     private firstSubscriber:Promise<any> = new Promise<any>((resolve) => {
         this.firstSubscriberResolver = resolve;
@@ -175,12 +180,39 @@ export abstract class VisSelection extends EventEmitter<VisSelectionEvent> {
         this.emit(VisSelectionEvent.RESIZE);
     }
 
+    abstract isValid(): boolean;
+
+    protected handleError(e?:any):void {
+        console.error(e);
+        this.working = false;
+    }
+
     // make sure no events go out until there is at least one subscriber to receive them.
     emit(value?: VisSelectionEvent) {
-        var self = this, emitArgs = arguments;
-        this.firstSubscriber.then(() => {
-            super.emit.apply(self,emitArgs);
-        });
+        var self = this,
+            emitArgs = arguments,
+            now = Date.now();
+        // throttle events on emit rather than requiring subscribers to do this.
+        // i.e. if the event being emitted differs from the last event emitted it
+        // always gets through.  events get pruned out if they are not distinct
+        // and happen within the specific interval
+        // e.g.
+        // selection.update(); selection.update(); selection.update();
+        // only the first will get through
+        // but selection.update() setTimeout(() => selection.update(),600);
+        // both will get through
+        if(this.lastEmit.value !== value || this.lastEmit.when < (now-500) ) {
+            this.lastEmit = {
+                value: value,
+                when: now
+            };
+            console.log('letting event through',this.lastEmit);
+            this.firstSubscriber.then(() => {
+                super.emit.apply(self,emitArgs);
+            });
+        } else {
+            console.log('pruned out redundant event',this.lastEmit);
+        }
     }
 
     subscribe(generatorOrNext?: any, error?: any, complete?: any): any {

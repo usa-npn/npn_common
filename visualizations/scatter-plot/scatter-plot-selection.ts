@@ -45,17 +45,18 @@ export const AXIS = [
 // but it's not clear if that's the case without another visualization
 // making use of the same service/s to drive it...
 export interface ScatterPlotSelectionPlot {
-    color: string;
-    species: Species;
-    phenophase: Phenophase;
+    color?: string;
+    species?: Species;
+    phenophase?: Phenophase;
     [x: string]: any;
 }
+const TODAY = new Date();
 
 export class ScatterPlotSelection extends SiteOrSummaryVisSelection {
     @selectionProperty({des: d => new Date(d)})
-    start: Date; // start year
+    start: Date = new Date (TODAY.getFullYear()-1,0,1); // start year
     @selectionProperty({des: d => new Date(d)})
-    end: Date; // end year
+    end: Date = new Date (TODAY.getFullYear(),0,1); // end year
     @selectionProperty()
     regressionLines: boolean = false;
     @selectionProperty()
@@ -73,6 +74,17 @@ export class ScatterPlotSelection extends SiteOrSummaryVisSelection {
 
     private d3DateFormat = d3.timeFormat('%x');
 
+    isValid():boolean {
+        return this.start &&
+               this.end &&
+               (this.start.getFullYear() < this.end.getFullYear()) &&
+               this.validPlots.length > 0;
+    }
+
+    get validPlots():ScatterPlotSelectionPlot[] {
+        return this.plots.filter(p => p.color && p.species && p.phenophase);
+    }
+
     toURLSearchParams(): URLSearchParams {
         let params = new URLSearchParams();
         params.set('climate_data','1');
@@ -82,7 +94,7 @@ export class ScatterPlotSelection extends SiteOrSummaryVisSelection {
         // TODO - this typically comes from app wide configuration settings`
         // is "environment" an ok place to bind this config, probably not
         params.set('num_days_quality_filter',''+environment.appConfig.num_days_quality_filter);
-        this.plots.forEach((p,i) => {
+        this.validPlots.forEach((p,i) => {
             params.set(`species_id[${i}]`,`${p.species.species_id}`);
             params.set(`phenophase_id[${i}]`,`${p.phenophase.phenophase_id}`);
         });
@@ -118,37 +130,42 @@ export class ScatterPlotSelection extends SiteOrSummaryVisSelection {
     }
 
     getData(): Promise<Array<any>> {
+        if(!this.isValid()) {
+            return Promise.reject(this.INVALID_SELECTION);
+        }
         this.working = true;
-        return super.getData().then((data) => {
-            let colorKey = (d) => { return `${d.species_id}:${d.phenophase_id}`},
-                colorMap = this.plots.reduce((map,p) => {
-                    map[`${p.species.species_id}:${p.phenophase.phenophase_id}`] = p.color;
-                    return map;
-                },{}),
-                startYear = this.start.getFullYear(),
-                result = data.filter((d,i) => {
-                    if(!(d.color = colorMap[colorKey(d)])) {
-                        // this can happen if a phenophase id spans two species but is only plotted for one
-                        // e.g. boxelder/breaking leaf buds, boxelder/unfolding leaves, red maple/breaking leaf buds
-                        // the service will return data for 'red maple/unfolding leaves' but the user hasn't requested
-                        // that be plotted so we need to discard this data.
-                        return false;
-                    }
-                    d.id = i;
-                    d.fyy = this.getFirstYesYear(d);
-                    for(let summaryKey in KEYS_TO_NORMALIZE) {
-                        let siteKey = KEYS_TO_NORMALIZE[summaryKey];
-                        if(typeof(d[summaryKey]) === 'undefined') {
-                            d[summaryKey] = d[siteKey];
+        return super.getData()
+            .then((data) => {
+                let colorKey = (d) => { return `${d.species_id}:${d.phenophase_id}`},
+                    colorMap = this.validPlots.reduce((map,p) => {
+                        map[`${p.species.species_id}:${p.phenophase.phenophase_id}`] = p.color;
+                        return map;
+                    },{}),
+                    startYear = this.start.getFullYear(),
+                    result = data.filter((d,i) => {
+                        if(!(d.color = colorMap[colorKey(d)])) {
+                            // this can happen if a phenophase id spans two species but is only plotted for one
+                            // e.g. boxelder/breaking leaf buds, boxelder/unfolding leaves, red maple/breaking leaf buds
+                            // the service will return data for 'red maple/unfolding leaves' but the user hasn't requested
+                            // that be plotted so we need to discard this data.
+                            return false;
                         }
-                    }
-                    // this is the day # that will get plotted 1 being the first day of the start_year
-                    // 366 being the first day of start_year+1, etc.
-                    d.day_in_range = ((d.fyy-startYear)*365)+this.getDoy(d);
-                    return true;
-                });
-                this.working = false;
-                return result;
-        });
+                        d.id = i;
+                        d.fyy = this.getFirstYesYear(d);
+                        for(let summaryKey in KEYS_TO_NORMALIZE) {
+                            let siteKey = KEYS_TO_NORMALIZE[summaryKey];
+                            if(typeof(d[summaryKey]) === 'undefined') {
+                                d[summaryKey] = d[siteKey];
+                            }
+                        }
+                        // this is the day # that will get plotted 1 being the first day of the start_year
+                        // 366 being the first day of start_year+1, etc.
+                        d.day_in_range = ((d.fyy-startYear)*365)+this.getDoy(d);
+                        return true;
+                    });
+                    this.working = false;
+                    return result;
+            })
+            .catch(this.handleError);
     }
 }

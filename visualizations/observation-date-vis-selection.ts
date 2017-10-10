@@ -40,13 +40,23 @@ export abstract class ObservationDateVisSelection extends VisSelection {
         super();
     }
 
+    isValid():boolean {
+        return this.years && this.years.length && this.validPlots.length > 0;
+    }
+
+    get validPlots(): ObservationDatePlot[] {
+        return (this.plots||[]).filter(p => {
+            return p.color && p.species && p.phenophase;
+        });
+    }
+
     toURLSearchParams(): URLSearchParams {
         let params = new URLSearchParams();
         params.set('request_src',this.requestSrc);
         this.years.forEach((y,i) => {
             params.set(`year[${i}]`,`${y.getFullYear()}`);
         });
-        this.plots.forEach((plot,i) => {
+        this.validPlots.forEach((plot,i) => {
             params.set(`species_id[${i}]`,`${plot.species.species_id}`);
             params.set(`phenophase_id[${i}]`,`${plot.phenophase.phenophase_id}`);
         });
@@ -54,16 +64,20 @@ export abstract class ObservationDateVisSelection extends VisSelection {
     }
 
     getData(): Promise<ObservationDateData> {
+        if(!this.isValid()) {
+            return Promise.reject(this.INVALID_SELECTION);
+        }
         let params = this.toURLSearchParams(),
         url = `${environment.apiRoot}/npn_portal/observations/getObservationDates.json`,
         cacheKey = {
             u: url,
             params: params.toString()
         },
+        vPlots = this.validPlots,
         data:any[] = this.cacheService.get(cacheKey),
         process = (data:any[]):ObservationDateData => {
             let response = new ObservationDateData(),
-                y = (this.plots.length*this.years.length)-1,
+                y = (vPlots.length*this.years.length)-1,
                 addDoys = (doys,color) => {
                     doys.forEach(doy => {
                         response.data.push({
@@ -82,7 +96,7 @@ export abstract class ObservationDateVisSelection extends VisSelection {
                     return map;
                 },{});
                 console.log('speciesMap',speciesMap);
-            this.plots.forEach(plot => {
+            vPlots.forEach(plot => {
                 let species = speciesMap[plot.species.species_id],
                     phenophase = species.phenophases[plot.phenophase.phenophase_id];
                 this.years.forEach(yr => {
@@ -120,9 +134,5 @@ export abstract class ObservationDateVisSelection extends VisSelection {
                     .catch(this.handleError);
             });
         }
-    }
-
-    protected handleError(error: any): void {
-        console.error('ERROR',error);
     }
 }

@@ -108,11 +108,11 @@ export class CalendarComponent extends SvgVisualizationBaseComponent {
 
     protected update(): void {
         this.reset();
-        let selection = this.selection;
-        selection.getData().then(data => {
+        this.selection.getData().then(data => {
             this.data = data;
             this.redraw();
-        });
+        })
+        .catch(this.handleError);
     }
 
     protected redraw(): void {

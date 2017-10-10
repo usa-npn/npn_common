@@ -103,8 +103,4 @@ export abstract class SiteOrSummaryVisSelection extends VisSelection {
             })
             .catch(this.handleError);
     }
-
-    protected handleError(error: any): void {
-        console.error('ERROR',error);
-    }
 }

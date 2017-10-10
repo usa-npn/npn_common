@@ -1,7 +1,7 @@
 import { Component, Input, OnInit, OnChanges, DoCheck, SimpleChanges, AfterViewInit, HostListener, ElementRef, OnDestroy } from '@angular/core';
 
 import {Window} from '../common';
-import {VisSelection,VisSelectionEvent} from './vis-selection';
+import {VisSelection,VisSelectionEvent,REJECT_INVALID_SELECTION} from './vis-selection';
 
 import {Observable} from 'rxjs/Observable';
 import 'rxjs/add/observable/fromEvent';
@@ -101,7 +101,8 @@ export abstract class VisualizationBaseComponent implements AfterViewInit, OnDes
 
         // now that we're prepared to start listening to our selection for
         // VisSelectionEvents.
-        this.selection.subscribe((event) => {
+        this.selection
+        .subscribe((event) => {
             switch(event) {
                 case VisSelectionEvent.RESET:
                     return this.reset();
@@ -125,6 +126,12 @@ export abstract class VisualizationBaseComponent implements AfterViewInit, OnDes
     onResize(event) {
         this.redraw();
     }*/
+
+    protected handleError(e?:any):void {
+        if(e && e !== REJECT_INVALID_SELECTION) {
+            console.error(e);
+        }
+    }
 }
 
 export class VisualizationMargins {

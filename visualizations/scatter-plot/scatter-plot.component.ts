@@ -92,7 +92,8 @@ export class ScatterPlotComponent extends SvgVisualizationBaseComponent {
         selection.getData().then((data) => {
             this.data = data;
             this.redraw();
-        });
+        })
+        .catch(this.handleError);
     }
 
     protected redraw():void {
@@ -182,7 +183,7 @@ export class ScatterPlotComponent extends SvgVisualizationBaseComponent {
             .attr('transform','translate(0,-'+(this.sizing.margin.top-10)+')')
             .style('font-size','1em'),
             r = 5, vpad = 4;
-        this.selection.plots.forEach((plot,i) => {
+        this.selection.validPlots.forEach((plot,i) => {
             let row = legend.append('g')
                 .attr('class','legend-item')
                 .attr('transform','translate(10,'+(((i+1)*(this.baseFontSize() as number))+(i*vpad))+')'),

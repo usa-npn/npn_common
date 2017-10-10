@@ -21,6 +21,9 @@ export class AgddMapSelection extends VisSelection {
     // BOX(E N,E N) BOX(lng lat, lng lat) BOX(SW,NE)
     this.agdd1.box = 'BOX(-106.50213020231 40.5170110198478,-106.210591798487 40.9346817640039)';
     */
+    isValid():boolean {
+        return !!(this.image && this.box && this.boundary);
+    }
 
     addTo(map: google.maps.Map): void {
         let bounds = this.getBounds();
