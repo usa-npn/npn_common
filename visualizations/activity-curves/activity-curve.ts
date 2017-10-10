@@ -98,7 +98,7 @@ export class ActivityCurve {
     }
 
     get validMetrics() {
-        return this._metrics;
+        return (this._metrics||[]);
     }
 
     /**

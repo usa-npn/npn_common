@@ -11,13 +11,16 @@ import 'rxjs/add/operator/debounceTime';
     template: `
     <year-range-input [(start)]="yearStart" [(end)]="yearEnd" (onStartChange)="yearChange($event)" (onEndChange)="yearChange($event)"></year-range-input>
 
-    <species-phenophase-input *ngFor="let spi of selection.plots"
-        [(species)]="spi.species" [(phenophase)]="spi.phenophase" [(color)]="spi.color"
-        [gatherColor]="true"
-        (onSpeciesChange)="updateChange()"
-        (onPhenophaseChange)="updateChange()"
-        (onColorChange)="redrawChange($event)"></species-phenophase-input>
-    <button md-button class="add-plot" [disabled]="!plotsValid() || selection.plots.length === 3" (click)="addPlot()">Add</button>
+    <div class="phenophase-input-wrapper" *ngFor="let spi of selection.plots; index as idx">
+        <species-phenophase-input
+            [(species)]="spi.species" [(phenophase)]="spi.phenophase" [(color)]="spi.color"
+            [gatherColor]="true"
+            (onSpeciesChange)="updateChange()"
+            (onPhenophaseChange)="updateChange()"
+            (onColorChange)="redrawChange($event)"></species-phenophase-input>
+        <button *ngIf="idx > 0" md-button class="remove-plot" (click)="removePlot(idx)">Remove</button>
+        <button *ngIf="selection.plots.length < 3 && idx === (selection.plots.length-1)" md-button class="add-plot" [disabled]="!plotsValid()" (click)="addPlot()">Add</button>
+    </div>
 
     <div>
         <md-select placeholder="X Axis" name="xAxis" [(ngModel)]="selection.axis" (change)="redrawChange()">
@@ -29,7 +32,7 @@ import 'rxjs/add/operator/debounceTime';
     `,
     styles: [`
         year-range-input,
-        species-phenophase-input {
+        .phenophase-input-wrapper {
             display: block;
             margin-top: 15px;
         }
@@ -80,6 +83,11 @@ export class ScatterPlotControls {
 
     addPlot() {
         this.selection.plots.push({});
+    }
+
+    removePlot(index:number) {
+        this.selection.plots.splice(index,1);
+        this.updateChange();
     }
 
     plotsValid() {
