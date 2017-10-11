@@ -20,6 +20,7 @@ export const FONT_SIZE_PX:string = FONT_SIZE+'px';
   styleUrls: ['./visualization-base.component.scss']
 })
 export abstract class VisualizationBaseComponent implements AfterViewInit, OnDestroy {
+    private subscription:any;
     @Input() selection: VisSelection;
 
     id: string = 'visualization-'+Math.floor(Math.random()*1000);
@@ -101,24 +102,26 @@ export abstract class VisualizationBaseComponent implements AfterViewInit, OnDes
 
         // now that we're prepared to start listening to our selection for
         // VisSelectionEvents.
-        this.selection
-        .subscribe((event) => {
-            switch(event) {
-                case VisSelectionEvent.RESET:
-                    return this.reset();
-                case VisSelectionEvent.REDRAW:
-                    return this.redraw();
-                case VisSelectionEvent.UPDATE:
-                    return this.update();
-                case VisSelectionEvent.RESIZE:
-                    return this.resize();
-            }
-        });
+        this.subscription = this.selection
+            .subscribe((event) => {
+                switch(event) {
+                    case VisSelectionEvent.RESET:
+                        return this.reset();
+                    case VisSelectionEvent.REDRAW:
+                        return this.redraw();
+                    case VisSelectionEvent.UPDATE:
+                        return this.update();
+                    case VisSelectionEvent.RESIZE:
+                        return this.resize();
+                }
+            });
     }
 
     ngOnDestroy() {
         console.debug('visualization.ngOnDestroy');
-        this.selection.unsubscribe();
+        if(this.subscription) {
+            this.subscription.unsubscribe();
+        }
     }
 
     /* a way of capturing window events...
