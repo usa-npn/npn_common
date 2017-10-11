@@ -118,6 +118,9 @@ export class CalendarComponent extends SvgVisualizationBaseComponent {
     }
 
     protected redraw(): void {
+        if(!this.data) {
+            return;
+        }
         let sizing = this.sizing,
             processed = this.processed = this.selection.postProcessData(this.data);
 
