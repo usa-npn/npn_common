@@ -14,6 +14,7 @@ import 'rxjs/add/operator/debounceTime';
     <div class="phenophase-input-wrapper" *ngFor="let spi of selection.plots; index as idx">
         <species-phenophase-input
             [(species)]="spi.species" [(phenophase)]="spi.phenophase" [(color)]="spi.color"
+            [selection]="selection"
             [gatherColor]="true"
             (onSpeciesChange)="updateChange()"
             (onPhenophaseChange)="updateChange()"

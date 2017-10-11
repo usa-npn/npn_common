@@ -8,11 +8,11 @@ import {ActivityCurvesSelection,ActivityFrequency,ACTIVITY_FREQUENCIES} from './
     template: `
     <div class="curve one">
         <label [ngStyle]="{'color': selection.curves[0].color}">Curve 1</label>
-        <curve-selection-control [curve]="selection.curves[0]"></curve-selection-control>
+        <curve-selection-control [selection]="selection" [curve]="selection.curves[0]"></curve-selection-control>
     </div>
     <div class="curve two">
         <label [ngStyle]="{'color': selection.curves[1].color}">Curve 2</label>
-        <curve-selection-control [curve]="selection.curves[1]"></curve-selection-control>
+        <curve-selection-control [selection]="selection"  [curve]="selection.curves[1]"></curve-selection-control>
     </div>
     <div class="curve-common">
         <md-select class="date-interval" placeholder="Date Interval" [(ngModel)]="selection.frequency">

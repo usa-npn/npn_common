@@ -2,11 +2,12 @@ import {Component,Input,Output,EventEmitter} from '@angular/core';
 
 import {Species} from '../../common';
 import {ActivityCurve,ACTIVITY_CURVE_KINGDOM_METRICS} from './activity-curve';
+import {ActivityCurvesSelection} from './activity-curves-selection';
 
 @Component({
     selector: 'curve-selection-control',
     template: `
-    <species-phenophase-input [(species)]="curve.species" [(phenophase)]="curve.phenophase">
+    <species-phenophase-input [(species)]="curve.species" [(phenophase)]="curve.phenophase" [selection]="selection">
     </species-phenophase-input>
 
     <md-select class="year-input" placeholder="Year" [(ngModel)]="curve.year">
@@ -24,7 +25,10 @@ import {ActivityCurve,ACTIVITY_CURVE_KINGDOM_METRICS} from './activity-curve';
     `]
 })
 export class CurveControlComponent {
-    @Input() curve: ActivityCurve;
+    @Input()
+    selection: ActivityCurvesSelection;
+    @Input()
+    curve: ActivityCurve;
 
     validYears:number[] = (function() {
         let thisYear = (new Date()).getFullYear(),

@@ -6,7 +6,7 @@ import {CacheService} from '../../common';
 import {environment} from '../../environments/environment';
 
 import {INTERPOLATE,ActivityCurve} from './activity-curve';
-import {VisSelection,selectionProperty} from '../vis-selection';
+import {VisSelection,selectionProperty,NetworkAwareVisSelection,StationAwareVisSelection} from '../vis-selection';
 
 export class ActivityFrequency {
     value:string|number;

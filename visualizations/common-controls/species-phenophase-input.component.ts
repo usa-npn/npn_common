@@ -6,6 +6,7 @@ import 'rxjs/add/operator/startWith';
 import 'rxjs/add/operator/map';
 
 import {Species,Phenophase,SpeciesService,SpeciesTitlePipe} from '../../common';
+import {VisSelection} from '../vis-selection';
 
 const COLORS = [
   '#1f77b4','#ff7f0e','#2ca02c','#d62728','#222299', '#c51b8a',  '#8c564b', '#637939', '#843c39',
@@ -59,8 +60,7 @@ const COLORS = [
 export class SpeciesPhenophaseInputComponent implements OnInit {
     @Input() startYear:number;
     @Input() endYear:number;
-    @Input() networkIds:any[];
-    @Input() stationIds:any[];
+    @Input() selection:VisSelection;
 
     @Output() speciesChange = new EventEmitter<Species>();
     speciesValue:Species;
@@ -94,28 +94,34 @@ export class SpeciesPhenophaseInputComponent implements OnInit {
     }
 
     ngOnInit() {
+        let params = {};
+        if(this.selection) {
+            (this.selection.networkIds||[]).forEach((id,i) => params[`network_id[${i}]`] = `${id}`);
+            (this.selection.stationIds||[]).forEach((id,i) => params[`station_ids[${i}]`] = `${id}`);
+        }
         // load up the available species
-        this.speciesService.getAllSpecies()
+        this.speciesService.getAllSpecies(params)
             .then(species => {
-                this.speciesList = species;
+                this.speciesList = species.sort((a,b) => {
+                    if(a.number_observations < b.number_observations) {
+                        return 1;
+                    }
+                    if(a.number_observations > b.number_observations) {
+                        return -1;
+                    }
+                    return 0;
+                });
             });
     }
 
     filterSpecies(s) {
         if(typeof(s) === 'string') {
-            s = s.toLowerCase();
-            return (this.speciesList||[]).filter(sp => {
-                let title = this.speciesTitle.transform(sp).toLowerCase();;
-                return title.indexOf(s) !== -1;
-            }).sort((a,b) => {
-                if(a.number_observations < b.number_observations) {
-                    return 1;
-                }
-                if(a.number_observations > b.number_observations) {
-                    return -1;
-                }
-                return 0;
-            });
+            s = s.trim().toLowerCase();
+            return s !== '' ?
+                (this.speciesList||[]).filter(sp => {
+                    let title = this.speciesTitle.transform(sp).toLowerCase();;
+                    return title.indexOf(s) !== -1;
+                }) : (this.speciesList||[]);
         }
         return [s];
     }

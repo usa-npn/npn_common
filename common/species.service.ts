@@ -18,17 +18,19 @@ export class SpeciesService {
                 private datePipe: DatePipe) {
     }
 
-    getAllSpecies(): Promise<Species[]> {
+    getAllSpecies(params?:any): Promise<Species[]> {
         return new Promise((resolve,reject) => {
+            console.log('SpeciesService.getAllSpecies:params',params)
             let url = `${environment.apiRoot}/npn_portal/species/getSpeciesFilter.json`,
                 cacheKey = {
-                    u: url
+                    u: url,
+                    params:params
                 },
                 data:Species[] = this.cache.get(cacheKey);
             if(data) {
                 resolve(data);
             } else {
-                this.http.get(url)
+                this.http.get(url,{params:params})
                     .toPromise()
                     .then(response => {
                         data = response.json() as Species[];

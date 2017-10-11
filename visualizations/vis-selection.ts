@@ -140,6 +140,11 @@ export abstract class VisSelection extends EventEmitter<VisSelectionEvent> {
     debug:boolean = false;
     working:boolean = false;
 
+    @selectionProperty()
+    networkIds?:any[];
+    @selectionProperty()
+    stationIds?:any[];
+
     readonly INVALID_SELECTION = REJECT_INVALID_SELECTION;
 
     private lastEmit:any = {};
