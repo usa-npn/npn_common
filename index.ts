@@ -14,12 +14,12 @@ import {MdCheckboxModule} from '@angular/material';
   declarations: [
   ],
   imports: [
+    BrowserAnimationsModule,
     BrowserModule,
     NpnCommonModule,
     VisualizationsModule,
     HttpModule,
     FormsModule,
-    BrowserAnimationsModule,
     MdCheckboxModule
   ],
   providers: [

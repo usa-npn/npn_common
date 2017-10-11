@@ -5,7 +5,7 @@ import { FormsModule,ReactiveFormsModule } from '@angular/forms';
 import {VisualizationDownloadComponent} from './visualization-download.component';
 
 import {ScatterPlotSelectionFactory,ScatterPlotComponent,ScatterPlotControls} from './scatter-plot';
-import {CalendarSelectionFactory,CalendarComponent} from './calendar';
+import {CalendarSelectionFactory,CalendarComponent,CalendarControlComponent} from './calendar';
 import {ActivityCurvesSelectionFactory,ActivityCurvesComponent,CurveControlComponent,ActivityCurvesControlComponent} from './activity-curves';
 import {AgddMapComponent,AgddMapSelectionFactory} from './agdd-map';
 import {VisualizationComponent} from './visualization.component';
@@ -13,8 +13,9 @@ import {VisualizationComponent} from './visualization.component';
 import {VisualizationSelectionFactory} from './visualization-selection-factory.service';
 import {SpeciesPhenophaseInputComponent,YearRangeInputComponent} from './common-controls';
 
+import {BrowserModule} from '@angular/platform-browser';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
-import {MdButtonModule, MdCheckboxModule, MdSelectModule, MdProgressSpinnerModule,MatExpansionModule,MatAutocompleteModule,MatInputModule} from '@angular/material';
+import {MdButtonModule, MdCheckboxModule, MdSelectModule, MdProgressSpinnerModule,MatExpansionModule,MatAutocompleteModule,MatInputModule,MatSliderModule} from '@angular/material';
 
 import {AgmCoreModule} from '@agm/core';
 
@@ -22,16 +23,19 @@ import {NpnCommonModule} from '../common';
 
 @NgModule({
   imports: [
+    BrowserAnimationsModule,
+    BrowserModule,
     CommonModule,
     NpnCommonModule,
     FormsModule,ReactiveFormsModule,
-    BrowserAnimationsModule, MdButtonModule, MdCheckboxModule, MdSelectModule, MdProgressSpinnerModule, MatExpansionModule,MatAutocompleteModule,MatInputModule,
+    MdButtonModule, MdCheckboxModule,
+    MdSelectModule, MdProgressSpinnerModule, MatExpansionModule,
+    MatAutocompleteModule,MatInputModule,MatSliderModule,
     AgmCoreModule
   ],
   declarations: [
-      ScatterPlotComponent,
-      ScatterPlotControls,
-      CalendarComponent,
+      ScatterPlotComponent,ScatterPlotControls,
+      CalendarComponent,CalendarControlComponent,
       ActivityCurvesComponent,CurveControlComponent,ActivityCurvesControlComponent,
       AgddMapComponent,
       VisualizationDownloadComponent,
@@ -43,7 +47,7 @@ import {NpnCommonModule} from '../common';
       ScatterPlotComponent,
       ScatterPlotControls,
       ActivityCurvesComponent,ActivityCurvesControlComponent,
-      CalendarComponent,
+      CalendarComponent,CalendarControlComponent,
       AgddMapComponent,
       VisualizationComponent,
       SpeciesPhenophaseInputComponent

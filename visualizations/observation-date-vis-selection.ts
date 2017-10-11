@@ -6,9 +6,9 @@ import {CacheService,Species,Phenophase,SpeciesTitlePipe} from '../common';
 import {environment} from '../environments/environment';
 
 export class ObservationDatePlot {
-    color: String;
-    species: Species;
-    phenophase: Phenophase;
+    color?: String;
+    species?: Species;
+    phenophase?: Phenophase;
     [x: string]: any;
 }
 
@@ -31,10 +31,10 @@ export abstract class ObservationDateVisSelection extends VisSelection {
     negative:boolean = false;
     @selectionProperty()
     negativeColor:string = '#aaa'
-    @selectionProperty({des: d => new Date(d)})
-    years:Date[];
     @selectionProperty()
-    plots:ObservationDatePlot[];
+    years:number[] = [];
+    @selectionProperty()
+    plots:ObservationDatePlot[] = [];
 
     constructor(protected http: Http,protected cacheService: CacheService, protected speciesTitle: SpeciesTitlePipe) {
         super();
@@ -54,7 +54,7 @@ export abstract class ObservationDateVisSelection extends VisSelection {
         let params = new URLSearchParams();
         params.set('request_src',this.requestSrc);
         this.years.forEach((y,i) => {
-            params.set(`year[${i}]`,`${y.getFullYear()}`);
+            params.set(`year[${i}]`,`${y}`);
         });
         this.validPlots.forEach((plot,i) => {
             params.set(`species_id[${i}]`,`${plot.species.species_id}`);
@@ -63,7 +63,53 @@ export abstract class ObservationDateVisSelection extends VisSelection {
         return params;
     }
 
-    getData(): Promise<ObservationDateData> {
+    postProcessData(data:any[]):ObservationDateData {
+        let response = new ObservationDateData(),
+            vPlots = this.validPlots,
+            y = (vPlots.length*this.years.length)-1,
+            addDoys = (doys,color) => {
+                doys.forEach(doy => {
+                    response.data.push({
+                        y: y,
+                        x: doy,
+                        color: color
+                    });
+                });
+            },
+            speciesMap = data.reduce((map,species) => {
+                map[species.species_id] = species;
+                // first time translate phenophases array to a map.
+                if(Array.isArray(species.phenophases)) {
+                    species.phenophases = species.phenophases.reduce(function(m,pp){
+                        m[pp.phenophase_id] = pp;
+                        return m;
+                    },{});
+                }
+                return map;
+            },{});
+            console.log('speciesMap',speciesMap);
+        vPlots.forEach(plot => {
+            let species = speciesMap[plot.species.species_id],
+                phenophase = species.phenophases[plot.phenophase.phenophase_id];
+            this.years.forEach(year => {
+                if(phenophase && phenophase.years && phenophase.years[year]) {
+                    if(this.negative) {
+                        console.debug('year negative',y,year,species.common_name,phenophase,phenophase.years[year].negative);
+                        addDoys(phenophase.years[year].negative,this.negativeColor);
+                    }
+                    console.debug('year positive',y,year,species.common_name,phenophase,phenophase.years[year].positive);
+                    addDoys(phenophase.years[year].positive,plot.color);
+                }
+                response.labels.splice(0,0,this.speciesTitle.transform(plot.species)+'/'+plot.phenophase.phenophase_name+' ('+year+')');
+                console.debug('y of '+y+' is for '+response.labels[0]);
+                y--;
+            });
+        });
+        console.log('observation data',response);
+        return response;
+    }
+
+    getData(): Promise<any[]> {
         if(!this.isValid()) {
             return Promise.reject(this.INVALID_SELECTION);
         }
@@ -73,53 +119,10 @@ export abstract class ObservationDateVisSelection extends VisSelection {
             u: url,
             params: params.toString()
         },
-        vPlots = this.validPlots,
-        data:any[] = this.cacheService.get(cacheKey),
-        process = (data:any[]):ObservationDateData => {
-            let response = new ObservationDateData(),
-                y = (vPlots.length*this.years.length)-1,
-                addDoys = (doys,color) => {
-                    doys.forEach(doy => {
-                        response.data.push({
-                            y: y,
-                            x: doy,
-                            color: color
-                        });
-                    });
-                },
-                speciesMap = data.reduce((map,species) => {
-                    map[species.species_id] = species;
-                    species.phenophases = species.phenophases.reduce(function(m,pp){
-                        m[pp.phenophase_id] = pp;
-                        return m;
-                    },{});
-                    return map;
-                },{});
-                console.log('speciesMap',speciesMap);
-            vPlots.forEach(plot => {
-                let species = speciesMap[plot.species.species_id],
-                    phenophase = species.phenophases[plot.phenophase.phenophase_id];
-                this.years.forEach(yr => {
-                    let year = yr.getFullYear();
-                    if(phenophase && phenophase.years && phenophase.years[year]) {
-                        if(this.negative) {
-                            console.debug('year negative',y,year,species.common_name,phenophase,phenophase.years[year].negative);
-                            addDoys(phenophase.years[year].negative,this.negativeColor);
-                        }
-                        console.debug('year positive',y,year,species.common_name,phenophase,phenophase.years[year].positive);
-                        addDoys(phenophase.years[year].positive,plot.color);
-                    }
-                    response.labels.splice(0,0,this.speciesTitle.transform(plot.species)+'/'+plot.phenophase.phenophase_name+' ('+year+')');
-                    console.debug('y of '+y+' is for '+response.labels[0]);
-                    y--;
-                });
-            });
-            console.log('observation data',response);
-            return response;
-        };
+        data:any[] = this.cacheService.get(cacheKey);
 
         if(data) {
-            return Promise.resolve(process(data));
+            return Promise.resolve(data);
         } else {
             this.working = true;
             return new Promise(resolve => {
@@ -129,7 +132,7 @@ export abstract class ObservationDateVisSelection extends VisSelection {
                         let arr = response.json() as any[];
                         this.cacheService.set(cacheKey,arr);
                         this.working = false;
-                        resolve(process(arr));
+                        resolve(arr);
                     })
                     .catch(this.handleError);
             });

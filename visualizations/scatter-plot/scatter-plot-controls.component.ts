@@ -38,7 +38,7 @@ import 'rxjs/add/operator/debounceTime';
         }
     `]
 })
-export class ScatterPlotControls {
+export class ScatterPlotControls implements OnInit {
     @Input()
     selection: ScatterPlotSelection;
     axis = AXIS;
@@ -49,7 +49,9 @@ export class ScatterPlotControls {
     updateSent:boolean = false;
 
     ngOnInit() {
-        this.addPlot();
+        if(this.selection.plots.length === 0) {
+            this.addPlot();
+        }
     }
 
     yearChange(change) {

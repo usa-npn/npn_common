@@ -26,7 +26,8 @@ export class CalendarComponent extends SvgVisualizationBaseComponent {
     y: ScaleBand<number>;
     yAxis: Axis<number>
 
-    private data:ObservationDateData;
+    private processed:ObservationDateData;
+    private data:any[];
 
     // the doy of the first of each month doesn't change from year to year just what
     // day of the week days fall on so what year is used to calculate them is irrelevant
@@ -69,6 +70,7 @@ export class CalendarComponent extends SvgVisualizationBaseComponent {
 
     protected reset(): void {
         super.reset();
+        this.processed = undefined;
         let chart = this.chart,
             sizing = this.sizing,
             d3_month_fmt = d3.timeFormat(this.getMonthFormat());
@@ -83,8 +85,8 @@ export class CalendarComponent extends SvgVisualizationBaseComponent {
             });
         this.y = scaleBand<number>().range([sizing.height,0]).domain(d3.range(0,6)).paddingOuter(0.5);
         this.yAxis = axisRight<number>(this.y).tickSize(sizing.width).tickFormat(i => {
-            return this.data && this.data.labels && i < this.data.labels.length ?
-                this.data.labels[i] : '';
+            return this.processed && this.processed.data && i < this.processed.labels.length ?
+                this.processed.labels[i] : '';
         });
 
         chart.append('g')
@@ -116,20 +118,21 @@ export class CalendarComponent extends SvgVisualizationBaseComponent {
     }
 
     protected redraw(): void {
-        let sizing = this.sizing;
+        let sizing = this.sizing,
+            processed = this.processed = this.selection.postProcessData(this.data);
 
         // update y axis
         this.y.paddingInner(this.selection.bandPadding);
-        if(this.data && this.data.labels) {
-            this.y.domain(d3.range(0,this.data.labels.length));
+        if(processed && processed.labels) {
+            this.y.domain(d3.range(0,processed.labels.length));
         }
         this.yAxis.scale(this.y);
         this.chart.selectAll('g .y.axis')
             .call(this.yAxis);
 
         this.chart.selectAll('.doy').remove();
-        if(this.data && this.data.data) {
-            let doys = this.chart.selectAll('.doy').data(this.data.data, d => {
+        if(processed && processed.data) {
+            let doys = this.chart.selectAll('.doy').data(processed.data, d => {
                 let point = d as ObservationDataDataPoint; // why is this necessary
                 return`${point.y}-${point.x}-${point.color}`;
             });
