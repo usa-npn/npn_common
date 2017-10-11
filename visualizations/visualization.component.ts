@@ -14,9 +14,9 @@ import {AgddMapSelection} from './agdd-map';
 @Component({
     selector: 'npn-visualization',
     template: `
-    <scatter-plot *ngIf="scatter" [selection]="scatter"></scatter-plot>
-    <calendar *ngIf="calendar" [selection]="calendar"></calendar>
-    <activity-curves *ngIf="activity" [selection]="activity"></activity-curves>
+    <scatter-plot *ngIf="scatter" [selection]="scatter" [showDownload]="showDownload"></scatter-plot>
+    <calendar *ngIf="calendar" [selection]="calendar"  [showDownload]="showDownload"></calendar>
+    <activity-curves *ngIf="activity" [selection]="activity"  [showDownload]="showDownload"></activity-curves>
     <agdd-map *ngIf="agdd" [selection]="agdd"></agdd-map>
     <md-expansion-panel *ngIf="selection.debug">
         <md-expansion-panel-header>
@@ -35,7 +35,11 @@ import {AgddMapSelection} from './agdd-map';
     `]
 })
 export class VisualizationComponent implements OnInit {
-    @Input() selection: VisSelection;
+    @Input()
+    showDownload:boolean = true;
+
+    @Input()
+    selection: VisSelection;
 
     private scatter: ScatterPlotSelection;
     private calendar: CalendarSelection;

@@ -1,4 +1,4 @@
-import {Component} from '@angular/core';
+import {Component,Input} from '@angular/core';
 
 import {VisSelection,VisSelectionEvent} from './vis-selection';
 import {VisualizationBaseComponent,VisualizationSizing,VisualizationMargins} from './visualization-base.component';
@@ -16,6 +16,8 @@ export const FONT_SIZE_PX:string = FONT_SIZE+'px';
   styleUrls: ['./svg-visualization-base.component.scss']
 })
 export abstract class SvgVisualizationBaseComponent extends VisualizationBaseComponent {
+    @Input()
+    showDownload:boolean = true;
     record: any;
 
     disclaimer: string;

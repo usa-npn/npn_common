@@ -3,7 +3,7 @@
         <md-progress-spinner mode="indeterminate"></md-progress-spinner>
     </div>
     <div class="chart-container">
-        <visualization-download svgWrapperId="{{id}}" filename="{{filename}}"></visualization-download>
+        <visualization-download *ngIf="showDownload" svgWrapperId="{{id}}" filename="{{filename}}"></visualization-download>
         <div [class]="clazz" id="{{id}}"><svg></svg></div>
     </div>
     <div *ngIf="disclaimer" class="vis-disclaimer">{{disclaimer}}</div>
