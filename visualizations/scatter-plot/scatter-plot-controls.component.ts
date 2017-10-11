@@ -55,7 +55,7 @@ export class ScatterPlotControls {
     yearChange(change) {
         if(change && change.oldValue !== change.newValue && this.yearStart && this.yearEnd) {
             this.selection.start = new Date(this.yearStart,0,1);
-            this.selection.end = new Date(this.yearEnd,0,1);
+            this.selection.end = new Date(this.yearEnd,11,31);
             this.updateChange();
         }
     }

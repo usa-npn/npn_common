@@ -32,7 +32,8 @@ const COLORS = [
     </md-select>
 
     <md-select *ngIf="gatherColor" class="color-input" placeholder="Color" [(ngModel)]="color">
-      <md-option *ngFor="let c of colorList" [value]="c"><div class="color-swatch" [ngStyle]="{'background-color':c}">{{c}}</div></md-option>
+      <md-select-trigger><div class="color-swatch" [ngStyle]="{'background-color':color}"></div></md-select-trigger>
+      <md-option *ngFor="let c of colorList" [value]="c"><div class="color-swatch" [ngStyle]="{'background-color':c}"></div></md-option>
     </md-select>
     `,
     styles: [`
@@ -46,6 +47,12 @@ const COLORS = [
             display: inline-block;
             width: 20px;
             height: 20px;
+        }
+        .color-input {
+
+        }
+        .color-input /deep/ .mat-select-trigger {
+            //border: 1px solid red;
         }
     `]
 })
