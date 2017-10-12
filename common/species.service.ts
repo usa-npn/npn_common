@@ -30,7 +30,9 @@ export class SpeciesService {
             if(data) {
                 resolve(data);
             } else {
-                this.http.get(url,{params:params})
+                let uParams = new URLSearchParams()
+                Object.keys(params).forEach(key => uParams.set(`${key}`,`${params[key]}`));
+                this.http.post(url,uParams.toString(),{headers:HEADERS})
                     .toPromise()
                     .then(response => {
                         data = response.json() as Species[];
