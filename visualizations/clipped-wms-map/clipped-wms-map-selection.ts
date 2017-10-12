@@ -6,7 +6,7 @@ import 'rxjs/add/operator/toPromise';
 
 import {} from '@types/googlemaps';
 
-export class AgddMapSelection extends VisSelection {
+export class ClippedWmsMapSelection extends VisSelection {
     @selectionProperty()
     image: string;
     @selectionProperty()

@@ -4,9 +4,7 @@ import {VisSelection} from './vis-selection';
 import {ScatterPlotSelection,ScatterPlotSelectionFactory} from './scatter-plot';
 import {CalendarSelection,CalendarSelectionFactory} from './calendar';
 import {ActivityCurvesSelection,ActivityCurvesSelectionFactory} from './activity-curves';
-
-// TODO
-import {AgddMapSelection,AgddMapSelectionFactory} from './agdd-map';
+import {ClippedWmsMapSelection,ClippedWmsMapSelectionFactory} from './clipped-wms-map';
 
 @Injectable()
 export class VisualizationSelectionFactory {
@@ -15,12 +13,11 @@ export class VisualizationSelectionFactory {
     constructor(private calendar: CalendarSelectionFactory,
                 private scatter: ScatterPlotSelectionFactory,
                 private activity: ActivityCurvesSelectionFactory,
-                private agddMap: AgddMapSelectionFactory) {
+                private clippedWmsMap: ClippedWmsMapSelectionFactory) {
         this.factoryMap.CalendarSelection = calendar;
         this.factoryMap.ScatterPlotSelection = scatter;
         this.factoryMap.ActivityCurvesSelection = activity;
-        this.factoryMap.AgddMapSelection = agddMap;
-
+        this.factoryMap.ClippedWmsMapSelection = clippedWmsMap;
     }
 
     newCalendarSelection():CalendarSelection {
@@ -35,8 +32,8 @@ export class VisualizationSelectionFactory {
         return this.activity.newSelection();
     }
 
-    newAgddMapSelection(): AgddMapSelection {
-        return this.agddMap.newSelection();
+    newClippedWmsMapSelection(): ClippedWmsMapSelection {
+        return this.clippedWmsMap.newSelection();
     }
 
     cloneSelection(selection:VisSelection): VisSelection {

@@ -7,7 +7,7 @@ import {VisualizationDownloadComponent} from './visualization-download.component
 import {ScatterPlotSelectionFactory,ScatterPlotComponent,ScatterPlotControls} from './scatter-plot';
 import {CalendarSelectionFactory,CalendarComponent,CalendarControlComponent} from './calendar';
 import {ActivityCurvesSelectionFactory,ActivityCurvesComponent,CurveControlComponent,ActivityCurvesControlComponent} from './activity-curves';
-import {AgddMapComponent,AgddMapSelectionFactory} from './agdd-map';
+import {ClippedWmsMapComponent,ClippedWmsMapSelectionFactory} from './clipped-wms-map';
 import {VisualizationComponent} from './visualization.component';
 
 import {VisualizationSelectionFactory} from './visualization-selection-factory.service';
@@ -37,7 +37,7 @@ import {NpnCommonModule} from '../common';
       ScatterPlotComponent,ScatterPlotControls,
       CalendarComponent,CalendarControlComponent,
       ActivityCurvesComponent,CurveControlComponent,ActivityCurvesControlComponent,
-      AgddMapComponent,
+      ClippedWmsMapComponent,
       VisualizationDownloadComponent,
       VisualizationComponent,
       SpeciesPhenophaseInputComponent,
@@ -48,7 +48,7 @@ import {NpnCommonModule} from '../common';
       ScatterPlotControls,
       ActivityCurvesComponent,ActivityCurvesControlComponent,
       CalendarComponent,CalendarControlComponent,
-      AgddMapComponent,
+      ClippedWmsMapComponent,
       VisualizationComponent,
       SpeciesPhenophaseInputComponent
   ],
@@ -57,7 +57,7 @@ import {NpnCommonModule} from '../common';
       // can inject a specific type of factory
       ScatterPlotSelectionFactory,
       CalendarSelectionFactory,
-      AgddMapSelectionFactory,
+      ClippedWmsMapSelectionFactory,
       ActivityCurvesSelectionFactory,
       // OR one factory to rule them all
       VisualizationSelectionFactory
@@ -70,5 +70,4 @@ export {VisualizationSelectionFactory} from './visualization-selection-factory.s
 export * from './calendar';
 export * from './scatter-plot';
 export * from './activity-curves';
-// TODO
-export * from './agdd-map';
+export * from './clipped-wms-map';
