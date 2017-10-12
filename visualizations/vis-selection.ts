@@ -1,4 +1,5 @@
 import {EventEmitter} from '@angular/core';
+import {URLSearchParams} from '@angular/http';
 
 export const NULL_DATA = -9999;
 export const ONE_DAY_MILLIS:number = (24*60*60*1000);
@@ -139,11 +140,7 @@ export const REJECT_INVALID_SELECTION = 'invalid selection';
 export abstract class VisSelection extends EventEmitter<VisSelectionEvent> {
     debug:boolean = false;
     working:boolean = false;
-
-    @selectionProperty()
-    networkIds?:any[];
-    @selectionProperty()
-    stationIds?:any[];
+    [x: string]: any
 
     readonly INVALID_SELECTION = REJECT_INVALID_SELECTION;
 
@@ -228,9 +225,21 @@ export abstract class VisSelection extends EventEmitter<VisSelectionEvent> {
     }
 }
 
-export interface NetworkAwareVisSelection {
-    networkIds:any[];
-}
-export interface StationAwareVisSelection {
-    stationIds:any[];
+export abstract class NetworkAwareVisSelection extends VisSelection {
+    @selectionProperty()
+    networkIds?:any[] = [];
+    @selectionProperty()
+    stationIds?:any[] = [];
+
+    addNetworkParams(params:any):any {
+        if(params instanceof URLSearchParams) {
+            let p = params as URLSearchParams;
+            (this.networkIds||[]).forEach((id,i) => p.set(`network_id[${i}]`,`${id}`));
+            (this.stationIds||[]).forEach((id,i) => p.set(`station_ids[${i}]`,`${id}`));
+        } else if (params && typeof(params) === 'object') {
+            (this.networkIds||[]).forEach((id,i) => params[`network_id[${i}]`] = `${id}`);
+            (this.stationIds||[]).forEach((id,i) => params[`station_ids[${i}]`] = `${id}`);
+        }
+        return params;
+    }
 }

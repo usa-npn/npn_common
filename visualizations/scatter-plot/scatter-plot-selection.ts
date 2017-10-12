@@ -98,7 +98,7 @@ export class ScatterPlotSelection extends SiteOrSummaryVisSelection {
             params.set(`species_id[${i}]`,`${p.species.species_id}`);
             params.set(`phenophase_id[${i}]`,`${p.phenophase.phenophase_id}`);
         });
-        // TODO addCommonParams, site or geo args, etc.
+        this.addNetworkParams(params);
         return params;
     }
 

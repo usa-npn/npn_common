@@ -6,7 +6,7 @@ import {CacheService} from '../../common';
 import {environment} from '../../environments/environment';
 
 import {INTERPOLATE,ActivityCurve} from './activity-curve';
-import {VisSelection,selectionProperty,NetworkAwareVisSelection,StationAwareVisSelection} from '../vis-selection';
+import {NetworkAwareVisSelection,selectionProperty} from '../vis-selection';
 
 export class ActivityFrequency {
     value:string|number;
@@ -30,7 +30,7 @@ export const ACTIVITY_FREQUENCIES:ActivityFrequency[] = [
     ACTIVITY_FREQUENCY_WEEKLY
 ];
 
-export class ActivityCurvesSelection extends VisSelection {
+export class ActivityCurvesSelection extends NetworkAwareVisSelection {
     private headers = new Headers({'Content-Type':'application/x-www-form-urlencoded'});
     @selectionProperty()
     private _interpolate: INTERPOLATE = INTERPOLATE.monotone;
@@ -140,6 +140,7 @@ export class ActivityCurvesSelection extends VisSelection {
                         params.set('frequency',`${this.frequency.value}`);
                         params.set('species_id[0]',`${c.species.species_id}`);
                         params.set('phenophase_id[0]',`${c.phenophase.phenophase_id}`);
+                        this.addNetworkParams(params);
                         let url = `${environment.apiRoot}/npn_portal/observations/getMagnitudeData.json`,
                             cacheKey = {
                                 u: url,
