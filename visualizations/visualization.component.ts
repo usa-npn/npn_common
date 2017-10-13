@@ -5,6 +5,7 @@ import {VisSelection} from './vis-selection';
 import {ScatterPlotSelection} from './scatter-plot';
 import {CalendarSelection} from './calendar';
 import {ActivityCurvesSelection} from './activity-curves';
+import {ObserverActivitySelection} from './observer-activity';
 import {ClippedWmsMapSelection} from './clipped-wms-map';
 
 // the idea here is that with Angular 2/4 there is no $compile functionality
@@ -17,6 +18,7 @@ import {ClippedWmsMapSelection} from './clipped-wms-map';
     <scatter-plot *ngIf="scatter" [selection]="scatter" [showDownload]="showDownload"></scatter-plot>
     <calendar *ngIf="calendar" [selection]="calendar"  [showDownload]="showDownload"></calendar>
     <activity-curves *ngIf="activity" [selection]="activity"  [showDownload]="showDownload"></activity-curves>
+    <observer-activity *ngIf="observer" [selection]="observer" [showDownload]="showDownload"></observer-activity>
     <clipped-wms-map *ngIf="clippedWmsMap" [selection]="clippedWmsMap"></clipped-wms-map>
     <md-expansion-panel *ngIf="selection.debug">
         <md-expansion-panel-header>
@@ -44,6 +46,7 @@ export class VisualizationComponent implements OnInit {
     private scatter: ScatterPlotSelection;
     private calendar: CalendarSelection;
     private activity: ActivityCurvesSelection;
+    private observer: ObserverActivitySelection;
     private clippedWmsMap: ClippedWmsMapSelection;
 
     ngOnInit() {
@@ -58,6 +61,9 @@ export class VisualizationComponent implements OnInit {
         }
         if(this.selection instanceof ActivityCurvesSelection) {
             this.activity = this.selection;
+        }
+        if(this.selection instanceof ObserverActivitySelection) {
+            this.observer = this.selection;
         }
     }
 }

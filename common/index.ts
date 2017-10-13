@@ -39,3 +39,4 @@ export {Window} from './window';
 export {SpeciesTitlePipe} from './species-title.pipe';
 export {DoyPipe} from './doy.pipe';
 export {LegendDoyPipe} from './legend-doy.pipe';
+export {Guid} from './guid';

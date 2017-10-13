@@ -1,5 +1,6 @@
 import {EventEmitter} from '@angular/core';
 import {URLSearchParams} from '@angular/http';
+import {Guid} from '../common';
 
 export const NULL_DATA = -9999;
 export const ONE_DAY_MILLIS:number = (24*60*60*1000);
@@ -138,6 +139,8 @@ export const REJECT_INVALID_SELECTION = 'invalid selection';
  * so technically does.  Should perhaps consider not extending Angular's EventEmitter
  */
 export abstract class VisSelection extends EventEmitter<VisSelectionEvent> {
+    @selectionProperty()
+    guid:string = Guid.newGuid();
     debug:boolean = false;
     working:boolean = false;
     [x: string]: any

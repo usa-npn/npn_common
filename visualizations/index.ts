@@ -8,6 +8,7 @@ import {ScatterPlotSelectionFactory,ScatterPlotComponent,ScatterPlotControls} fr
 import {CalendarSelectionFactory,CalendarComponent,CalendarControlComponent} from './calendar';
 import {ActivityCurvesSelectionFactory,ActivityCurvesComponent,CurveControlComponent,ActivityCurvesControlComponent} from './activity-curves';
 import {ClippedWmsMapComponent,ClippedWmsMapSelectionFactory} from './clipped-wms-map';
+import {ObserverActivitySelectionFactory,ObserverActivityComponent,ObserverActivityControl} from './observer-activity';
 import {VisualizationComponent} from './visualization.component';
 
 import {VisualizationSelectionFactory} from './visualization-selection-factory.service';
@@ -37,6 +38,7 @@ import {NpnCommonModule} from '../common';
       ScatterPlotComponent,ScatterPlotControls,
       CalendarComponent,CalendarControlComponent,
       ActivityCurvesComponent,CurveControlComponent,ActivityCurvesControlComponent,
+      ObserverActivityComponent,ObserverActivityControl,
       ClippedWmsMapComponent,
       VisualizationDownloadComponent,
       VisualizationComponent,
@@ -47,6 +49,7 @@ import {NpnCommonModule} from '../common';
       ScatterPlotComponent,
       ScatterPlotControls,
       ActivityCurvesComponent,ActivityCurvesControlComponent,
+      ObserverActivityComponent,ObserverActivityControl,
       CalendarComponent,CalendarControlComponent,
       ClippedWmsMapComponent,
       VisualizationComponent,
@@ -59,6 +62,7 @@ import {NpnCommonModule} from '../common';
       CalendarSelectionFactory,
       ClippedWmsMapSelectionFactory,
       ActivityCurvesSelectionFactory,
+      ObserverActivitySelectionFactory,
       // OR one factory to rule them all
       VisualizationSelectionFactory
   ]
@@ -71,3 +75,4 @@ export * from './calendar';
 export * from './scatter-plot';
 export * from './activity-curves';
 export * from './clipped-wms-map';
+export * from './observer-activity';
