@@ -1,55 +1,213 @@
-import {NetworkAwareVisSelection,selectionProperty} from '../vis-selection';
+import {NetworkAwareVisSelection,selectionProperty,ONE_DAY_MILLIS} from '../vis-selection';
 import{CacheService} from '../../common';
 
+import {DatePipe} from '@angular/common';
 import {Http} from '@angular/http';
 import 'rxjs/add/operator/toPromise';
 
 import {} from '@types/googlemaps';
 
-export class ClippedWmsMapSelection extends NetworkAwareVisSelection {
-    @selectionProperty()
-    image: string;
-    @selectionProperty()
-    box: number[];
-    @selectionProperty()
-    boundary: string;
+import {environment} from '../../environments/environment';
 
-    constructor(protected http: Http,protected cacheService: CacheService) {
+const SIX_LAYERS:ClippedLayerDef[] = [{
+    label: 'Current Si-x leaf index',
+    layerName: 'si-x:average_leaf_ncep'
+},{
+    label: '6-day forecast',
+    layerName: 'si-x:average_leaf_ncep',
+    forecast: true
+}/* TODO not yet supported,{
+    label: 'Anomaly',
+    layerName: 'si-x:average_leaf_ncep',
+    forecast: false
+}*/];
+const AGDD_LAYERS:ClippedLayerDef[] = [
+    // TODO add when agdd support arives
+];
+
+export class ClippedWmsMapSelection extends NetworkAwareVisSelection {
+    @selectionProperty() // may need to use get/set pattern
+    service:string = 'si-x'; // si-x || agdd
+    @selectionProperty()
+    layer:ClippedLayerDef = SIX_LAYERS[0];
+    @selectionProperty()
+    fwsBoundary:string;
+
+    private data:DataAndBoundary;
+    private overlay:ImageOverlay;
+    private features:any[];
+
+    constructor(protected http: Http,protected cache: CacheService,protected datePipe: DatePipe) {
         super();
     }
-    /*
-    // BOX(E N,E N) BOX(lng lat, lng lat) BOX(SW,NE)
-    this.agdd1.box = 'BOX(-106.50213020231 40.5170110198478,-106.210591798487 40.9346817640039)';
-    */
+
     isValid():boolean {
-        return !!(this.image && this.box && this.boundary);
+        return (this.service === 'si-x' || this.service === 'agdd') && !!this.layer && !!this.fwsBoundary;
     }
 
-    addTo(map: google.maps.Map): void {
-        let bounds = this.getBounds();
-        if(bounds) {
-            map.panTo(bounds.getCenter());
-            /*let rect = new google.maps.Rectangle({
-                strokeColor: '#FF0000',
-                strokeOpacity: 0.8,
-                strokeWeight: 2,
-                fillColor: '#FF0000',
-                fillOpacity: 0.35,
-                map: map,
-                bounds: bounds
-            });*/
-            map.fitBounds(bounds);
-            lazyClassLoader();
-            let overlay = new ImageOverLayImpl(bounds,this.image,map);
-            overlay.add();
-            if(this.boundary) {
-                console.log(`MAP fetching boundary ${this.boundary}`)
-                this.http.get(this.boundary)
+    get validServices(): any[] {
+        return [{
+            value: 'si-x',
+            label: 'Spring index'
+        },{
+            value: 'agdd',
+            label: 'Accumulated growing degree days'
+        }];
+    }
+    get validLayers(): any[] {
+        switch(this.service) {
+            case 'si-x':
+                return SIX_LAYERS;
+            case 'agdd':
+                return AGDD_LAYERS;
+        }
+        return [];
+    }
+
+    get apiDate(): string {
+        // always "today" or 6 days in the future for forecast
+        let d = new Date();
+        if(this.layer && this.layer.forecast) {
+            d.setTime(d.getTime()+(6*ONE_DAY_MILLIS));
+        }
+        return this.datePipe.transform(d,'y-MM-dd');
+    }
+
+    private cachedGet(url: string, params:any): Promise<any> {
+        return new Promise((resolve,reject) => {
+            let cacheKey = {
+                u: url,
+                params: params
+            },
+            data:any = this.cache.get(cacheKey);
+            if(data) {
+                resolve(data);
+            } else {
+                this.http.get(url,{params:params})
                     .toPromise()
                     .then(response => {
-                        let geoJson = response.json();
+                        data = response.json() as any;
+                        this.cache.set(cacheKey,data);
+                        resolve(data);
+                    })
+                    .catch(reject);
+            }
+        });
+    }
+
+    getBoundary(): Promise<any> {
+        return new Promise((resolve,reject) => {
+            let url = `${environment.dataApiRoot}/v0/${this.service}/area/boundary`,
+                params = {
+                    format: 'geojson',
+                    fwsBoundary: this.fwsBoundary
+                };
+            this.cachedGet(url,params)
+                .then(response => {
+                    if(response && response.boundary) {
+                        this.cachedGet(response.boundary,{}).then(resolve).catch(reject);
+                    } else {
+                        reject('missing boundary in response.');
+                    }
+                })
+                .catch(reject);
+        });
+    }
+
+    getData(): Promise<any> {
+        let url = `${environment.dataApiRoot}/v0/${this.service}/area/clippedImage`,
+            params = {
+                layerName: this.layer.layerName,
+                fwsBoundary: this.fwsBoundary,
+                date: this.apiDate,
+                style: true,
+                fileFormat: 'png'
+            };
+        return this.cachedGet(url,params);
+    }
+
+    getDataAndBoundary(): Promise<DataAndBoundary> {
+        return new Promise((resolve,reject) => {
+            Promise.all([
+                this.getData(),
+                this.getBoundary()
+            ])
+            .then(arr => {
+                resolve({
+                    data: arr[0],
+                    boundary: arr[1]
+                })
+            })
+            .catch(reject);
+        });
+    }
+
+    resizeMap(map: google.maps.Map): Promise<any> {
+        return new Promise(resolve => {
+            if(this.data) {
+                let bounds = this.toBounds(this.data.data.bbox);
+                if(bounds) {
+                    map.fitBounds(bounds);
+                }
+            }
+            resolve();
+        });
+    }
+
+    removeFrom(map: google.maps.Map): Promise<any> {
+        return new Promise(resolve => {
+            if(this.overlay) {
+                this.overlay.remove();
+            }
+            (this.features||[]).forEach(f => {
+                map.data.remove(f);
+            });
+            this.data = undefined;
+            this.features = undefined;
+            this.overlay = undefined;
+            resolve();
+        });
+    }
+
+    addTo(map: google.maps.Map): Promise<any> {
+        return new Promise((resolve,reject) => {
+            if(this.overlay && this.features) {
+                return reject('already added to map, call removeFrom');
+            }
+            this.getDataAndBoundary() // and boundary
+                .then(dAndb => {
+                    if(this.overlay && this.features) {
+                        console.log('in promise, already have overlay and features');
+                        return resolve();
+                    }
+                    this.data = dAndb;
+                    let data = dAndb.data,
+                        bounds = this.toBounds(data.bbox),
+                        clippedImage = data.clippedImage;
+                    if(bounds) {
+                        map.panTo(bounds.getCenter());
+                        /*
+                        let rect = new google.maps.Rectangle({
+                            strokeColor: '#FF0000',
+                            strokeOpacity: 0.8,
+                            strokeWeight: 2,
+                            fillColor: '#FF0000',
+                            fillOpacity: 0.35,
+                            map: map,
+                            bounds: bounds
+                        });*/
+                        map.fitBounds(bounds);
+
+                        // have to do this so that the google api classes aren't
+                        // touched too early and our class extension invalid
+                        lazyClassLoader();
+
+                        this.overlay = new ImageOverLayImpl(bounds,clippedImage,map);
+                        this.overlay.add();
+
+                        let geoJson = dAndb.boundary;
                         console.log('MAP boundary resonse',geoJson);
-                        map.data.addGeoJson(geoJson);
+                        this.features = map.data.addGeoJson(geoJson);
                         map.data.setStyle(feature => {
                             return {
                                 strokeColor: '#FF0000',
@@ -59,17 +217,19 @@ export class ClippedWmsMapSelection extends NetworkAwareVisSelection {
                                 fillOpacity: 0.15,
                             };
                         });
-                    });
-            }
-        }
+                    }
+                })
+                .catch(reject);
+        });
+
     }
 
-    getBounds(): google.maps.LatLngBounds {
-        if(this.box && this.box.length === 4) {
-            let sw_lng = this.box[0],
-                sw_lat = this.box[1],
-                ne_lng = this.box[2],
-                ne_lat = this.box[3];
+    private toBounds(bbox:number[]): google.maps.LatLngBounds {
+        if(bbox && bbox.length === 4) {
+            let sw_lng = bbox[0],
+                sw_lat = bbox[1],
+                ne_lng = bbox[2],
+                ne_lat = bbox[3];
             return new google.maps.LatLngBounds(
               new google.maps.LatLng(sw_lat,sw_lng),
               new google.maps.LatLng(ne_lat,ne_lng)
@@ -93,8 +253,27 @@ export class ClippedWmsMapSelection extends NetworkAwareVisSelection {
     // lng + E of meridian - W of meridian
 }
 
+interface ClippedLayerDef {
+    label: string;
+    layerName: string;
+    forecast?:boolean;
+}
+
+interface ClippedImageResponse {
+    date: string;
+    layerClippedFrom: string;
+    clippedImage: string;
+    bbox: number [];
+}
+
+interface DataAndBoundary {
+    data: ClippedImageResponse,
+    boundary: any // geoJson
+};
+
 interface ImageOverlay extends google.maps.OverlayView {
     add();
+    remove();
 }
 let ImageOverLayImpl: { new (bounds: google.maps.LatLngBounds, image: string, map: google.maps.Map): ImageOverlay };
 
@@ -114,6 +293,10 @@ function lazyClassLoader() {
 
         add() {
             this.setMap(this.map);
+        }
+
+        remove() {
+            this.setMap(null);
         }
 
         onAdd() {

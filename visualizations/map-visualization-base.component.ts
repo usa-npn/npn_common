@@ -51,6 +51,8 @@ export abstract class MapVisualizationBaseComponent extends VisualizationBaseCom
     protected reset(): void {
         this.getMap().then(map => {
             console.log('Map reset',map);
+            map.panTo(new google.maps.LatLng(this.latitude,this.longitude));
+            map.setZoom(this.zoom);
         });
     }
 

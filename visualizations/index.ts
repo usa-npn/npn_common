@@ -7,7 +7,7 @@ import {VisualizationDownloadComponent} from './visualization-download.component
 import {ScatterPlotSelectionFactory,ScatterPlotComponent,ScatterPlotControls} from './scatter-plot';
 import {CalendarSelectionFactory,CalendarComponent,CalendarControlComponent} from './calendar';
 import {ActivityCurvesSelectionFactory,ActivityCurvesComponent,CurveControlComponent,ActivityCurvesControlComponent} from './activity-curves';
-import {ClippedWmsMapComponent,ClippedWmsMapSelectionFactory} from './clipped-wms-map';
+import {ClippedWmsMapComponent,ClippedWmsMapControl,ClippedWmsMapSelectionFactory} from './clipped-wms-map';
 import {ObserverActivitySelectionFactory,ObserverActivityComponent,ObserverActivityControl} from './observer-activity';
 import {VisualizationComponent} from './visualization.component';
 
@@ -39,7 +39,7 @@ import {NpnCommonModule} from '../common';
       CalendarComponent,CalendarControlComponent,
       ActivityCurvesComponent,CurveControlComponent,ActivityCurvesControlComponent,
       ObserverActivityComponent,ObserverActivityControl,
-      ClippedWmsMapComponent,
+      ClippedWmsMapComponent,ClippedWmsMapControl,
       VisualizationDownloadComponent,
       VisualizationComponent,
       SpeciesPhenophaseInputComponent,
@@ -51,7 +51,7 @@ import {NpnCommonModule} from '../common';
       ActivityCurvesComponent,ActivityCurvesControlComponent,
       ObserverActivityComponent,ObserverActivityControl,
       CalendarComponent,CalendarControlComponent,
-      ClippedWmsMapComponent,
+      ClippedWmsMapComponent,ClippedWmsMapControl,
       VisualizationComponent,
       SpeciesPhenophaseInputComponent
   ],

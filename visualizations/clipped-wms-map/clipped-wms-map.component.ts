@@ -19,9 +19,27 @@ export class ClippedWmsMapComponent extends MapVisualizationBaseComponent {
         this.getMapResolver(map);
     }
 
+    protected reset(): void {
+        this.getMap().then(m => {
+            this.selection.removeFrom(m)
+                .then(() => {
+                    super.reset();
+                });
+        });
+    }
+
+    protected update(): void {
+        this.resize();
+        this.getMap().then(m => {
+            this.selection.removeFrom(m)
+                .then(() => {
+                    this.selection.addTo(m)
+                });
+        });
+    }
+
     protected resize(): void {
         super.resize();
-        console.log('MAP SELECTION',this.selection);
-        this.getMap().then(m => this.selection.addTo(m));
+        this.getMap().then(m => this.selection.resizeMap(m));
     }
 }

@@ -12,8 +12,7 @@ export class ObserverActivitySelection extends StationAwareVisSelection {
     }
 
     isValid():boolean {
-        // TODO
-        return false;
+        return !!this.year;
     }
 
     dataCnt:number = 0;
