@@ -69,7 +69,7 @@ import {NpnCommonModule} from '../common';
 })
 export class VisualizationsModule { }
 
-export {VisSelection} from './vis-selection';
+export {VisSelection,NetworkAwareVisSelection,StationAwareVisSelection} from './vis-selection';
 export {VisualizationSelectionFactory} from './visualization-selection-factory.service';
 export * from './calendar';
 export * from './scatter-plot';

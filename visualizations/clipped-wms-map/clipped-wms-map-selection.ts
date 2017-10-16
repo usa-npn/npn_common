@@ -1,4 +1,4 @@
-import {VisSelection,selectionProperty} from '../vis-selection';
+import {NetworkAwareVisSelection,selectionProperty} from '../vis-selection';
 import{CacheService} from '../../common';
 
 import {Http} from '@angular/http';
@@ -6,7 +6,7 @@ import 'rxjs/add/operator/toPromise';
 
 import {} from '@types/googlemaps';
 
-export class ClippedWmsMapSelection extends VisSelection {
+export class ClippedWmsMapSelection extends NetworkAwareVisSelection {
     @selectionProperty()
     image: string;
     @selectionProperty()

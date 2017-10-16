@@ -1,7 +1,7 @@
 import {Headers,Http,URLSearchParams} from '@angular/http';
 import 'rxjs/add/operator/toPromise';
 
-import {NetworkAwareVisSelection,selectionProperty} from './vis-selection';
+import {StationAwareVisSelection,selectionProperty} from './vis-selection';
 import {CacheService,Species,Phenophase,SpeciesTitlePipe} from '../common';
 import {environment} from '../environments/environment';
 
@@ -22,7 +22,7 @@ export class ObservationDateData {
     data: ObservationDataDataPoint[] = [];
 }
 
-export abstract class ObservationDateVisSelection extends NetworkAwareVisSelection {
+export abstract class ObservationDateVisSelection extends StationAwareVisSelection {
     private headers = new Headers({'Content-Type':'application/x-www-form-urlencoded'});
 
     requestSrc:string = 'observation-date-vis-selection';

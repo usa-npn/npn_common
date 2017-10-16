@@ -231,16 +231,28 @@ export abstract class VisSelection extends EventEmitter<VisSelectionEvent> {
 export abstract class NetworkAwareVisSelection extends VisSelection {
     @selectionProperty()
     networkIds?:any[] = [];
-    @selectionProperty()
-    stationIds?:any[] = [];
 
     addNetworkParams(params:any):any {
         if(params instanceof URLSearchParams) {
             let p = params as URLSearchParams;
             (this.networkIds||[]).forEach((id,i) => p.set(`network_id[${i}]`,`${id}`));
-            (this.stationIds||[]).forEach((id,i) => p.set(`station_ids[${i}]`,`${id}`));
         } else if (params && typeof(params) === 'object') {
             (this.networkIds||[]).forEach((id,i) => params[`network_id[${i}]`] = `${id}`);
+        }
+        return params;
+    }
+}
+
+export abstract class StationAwareVisSelection extends NetworkAwareVisSelection {
+    @selectionProperty()
+    stationIds?:any[] = [];
+
+    addNetworkParams(params:any):any {
+        super.addNetworkParams(params);
+        if(params instanceof URLSearchParams) {
+            let p = params as URLSearchParams;
+            (this.stationIds||[]).forEach((id,i) => p.set(`station_ids[${i}]`,`${id}`));
+        } else if (params && typeof(params) === 'object') {
             (this.stationIds||[]).forEach((id,i) => params[`station_ids[${i}]`] = `${id}`);
         }
         return params;

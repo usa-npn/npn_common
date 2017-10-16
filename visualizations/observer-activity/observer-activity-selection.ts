@@ -1,9 +1,9 @@
 import {Http} from '@angular/http';
 import {CacheService} from '../../common';
-import {NetworkAwareVisSelection,selectionProperty} from '../vis-selection';
+import {StationAwareVisSelection,selectionProperty} from '../vis-selection';
 
 // TODO is this always network wide or can they select specific stations
-export class ObserverActivitySelection extends NetworkAwareVisSelection {
+export class ObserverActivitySelection extends StationAwareVisSelection {
     @selectionProperty()
     year:number;
 

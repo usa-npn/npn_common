@@ -3,9 +3,9 @@ import 'rxjs/add/operator/toPromise';
 
 import {CacheService} from '../common';
 import {environment} from '../environments/environment';
-import {NetworkAwareVisSelection,selectionProperty} from './vis-selection';
+import {StationAwareVisSelection,selectionProperty} from './vis-selection';
 
-export abstract class SiteOrSummaryVisSelection extends NetworkAwareVisSelection {
+export abstract class SiteOrSummaryVisSelection extends StationAwareVisSelection {
     private headers = new Headers({'Content-Type':'application/x-www-form-urlencoded'});
 
     @selectionProperty()
