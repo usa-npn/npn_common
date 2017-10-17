@@ -101,6 +101,7 @@ export class ObservationFrequencyComponent extends SvgVisualizationBaseComponent
         this.title.text(`${TITLE}, "TODO: Refuge Name", ${this.selection.year}`);
 
         console.log('DATA',this.data);
+        /*
         let data = this.data.months.slice(),
             chart = this.chart;
         // add a new record at the end that is the sum
@@ -109,7 +110,7 @@ export class ObservationFrequencyComponent extends SvgVisualizationBaseComponent
 
         // update x axis with months+total
         this.x.domain(d3.range(0,data.length));
-        this.chart.selectAll('g .x.axis').call(this.xAxis);
+        this.chart.selectAll('g .x.axis').call(this.xAxis);*/
 
         this.commonUpdates();
     }
