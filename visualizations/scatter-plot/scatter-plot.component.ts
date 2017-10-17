@@ -35,6 +35,7 @@ export class ScatterPlotComponent extends SvgVisualizationBaseComponent {
     defaultAxisFormat = d3.format('d');
     dateFormat = d3.timeFormat('%x');
 
+    filename:string = 'scatter-plot.png';
     // https://www.typescriptlang.org/docs/handbook/release-notes/typescript-2-1.html#object-spread-and-rest
     // similar to _|angular.extend
     margins: VisualizationMargins = {...DEFAULT_MARGINS, ...{top: 80,left: 60}};

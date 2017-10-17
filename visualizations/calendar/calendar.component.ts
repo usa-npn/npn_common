@@ -18,6 +18,7 @@ import * as d3 from 'd3';
 export class CalendarComponent extends SvgVisualizationBaseComponent {
     @Input() selection: CalendarSelection;
 
+    filename:string = 'calendar.png';
     margins: VisualizationMargins = {top: 20, right: 35, bottom: 45, left: 35};
 
     x: ScaleBand<number>;

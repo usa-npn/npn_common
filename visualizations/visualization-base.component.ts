@@ -20,8 +20,10 @@ export const FONT_SIZE_PX:string = FONT_SIZE+'px';
   styleUrls: ['./visualization-base.component.scss']
 })
 export abstract class VisualizationBaseComponent implements AfterViewInit, OnDestroy {
-    private subscription:any;
-    @Input() selection: VisSelection;
+    @Input()
+    selection: VisSelection;
+    @Input()
+    thumbnail:boolean = false;
 
     id: string = 'visualization-'+Math.floor(Math.random()*1000);
 
@@ -29,6 +31,8 @@ export abstract class VisualizationBaseComponent implements AfterViewInit, OnDes
     clazz: string = 'visualization '+this.constructor.name;
 
     margins: VisualizationMargins = {top: 0, right: 0, left: 0, bottom: 0};
+
+    private subscription:any;
 
     constructor(protected window: Window, protected rootElement: ElementRef) {}
 

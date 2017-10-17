@@ -63,6 +63,7 @@ export class ActivityCurvesComponent extends SvgVisualizationBaseComponent {
     x: ScaleLinear<number,number>;
     xAxis: Axis<number>;
 
+    filename:string = 'activity-curves.png';
     margins: VisualizationMargins = {top: 80,left: 80,right: 80,bottom: 80};
 
     constructor(protected window: Window, protected rootElement: ElementRef,private legendDoyPipe: LegendDoyPipe) {

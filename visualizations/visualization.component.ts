@@ -15,11 +15,11 @@ import {ClippedWmsMapSelection} from './clipped-wms-map';
 @Component({
     selector: 'npn-visualization',
     template: `
-    <scatter-plot *ngIf="scatter" [selection]="scatter" [showDownload]="showDownload"></scatter-plot>
-    <calendar *ngIf="calendar" [selection]="calendar"  [showDownload]="showDownload"></calendar>
-    <activity-curves *ngIf="activity" [selection]="activity"  [showDownload]="showDownload"></activity-curves>
-    <observer-activity *ngIf="observer" [selection]="observer" [showDownload]="showDownload"></observer-activity>
-    <clipped-wms-map *ngIf="clippedWmsMap" [selection]="clippedWmsMap"></clipped-wms-map>
+    <scatter-plot *ngIf="scatter" [selection]="scatter" [thumbnail]="thumbnail"></scatter-plot>
+    <calendar *ngIf="calendar" [selection]="calendar"  [thumbnail]="thumbnail"></calendar>
+    <activity-curves *ngIf="activity" [selection]="activity"  [thumbnail]="thumbnail"></activity-curves>
+    <observer-activity *ngIf="observer" [selection]="observer" [thumbnail]="thumbnail"></observer-activity>
+    <clipped-wms-map *ngIf="clippedWmsMap" [selection]="clippedWmsMap" [thumbnail]="thumbnail"></clipped-wms-map>
     <md-expansion-panel *ngIf="selection.debug">
         <md-expansion-panel-header>
             <md-panel-title>Selection</md-panel-title>
@@ -38,7 +38,7 @@ import {ClippedWmsMapSelection} from './clipped-wms-map';
 })
 export class VisualizationComponent implements OnInit {
     @Input()
-    showDownload:boolean = true;
+    thumbnail:boolean = false;
 
     @Input()
     selection: VisSelection;

@@ -36,6 +36,7 @@ export class ObserverActivityComponent extends SvgVisualizationBaseComponent {
         .domain(this.keys)
         .range(["#98abc5", "#d0743c"]);
 
+    filename:string = 'observer-activity.png';
     margins: VisualizationMargins = {...DEFAULT_MARGINS, ...{top: 100,left: 80}};
 
     data:any;
