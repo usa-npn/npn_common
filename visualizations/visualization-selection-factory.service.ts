@@ -5,6 +5,7 @@ import {ScatterPlotSelection,ScatterPlotSelectionFactory} from './scatter-plot';
 import {CalendarSelection,CalendarSelectionFactory} from './calendar';
 import {ActivityCurvesSelection,ActivityCurvesSelectionFactory} from './activity-curves';
 import {ObserverActivitySelection,ObserverActivitySelectionFactory} from './observer-activity';
+import {ObservationFrequencySelection,ObservationFrequencySelectionFactory} from './observation-frequency';
 import {ClippedWmsMapSelection,ClippedWmsMapSelectionFactory} from './clipped-wms-map';
 
 @Injectable()
@@ -15,11 +16,13 @@ export class VisualizationSelectionFactory {
                 private scatter: ScatterPlotSelectionFactory,
                 private activity: ActivityCurvesSelectionFactory,
                 private observer: ObserverActivitySelectionFactory,
+                private observationFreq: ObservationFrequencySelectionFactory,
                 private clippedWmsMap: ClippedWmsMapSelectionFactory) {
         this.factoryMap.CalendarSelection = calendar;
         this.factoryMap.ScatterPlotSelection = scatter;
         this.factoryMap.ActivityCurvesSelection = activity;
         this.factoryMap.ObserverActivitySelection = observer;
+        this.factoryMap.ObservationFrequencySelection = observationFreq;
         this.factoryMap.ClippedWmsMapSelection = clippedWmsMap;
     }
 
@@ -34,9 +37,13 @@ export class VisualizationSelectionFactory {
     newActivityCurvesSelection():ActivityCurvesSelection {
         return this.activity.newSelection();
     }
-    
+
     newObserverActivitySelection():ObserverActivitySelection {
         return this.observer.newSelection();
+    }
+    
+    newObservationFrequencySelection(): ObservationFrequencySelection {
+        return this.observationFreq.newSelection();
     }
 
     newClippedWmsMapSelection(): ClippedWmsMapSelection {

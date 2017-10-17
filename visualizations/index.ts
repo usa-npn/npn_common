@@ -9,6 +9,7 @@ import {CalendarSelectionFactory,CalendarComponent,CalendarControlComponent} fro
 import {ActivityCurvesSelectionFactory,ActivityCurvesComponent,CurveControlComponent,ActivityCurvesControlComponent} from './activity-curves';
 import {ClippedWmsMapComponent,ClippedWmsMapControl,ClippedWmsMapSelectionFactory} from './clipped-wms-map';
 import {ObserverActivitySelectionFactory,ObserverActivityComponent,ObserverActivityControl} from './observer-activity';
+import {ObservationFrequencySelectionFactory,ObservationFrequencyComponent,ObservationFrequencyControl} from './observation-frequency';
 import {VisualizationComponent} from './visualization.component';
 
 import {VisualizationSelectionFactory} from './visualization-selection-factory.service';
@@ -40,6 +41,7 @@ import {NpnCommonModule} from '../common';
       CalendarComponent,CalendarControlComponent,
       ActivityCurvesComponent,CurveControlComponent,ActivityCurvesControlComponent,
       ObserverActivityComponent,ObserverActivityControl,
+      ObservationFrequencyComponent,ObservationFrequencyControl,
       ClippedWmsMapComponent,ClippedWmsMapControl,
       VisualizationDownloadComponent,
       VisualizationComponent,
@@ -51,6 +53,7 @@ import {NpnCommonModule} from '../common';
       ScatterPlotControls,
       ActivityCurvesComponent,ActivityCurvesControlComponent,
       ObserverActivityComponent,ObserverActivityControl,
+      ObservationFrequencyComponent,ObservationFrequencyControl,
       CalendarComponent,CalendarControlComponent,
       ClippedWmsMapComponent,ClippedWmsMapControl,
       VisualizationComponent,
@@ -64,6 +67,7 @@ import {NpnCommonModule} from '../common';
       ClippedWmsMapSelectionFactory,
       ActivityCurvesSelectionFactory,
       ObserverActivitySelectionFactory,
+      ObservationFrequencySelectionFactory,
       // OR one factory to rule them all
       VisualizationSelectionFactory
   ]
@@ -77,3 +81,4 @@ export * from './scatter-plot';
 export * from './activity-curves';
 export * from './clipped-wms-map';
 export * from './observer-activity';
+export * from './observation-frequency';
