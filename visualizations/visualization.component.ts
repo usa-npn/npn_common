@@ -20,18 +20,18 @@ import {ClippedWmsMapSelection} from './clipped-wms-map';
     <activity-curves *ngIf="activity" [selection]="activity"  [thumbnail]="thumbnail"></activity-curves>
     <observer-activity *ngIf="observer" [selection]="observer" [thumbnail]="thumbnail"></observer-activity>
     <clipped-wms-map *ngIf="clippedWmsMap" [selection]="clippedWmsMap" [thumbnail]="thumbnail"></clipped-wms-map>
-    <md-expansion-panel *ngIf="selection.debug">
-        <md-expansion-panel-header>
-            <md-panel-title>Selection</md-panel-title>
-        </md-expansion-panel-header>
+    <mat-expansion-panel *ngIf="selection.debug">
+        <mat-expansion-panel-header>
+            <mat-panel-title>Selection</mat-panel-title>
+        </mat-expansion-panel-header>
         <pre>{{selection.external | json}}</pre>
-    </md-expansion-panel>
+    </mat-expansion-panel>
     `,
     styles: [`
         pre {
             font-family: "courier new";
         }
-        md-expansion-panel {
+        mat-expansion-panel {
             margin-top: 10px;
         }
     `]

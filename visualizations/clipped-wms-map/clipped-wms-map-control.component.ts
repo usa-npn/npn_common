@@ -4,12 +4,12 @@ import {ClippedWmsMapSelection} from './clipped-wms-map-selection';
 @Component({
     selector: 'clipped-wms-map-control',
     template: `
-    <md-select class="map-service-input" placeholder="Map" [(ngModel)]="selection.service" (change)="serviceChange()">
-        <md-option *ngFor="let s of validServices" [value]="s.value">{{s.label}}</md-option>
-    </md-select>
-    <md-select class="map-layer-input" placeholder="Layer" [(ngModel)]="selection.layer" (change)="layerChange()">
-        <md-option *ngFor="let l of validLayers" [value]="l">{{l.label}}</md-option>
-    </md-select>
+    <mat-select class="map-service-input" placeholder="Map" [(ngModel)]="selection.service" (change)="serviceChange()">
+        <mat-option *ngFor="let s of validServices" [value]="s.value">{{s.label}}</mat-option>
+    </mat-select>
+    <mat-select class="map-layer-input" placeholder="Layer" [(ngModel)]="selection.layer" (change)="layerChange()">
+        <mat-option *ngFor="let l of validLayers" [value]="l">{{l.label}}</mat-option>
+    </mat-select>
     `,
     styles:[`
         .map-service-input,

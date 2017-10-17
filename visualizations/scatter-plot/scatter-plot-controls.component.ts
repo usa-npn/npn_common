@@ -19,16 +19,21 @@ import 'rxjs/add/operator/debounceTime';
             (onSpeciesChange)="updateChange()"
             (onPhenophaseChange)="updateChange()"
             (onColorChange)="redrawChange($event)"></species-phenophase-input>
-        <button *ngIf="idx > 0" md-button class="remove-plot" (click)="removePlot(idx)">Remove</button>
-        <button *ngIf="selection.plots.length < 3 && idx === (selection.plots.length-1)" md-button class="add-plot" [disabled]="!plotsValid()" (click)="addPlot()">Add</button>
+        <button *ngIf="idx > 0" mat-button class="remove-plot" (click)="removePlot(idx)">Remove</button>
+        <button *ngIf="selection.plots.length < 3 && idx === (selection.plots.length-1)" mat-button class="add-plot" [disabled]="!plotsValid()" (click)="addPlot()">Add</button>
     </div>
 
     <div>
-        <md-select placeholder="X Axis" name="xAxis" [(ngModel)]="selection.axis" (change)="redrawChange()">
-          <md-option *ngFor="let a of axis" [value]="a">{{a.label}}</md-option>
-        </md-select>
-        <md-checkbox [(ngModel)]="selection.regressionLines" (change)="redrawChange()">Fit Lines</md-checkbox>
-        <md-checkbox [(ngModel)]="selection.individualPhenometrics" (change)="updateChange()">Use Individual Phenometrics</md-checkbox>
+        <mat-form-field>
+            <mat-select placeholder="X Axis" name="xAxis" [(ngModel)]="selection.axis" (change)="redrawChange()">
+              <mat-option *ngFor="let a of axis" [value]="a">{{a.label}}</mat-option>
+            </mat-select>
+        </mat-form-field>
+
+        <mat-checkbox [(ngModel)]="selection.regressionLines" (change)="redrawChange()">Fit Lines</mat-checkbox>
+
+        <mat-checkbox [(ngModel)]="selection.individualPhenometrics" (change)="updateChange()">Use Individual Phenometrics</mat-checkbox>
+
     </div>
     `,
     styles: [`

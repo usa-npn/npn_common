@@ -8,7 +8,6 @@ import {NpnCommonModule} from './common';
 
 import {FormsModule} from '@angular/forms';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
-import {MdCheckboxModule} from '@angular/material';
 
 @NgModule({
   declarations: [
@@ -19,8 +18,7 @@ import {MdCheckboxModule} from '@angular/material';
     NpnCommonModule,
     VisualizationsModule,
     HttpModule,
-    FormsModule,
-    MdCheckboxModule
+    FormsModule
   ],
   providers: [
       {provide: Window, useValue: window},

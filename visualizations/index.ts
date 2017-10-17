@@ -16,7 +16,7 @@ import {SpeciesPhenophaseInputComponent,YearRangeInputComponent} from './common-
 
 import {BrowserModule} from '@angular/platform-browser';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
-import {MdButtonModule, MdCheckboxModule, MdSelectModule, MdProgressSpinnerModule,MatExpansionModule,MatAutocompleteModule,MatInputModule,MatSliderModule} from '@angular/material';
+import {MatFormFieldModule,MatButtonModule, MatCheckboxModule, MatSelectModule, MatProgressSpinnerModule,MatExpansionModule,MatAutocompleteModule,MatInputModule,MatSliderModule} from '@angular/material';
 
 import {AgmCoreModule} from '@agm/core';
 
@@ -29,8 +29,9 @@ import {NpnCommonModule} from '../common';
     CommonModule,
     NpnCommonModule,
     FormsModule,ReactiveFormsModule,
-    MdButtonModule, MdCheckboxModule,
-    MdSelectModule, MdProgressSpinnerModule, MatExpansionModule,
+    MatFormFieldModule,
+    MatButtonModule, MatCheckboxModule,
+    MatSelectModule, MatProgressSpinnerModule, MatExpansionModule,
     MatAutocompleteModule,MatInputModule,MatSliderModule,
     AgmCoreModule
   ],

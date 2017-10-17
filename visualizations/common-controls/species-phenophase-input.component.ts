@@ -17,25 +17,29 @@ const COLORS = [
 @Component({
     selector: 'species-phenophase-input',
     template: `
-    <md-form-field class="species-input">
-        <input mdInput placeholder="Species" aria-label="Species"
-               [mdAutocomplete]="sp"
+    <mat-form-field class="species-input">
+        <input matInput placeholder="Species" aria-label="Species"
+               [matAutocomplete]="sp"
                [formControl]="speciesControl" [(ngModel)]="species"/>
-        <md-autocomplete #sp="mdAutocomplete" [displayWith]="speciesTitle.transform">
-          <md-option *ngFor="let s of filteredSpecies | async" [value]="s">
+        <mat-autocomplete #sp="matAutocomplete" [displayWith]="speciesTitle.transform">
+          <mat-option *ngFor="let s of filteredSpecies | async" [value]="s">
             {{s | speciesTitle}} ({{s.number_observations}})
-          </md-option>
-        </md-autocomplete>
-    </md-form-field>
+          </mat-option>
+        </mat-autocomplete>
+    </mat-form-field>
 
-    <md-select class="phenophase-input" placeholder="Phenophase" [(ngModel)]="phenophase" [disabled]="!phenophaseList.length">
-      <md-option *ngFor="let p of phenophaseList" [value]="p">{{p.phenophase_name}}</md-option>
-    </md-select>
+    <mat-form-field class="phenophase-input">
+        <mat-select placeholder="Phenophase" [(ngModel)]="phenophase" [disabled]="!phenophaseList.length">
+          <mat-option *ngFor="let p of phenophaseList" [value]="p">{{p.phenophase_name}}</mat-option>
+        </mat-select>
+    </mat-form-field>
 
-    <md-select *ngIf="gatherColor" class="color-input" placeholder="Color" [(ngModel)]="color">
-      <md-select-trigger><div class="color-swatch" [ngStyle]="{'background-color':color}"></div></md-select-trigger>
-      <md-option *ngFor="let c of colorList" [value]="c"><div class="color-swatch" [ngStyle]="{'background-color':c}"></div></md-option>
-    </md-select>
+    <mat-form-field *ngIf="gatherColor" class="color-input">
+        <mat-select  placeholder="Color" [(ngModel)]="color">
+          <mat-select-trigger><div class="color-swatch" [ngStyle]="{'background-color':color}"></div></mat-select-trigger>
+          <mat-option *ngFor="let c of colorList" [value]="c"><div class="color-swatch" [ngStyle]="{'background-color':c}"></div></mat-option>
+        </mat-select>
+    </mat-form-field>
     `,
     styles: [`
         .species-input {

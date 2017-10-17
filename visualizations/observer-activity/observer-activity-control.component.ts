@@ -5,9 +5,11 @@ import {ObserverActivitySelection} from './observer-activity-selection';
 @Component({
     selector: 'observer-activity-control',
     template:`
-    <md-select class="year-input" placeholder="Year" [(ngModel)]="selection.year" (change)="selection.update()">
-        <md-option *ngFor="let y of validYears" [value]="y">{{y}}</md-option>
-    </md-select>
+    <mat-form-field>
+        <mat-select class="year-input" placeholder="Year" [(ngModel)]="selection.year" (change)="selection.update()">
+            <mat-option *ngFor="let y of validYears" [value]="y">{{y}}</mat-option>
+        </mat-select>
+    </mat-form-field>
     `,
     styles:[`
     `]

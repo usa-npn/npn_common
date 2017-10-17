@@ -9,11 +9,13 @@ const THIS_YEAR = (new Date()).getFullYear();
     template: `
     <div>
         <div class="year-input-wrapper" *ngFor="let plotYear of selection.years;index as idx">
-            <md-select class="year-input" placeholder="Year" [(ngModel)]="selection.years[idx]" (change)="updateChange()">
-                <md-option *ngFor="let y of validStarts" [value]="y">{{y}}</md-option>
-            </md-select>
-            <button *ngIf="idx > 0" md-button class="remove-year" (click)="removeYear(idx)">Remove</button>
-            <button *ngIf="selection.years.length < 6 && idx === (selection.years.length-1)" md-button class="add-year" (click)="addYear()">Add</button>
+            <mat-form-field class="year-input" >
+                <mat-select placeholder="Year" [(ngModel)]="selection.years[idx]" (change)="updateChange()">
+                    <mat-option *ngFor="let y of validStarts" [value]="y">{{y}}</mat-option>
+                </mat-select>
+            </mat-form-field>
+            <button *ngIf="idx > 0" mat-button class="remove-year" (click)="removeYear(idx)">Remove</button>
+            <button *ngIf="selection.years.length < 6 && idx === (selection.years.length-1)" mat-button class="add-year" (click)="addYear()">Add</button>
         </div>
     </div>
 
@@ -25,22 +27,22 @@ const THIS_YEAR = (new Date()).getFullYear();
             (onSpeciesChange)="updateChange()"
             (onPhenophaseChange)="updateChange()"
             (onColorChange)="redrawChange($event)"></species-phenophase-input>
-        <button *ngIf="idx > 0" md-button class="remove-plot" (click)="removePlot(idx)">Remove</button>
-        <button *ngIf="idx === (selection.plots.length-1)" md-button class="add-plot" [disabled]="!plotsValid()" (click)="addPlot()">Add</button>
+        <button *ngIf="idx > 0" mat-button class="remove-plot" (click)="removePlot(idx)">Remove</button>
+        <button *ngIf="idx === (selection.plots.length-1)" mat-button class="add-plot" [disabled]="!plotsValid()" (click)="addPlot()">Add</button>
     </div>
 
-    <md-checkbox [(ngModel)]="selection.negative" (change)="redrawChange()">Display negative data</md-checkbox>
+    <mat-checkbox [(ngModel)]="selection.negative" (change)="redrawChange()">Display negative data</mat-checkbox>
 
     <label for="label-size-input">Label size
-        <md-slider id="label-size-input" min="0" max="10" step="0.25" [(ngModel)]="selection.fontSizeDelta" (change)="redrawChange()" [disabled]="!selection.isValid()"></md-slider>
+        <mat-slider id="label-size-input" min="0" max="10" step="0.25" [(ngModel)]="selection.fontSizeDelta" (change)="redrawChange()" [disabled]="!selection.isValid()"></mat-slider>
     </label>
 
     <label for="label-position-input">Label position
-        <md-slider id="label-position-input" min="0" max="100" step="1" [(ngModel)]="selection.labelOffset" (change)="redrawChange()" [disabled]="!selection.isValid()"></md-slider>
+        <mat-slider id="label-position-input" min="0" max="100" step="1" [(ngModel)]="selection.labelOffset" (change)="redrawChange()" [disabled]="!selection.isValid()"></mat-slider>
     </label>
 
     <label for="label-band-size-input">Band size
-        <md-slider invert id="label-band-size-input" min="0" max="0.95" step="0.05" [(ngModel)]="selection.bandPadding" (change)="redrawChange()" [disabled]="!selection.isValid()"></md-slider>
+        <mat-slider invert id="label-band-size-input" min="0" max="0.95" step="0.05" [(ngModel)]="selection.bandPadding" (change)="redrawChange()" [disabled]="!selection.isValid()"></mat-slider>
     </label>
     `,
     styles:[`

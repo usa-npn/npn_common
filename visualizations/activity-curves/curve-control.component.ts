@@ -10,13 +10,17 @@ import {ActivityCurvesSelection} from './activity-curves-selection';
     <species-phenophase-input [(species)]="curve.species" [(phenophase)]="curve.phenophase" [selection]="selection">
     </species-phenophase-input>
 
-    <md-select class="year-input" placeholder="Year" [(ngModel)]="curve.year">
-        <md-option *ngFor="let y of validYears" [value]="y">{{y}}</md-option>
-    </md-select>
+    <mat-form-field class="year-input">
+        <mat-select placeholder="Year" [(ngModel)]="curve.year">
+            <mat-option *ngFor="let y of validYears" [value]="y">{{y}}</mat-option>
+        </mat-select>
+    </mat-form-field>
 
-    <md-select class="metric-input" placeholder="Metric" [(ngModel)]="curve.metric" [disabled]="!curve.validMetrics.length">
-        <md-option *ngFor="let m of curve.validMetrics" [value]="m">{{m.label}}</md-option>
-    </md-select>
+    <mat-form-field class="metric-input">
+        <mat-select placeholder="Metric" [(ngModel)]="curve.metric" [disabled]="!curve.validMetrics.length">
+            <mat-option *ngFor="let m of curve.validMetrics" [value]="m">{{m.label}}</mat-option>
+        </mat-select>
+    </mat-form-field>
     `,
     styles: [`
         .metric-input {

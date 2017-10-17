@@ -15,13 +15,17 @@ import {ActivityCurvesSelection,ActivityFrequency,ACTIVITY_FREQUENCIES} from './
         <curve-selection-control [selection]="selection"  [curve]="selection.curves[1]"></curve-selection-control>
     </div>
     <div class="curve-common">
-        <md-select class="date-interval" placeholder="Date Interval" [(ngModel)]="selection.frequency">
-            <md-option *ngFor="let f of frequencies" [value]="f">{{f.label}}</md-option>
-        </md-select>
+        <mat-form-field class="date-interval">
+            <mat-select placeholder="Date Interval" [(ngModel)]="selection.frequency">
+                <mat-option *ngFor="let f of frequencies" [value]="f">{{f.label}}</mat-option>
+            </mat-select>
+        </mat-form-field>
 
-        <md-select class="line-interpolateion" placeholder="Line Interpolation" [(ngModel)]="selection.interpolate">
-            <md-option *ngFor="let i of interpolates" [value]="i.value">{{i.label}}</md-option>
-        </md-select>
+        <mat-form-field class="line-interpolateion">
+            <mat-select placeholder="Line Interpolation" [(ngModel)]="selection.interpolate">
+                <mat-option *ngFor="let i of interpolates" [value]="i.value">{{i.label}}</mat-option>
+            </mat-select>
+        </mat-form-field>
     </div>
     `,
     styles:[`

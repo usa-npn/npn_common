@@ -141,6 +141,8 @@ export const REJECT_INVALID_SELECTION = 'invalid selection';
 export abstract class VisSelection extends EventEmitter<VisSelectionEvent> {
     @selectionProperty()
     guid:string = Guid.newGuid();
+    @selectionProperty()
+    meta:any = {}; // a place for non selection specific info to be held
     debug:boolean = false;
     working:boolean = false;
     [x: string]: any

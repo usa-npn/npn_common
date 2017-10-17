@@ -3,12 +3,16 @@ import {Component,Input,Output,EventEmitter,OnInit} from '@angular/core';
 @Component({
     selector: 'year-range-input',
     template: `
-    <md-select class="start-year" placeholder="Start year" [(ngModel)]="start">
-        <md-option *ngFor="let y of validStarts" [value]="y">{{y}}</md-option>
-    </md-select>
-    <md-select class="end-year" placeholder="End year" [(ngModel)]="end" [disabled]="!start">
-        <md-option *ngFor="let y of validEnds" [value]="y">{{y}}</md-option>
-    </md-select>
+    <mat-form-field class="start-year">
+        <mat-select placeholder="Start year" [(ngModel)]="start">
+            <mat-option *ngFor="let y of validStarts" [value]="y">{{y}}</mat-option>
+        </mat-select>
+    </mat-form-field>
+    <mat-form-field class="end-year">
+        <mat-select placeholder="End year" [(ngModel)]="end" [disabled]="!start">
+            <mat-option *ngFor="let y of validEnds" [value]="y">{{y}}</mat-option>
+        </mat-select>
+    </mat-form-field>
     `
 })
 export class YearRangeInputComponent {
