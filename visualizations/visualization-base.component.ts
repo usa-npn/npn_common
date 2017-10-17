@@ -37,16 +37,17 @@ export abstract class VisualizationBaseComponent implements AfterViewInit, OnDes
      * be drawn to fit properly within the parent element.
      */
     getSizeInfo(): VisualizationSizing {
-        let parent = this.rootElement.nativeElement.parentElement as HTMLElement,
+        let native = this.rootElement.nativeElement as HTMLElement,
+            parent = native.parentElement as HTMLElement,
+            ratioMult = 0.5376, // ratio based on initial w/h of 930/500
             strToPx = s => parseInt(s.replace(/px$/,'')),
             style = getComputedStyle(parent,null),
             minusLeft = strToPx(style.paddingLeft)+strToPx(style.borderLeftWidth),
             minusRight = strToPx(style.paddingRight)+strToPx(style.borderRightWidth),
-            innerWidth = parent.clientWidth - minusLeft - minusRight; // this.window.innerWidth*0.90;
-
-        let margin = this.margins,
-            cw = Math.round(innerWidth),
-            ch = Math.round(cw*0.5376), // ration based on initial w/h of 930/500
+            innerWidth = parent.clientWidth - minusLeft - minusRight,
+            margin = this.margins,
+            cw = Math.floor(innerWidth),
+            ch = Math.floor(cw*ratioMult),
             w = cw  - margin.left - margin.right,
             h = ch  - margin.top - margin.bottom;
         if(isNaN(w)) {

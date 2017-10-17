@@ -6,6 +6,6 @@
         <visualization-download *ngIf="showDownload" svgWrapperId="{{id}}" filename="{{filename}}"></visualization-download>
         <div [class]="clazz" id="{{id}}"><svg></svg></div>
     </div>
-    <div *ngIf="disclaimer" class="vis-disclaimer">{{disclaimer}}</div>
+    <div *ngIf="disclaimer && showDownload" class="vis-disclaimer">{{disclaimer}}</div>
 </div>
 <pre *ngIf="record">{{record | json}}</pre>

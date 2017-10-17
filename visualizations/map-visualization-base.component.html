@@ -1,1 +1,6 @@
-<agm-map (mapReady)="mapReady($event)"></agm-map>
+<div class="vis-container">
+    <div class="vis-working" *ngIf="selection.working">
+        <md-progress-spinner mode="indeterminate"></md-progress-spinner>
+    </div>
+    <agm-map (mapReady)="mapReady($event)"></agm-map>
+</div>

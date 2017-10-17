@@ -170,7 +170,16 @@ export class ClippedWmsMapSelection extends NetworkAwareVisSelection {
     }
 
     addTo(map: google.maps.Map): Promise<any> {
-        return new Promise((resolve,reject) => {
+        return new Promise((_resolve,_reject) => {
+            this.working = true;
+            let resolve = (d?:any) => {
+                    this.working = false;
+                    _resolve(d);
+                },
+                reject = (e?:any) => {
+                    this.working = false;
+                    _reject(e);
+                };
             if(this.overlay && this.features) {
                 return reject('already added to map, call removeFrom');
             }
@@ -218,6 +227,7 @@ export class ClippedWmsMapSelection extends NetworkAwareVisSelection {
                             };
                         });
                     }
+                    resolve();
                 })
                 .catch(reject);
         });
