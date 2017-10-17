@@ -2,6 +2,7 @@ import { NgModule } from '@angular/core';
 
 import {CacheService} from './cache-service';
 import {SpeciesService} from './species.service';
+import {NetworkService} from './network.service';
 
 import {SpeciesTitlePipe} from './species-title.pipe';
 import {DoyPipe} from './doy.pipe';
@@ -21,6 +22,7 @@ import {DatePipe} from '@angular/common';
     providers: [
         CacheService,
         SpeciesService,
+        NetworkService,
         SpeciesTitlePipe,
         DatePipe,
         DoyPipe,
@@ -34,6 +36,7 @@ export {Phenophase} from './phenophase';
 
 export {CacheService} from './cache-service';
 export {SpeciesService} from './species.service';
+export {NetworkService} from './network.service';
 export {Window} from './window';
 
 export {SpeciesTitlePipe} from './species-title.pipe';

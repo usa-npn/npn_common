@@ -11,7 +11,7 @@ import {Selection} from 'd3-selection';
 import {ScaleBand,scaleBand,ScaleLinear,scaleLinear,ScaleOrdinal,scaleOrdinal} from 'd3-scale';
 import * as d3 from 'd3';
 
-const TITLE = 'New/Active Observers by Month';
+const TITLE = 'Site visits by month';
 
 @Component({
   selector: 'observation-frequency',
@@ -30,13 +30,7 @@ export class ObservationFrequencyComponent extends SvgVisualizationBaseComponent
     y: ScaleLinear<number,number>;
     yAxis: Axis<number>;
 
-    keyLabels:string[] = ['New observers','Active observers'];
-    keys:string[] = ['number_new_observers','number_active_observers'];
-    z: ScaleOrdinal<string,string> = scaleOrdinal<string,string>()
-        .domain(this.keys)
-        .range(["#98abc5", "#d0743c"]);
-
-    filename:string = 'observer-activity.png';
+    filename:string = 'observation-frequency.png';
     margins: VisualizationMargins = {...DEFAULT_MARGINS, ...{top: 100,left: 80}};
 
     data:any;
@@ -66,25 +60,6 @@ export class ObservationFrequencyComponent extends SvgVisualizationBaseComponent
                      .attr('x', '0')
                      .style('text-anchor','start')
                      .style('font-size','18px');
-        let legend = chart.append('g')
-            .attr('class','legend')
-            .attr('transform','translate(0,-'+(sizing.margin.top-10)+')')
-            .attr('text-anchor','start')
-            .style('font-size',fontSize)
-            .selectAll('g')
-            .data(this.keyLabels)
-            .enter().append('g')
-            .attr('transform',(d,i) => `translate(0,${i*22+24})`);
-        legend.append('rect')
-            .attr('x',0)
-            .attr('width',20)
-            .attr('height',20)
-            .attr('fill',this.z);
-        legend.append('text')
-            .attr('x',24)
-            .attr('y',fontSize-0.5)
-            .attr('dy','0.32em')
-            .text(d => d);
 
         this.x = scaleBand<number>()
             .rangeRound([0,sizing.width])
@@ -105,17 +80,7 @@ export class ObservationFrequencyComponent extends SvgVisualizationBaseComponent
 
         this.y = scaleLinear().range([sizing.height,0]).domain([0,20]); // just a default domain
         this.yAxis = axisLeft<number>(this.y);
-        chart.append('g')
-            .attr('class', 'y axis')
-            .call(this.yAxis)
-          .append('text')
-          .attr('fill','#000') // somehow parent g has fill="none"
-          .attr('transform', 'rotate(-90)')
-          .attr('y', '0')
-          .attr('dy','-3em')
-          .attr('x',-1*(sizing.height/2)) // looks odd but to move in the Y we need to change X because of transform
-          .style('text-anchor', 'middle')
-          .text(TITLE);
+
         this.commonUpdates();
     }
 
@@ -134,43 +99,18 @@ export class ObservationFrequencyComponent extends SvgVisualizationBaseComponent
             return;
         }
         this.title.text(`${TITLE}, "TODO: Refuge Name", ${this.selection.year}`);
+
         console.log('DATA',this.data);
         let data = this.data.months.slice(),
-            chart = this.chart,
-            new_sum = data.reduce((sum,d) => sum+d.number_new_observers,0),
-            active_sum = data.reduce((sum,d) => sum+d.number_active_observers,0);
+            chart = this.chart;
         // add a new record at the end that is the sum
-        data.push({
-            number_new_observers: new_sum,
-            number_active_observers: active_sum
-        })
+        data.push({})
         console.log('VIS DATA',data);
-        console.log('STACKED',d3.stack().keys(this.keys)(data));
 
         // update x axis with months+total
         this.x.domain(d3.range(0,data.length));
         this.chart.selectAll('g .x.axis').call(this.xAxis);
 
-        // update y axis, domain is 0 to max of sum of the two keys
-        // largest will always be the total column
-        this.y.domain([0,(new_sum+active_sum)]);
-        this.chart.selectAll('g .y.axis').call(this.yAxis);
-
-        this.chart.selectAll('g .bars').remove();
-        this.chart.append('g')
-            .attr('class','bars')
-            .selectAll('g')
-            .data(d3.stack().keys(this.keys)(data))
-        .enter().append('g')
-          .attr('fill', d => this.z(d.key))
-        .selectAll('rect')
-        .data(d => d as any[])
-            .enter().append('rect')
-              .attr('x', (d,i) => this.x(i))
-              .attr('y', d => this.y(d[1]))
-              .attr('title', d => `${d[1]}`)
-              .attr('height',d => this.y(d[0]) - this.y(d[1]))
-              .attr('width',this.x.bandwidth());
         this.commonUpdates();
     }
 }
