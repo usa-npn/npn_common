@@ -97,7 +97,7 @@ export class ScatterPlotComponent extends SvgVisualizationBaseComponent {
         .catch(this.handleError);
     }
 
-    protected redraw():void {
+    protected redrawSvg():void {
         if(!this.data) {
             return;
         }

@@ -31,6 +31,9 @@ export abstract class SvgVisualizationBaseComponent extends VisualizationBaseCom
 
     margins: VisualizationMargins = DEFAULT_MARGINS;
 
+    protected minWidth:number = 700;
+    thumbnailSrc:any;
+
     baseFontSize(withPx?:boolean): number | string {
         let fs = FONT_SIZE;
         if(this.sizing) {
@@ -101,6 +104,54 @@ export abstract class SvgVisualizationBaseComponent extends VisualizationBaseCom
         this.reset();
         this.redraw();
     }
+
+    getSizeInfo(minWidth?:number): VisualizationSizing {
+        return super.getSizeInfo(this.minWidth);
+    }
+
+    /**
+     * IMPORTANT:
+     * Sub-classes should implement the redrawSvg and not over-ride redraw.
+     * If redraw is over-ridden the implementation  will lose the ability to
+     * dynamically replace themselves with a thumbnail should the screen
+     * realestate for the visualization get too small.
+     */
+    protected redraw(): void {
+        this.redrawSvg();
+        let sizeInfo = this.sizing,
+            w = sizeInfo.width + sizeInfo.margin.left + sizeInfo.margin.right;
+        if(w === this.minWidth) {
+            let native = this.rootElement.nativeElement as HTMLElement,
+                svg = native.querySelector('svg.svg-visualization') as SVGElement,
+                wrappedSvg = d3.select(svg),
+                canvas = native.querySelector('canvas.thumbnail-canvas') as HTMLCanvasElement,
+                img = native.querySelector('img.thumbnail-image') as HTMLImageElement,
+                wrappedImg = d3.select(img),
+                h = sizeInfo.height + sizeInfo.margin.top + sizeInfo.margin.bottom;
+            console.debug('SvgVisualizationBaseComponent: minWidth hit, replacing with generated thumbnail image.');
+            wrappedSvg.attr('version',1.1)
+                .attr('xmlns', 'http://www.w3.org/2000/svg');
+            let svgParent = svg.parentNode as HTMLElement,
+                html = svgParent.innerHTML;
+            canvas.width = +wrappedSvg.attr('width');
+            canvas.height = +wrappedSvg.attr('height');
+            wrappedImg.attr('width',sizeInfo.scaledWidth);
+            let context = canvas.getContext('2d'),
+                image = new Image();
+            image.onload = () => {
+                context.drawImage(image,0,0);
+                this.thumbnailSrc = img.src = canvas.toDataURL('image/png');
+            };
+            image.src = 'data:image/svg+xml;base64,'+ window.btoa(html);
+        } else {
+            this.thumbnailSrc = undefined;
+        }
+    }
+
+    /**
+     * SVG replacement for the redraw function.
+     */
+    protected abstract redrawSvg(): void;
 
     ngAfterViewInit() {
         this.visRoot = d3.select('#'+this.id);

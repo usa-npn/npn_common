@@ -229,7 +229,7 @@ export class ActivityCurvesComponent extends SvgVisualizationBaseComponent {
         });
     }
 
-    protected redraw(): void {
+    protected redrawSvg(): void {
         let chart = this.chart,
             sizing = this.sizing,
             selection = this.selection,

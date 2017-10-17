@@ -5,10 +5,9 @@
         position: relative;
     }
 
-    .visualization {
-        >svg {
+    .visualization >svg,
+    img.thumbnail-image {
             border: 1px solid #000;
-        }
     }
     .vis-disclaimer {
         margin-top: 5px;

@@ -40,7 +40,7 @@ export abstract class VisualizationBaseComponent implements AfterViewInit, OnDes
      * Calculates the dimensions (width based) that the visualization should
      * be drawn to fit properly within the parent element.
      */
-    getSizeInfo(): VisualizationSizing {
+    getSizeInfo(minWidth?:number): VisualizationSizing {
         let native = this.rootElement.nativeElement as HTMLElement,
             parent = native.parentElement as HTMLElement,
             ratioMult = 0.5376, // ratio based on initial w/h of 930/500
@@ -51,7 +51,11 @@ export abstract class VisualizationBaseComponent implements AfterViewInit, OnDes
             innerWidth = parent.clientWidth - minusLeft - minusRight,
             margin = this.margins,
             cw = Math.floor(innerWidth),
-            ch = Math.floor(cw*ratioMult),
+            scaledWidth = cw;
+        if(minWidth && cw < minWidth) {
+            cw = minWidth;
+        }
+        let ch = Math.floor(cw*ratioMult),
             w = cw  - margin.left - margin.right,
             h = ch  - margin.top - margin.bottom;
         if(isNaN(w)) {
@@ -60,7 +64,7 @@ export abstract class VisualizationBaseComponent implements AfterViewInit, OnDes
         if(isNaN(h)) {
             h = 0;
         }
-        return (this.sizing={width: w, height : h, margin: margin});
+        return (this.sizing={scaledWidth: scaledWidth, width: w, height : h, margin: margin});
     }
 
     /**
@@ -150,6 +154,7 @@ export class VisualizationMargins {
 }
 
 export class VisualizationSizing {
+    scaledWidth?: number;
     width: number;
     height: number;
     margin: VisualizationMargins;
