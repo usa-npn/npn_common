@@ -88,13 +88,11 @@ export class ScatterPlotComponent extends SvgVisualizationBaseComponent {
 
     protected update(): void {
         this.reset();
-        let selection = this.selection;
-        this.title.text(`${selection.start.getFullYear()} - ${selection.end.getFullYear()}`);
-        selection.getData().then((data) => {
+        this.selection.getData().then((data) => {
             this.data = data;
             this.redraw();
         })
-        .catch(this.handleError);
+        .catch(e => this.handleError(e));
     }
 
     protected redrawSvg():void {
@@ -111,8 +109,7 @@ export class ScatterPlotComponent extends SvgVisualizationBaseComponent {
             extent = d3.extent(nonNullData,getX),
             formatXTickLabels = selection.axis.axisFmt||this.defaultAxisFormat;
 
-        // TODO this is a repeat !DRY
-        this.title.text(`${selection.start.getFullYear()} - ${selection.end.getFullYear()}`);
+        this.title.text(`${selection.start} - ${selection.end}`);
 
         this.x.domain([extent[0]-padding,extent[1]+padding]);
         this.xAxis.scale(this.x).tickFormat(d3.format('.2f')); // TODO per-selection tick formatting

@@ -9,7 +9,7 @@ import 'rxjs/add/operator/debounceTime';
 @Component({
     selector: 'scatter-plot-control',
     template: `
-    <year-range-input [(start)]="yearStart" [(end)]="yearEnd" (onStartChange)="yearChange($event)" (onEndChange)="yearChange($event)"></year-range-input>
+    <year-range-input [(start)]="selection.start" [(end)]="selection.end" (onStartChange)="updateChange()" (onEndChange)="updateChange()"></year-range-input>
 
     <div class="phenophase-input-wrapper" *ngFor="let spi of selection.plots; index as idx">
         <species-phenophase-input
@@ -49,22 +49,11 @@ export class ScatterPlotControls implements OnInit {
     selection: ScatterPlotSelection;
     axis = AXIS;
 
-    yearStart:number;
-    yearEnd:number;
-
     updateSent:boolean = false;
 
     ngOnInit() {
         if(this.selection.plots.length === 0) {
             this.addPlot();
-        }
-    }
-
-    yearChange(change) {
-        if(change && change.oldValue !== change.newValue && this.yearStart && this.yearEnd) {
-            this.selection.start = new Date(this.yearStart,0,1);
-            this.selection.end = new Date(this.yearEnd,11,31);
-            this.updateChange();
         }
     }
 

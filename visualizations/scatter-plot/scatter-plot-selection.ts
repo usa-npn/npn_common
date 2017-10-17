@@ -53,10 +53,10 @@ export interface ScatterPlotSelectionPlot {
 const TODAY = new Date();
 
 export class ScatterPlotSelection extends SiteOrSummaryVisSelection {
-    @selectionProperty({des: d => new Date(d)})
-    start: Date;// = new Date (TODAY.getFullYear()-1,0,1); // start year
-    @selectionProperty({des: d => new Date(d)})
-    end: Date;// = new Date (TODAY.getFullYear(),0,1); // end year
+    @selectionProperty()
+    start: number;
+    @selectionProperty()
+    end: number;
     @selectionProperty()
     regressionLines: boolean = false;
     @selectionProperty()
@@ -77,7 +77,7 @@ export class ScatterPlotSelection extends SiteOrSummaryVisSelection {
     isValid():boolean {
         return this.start &&
                this.end &&
-               (this.start.getFullYear() < this.end.getFullYear()) &&
+               (this.start < this.end) &&
                this.validPlots.length > 0;
     }
 
@@ -89,8 +89,8 @@ export class ScatterPlotSelection extends SiteOrSummaryVisSelection {
         let params = new URLSearchParams();
         params.set('climate_data','1');
         params.set('request_src','npn-vis-scatter-plot');
-        params.set('start_date',this.start.getFullYear()+'-01-01');
-        params.set('end_date',this.end.getFullYear()+'-12-31');
+        params.set('start_date',`${this.start}-01-01`);
+        params.set('end_date',`${this.end}-12-31`);
         // TODO - this typically comes from app wide configuration settings`
         // is "environment" an ok place to bind this config, probably not
         params.set('num_days_quality_filter',''+environment.appConfig.num_days_quality_filter);
@@ -103,7 +103,8 @@ export class ScatterPlotSelection extends SiteOrSummaryVisSelection {
     }
 
     doyDateFormat(doy:number):string {
-        let time = ((doy-1)*ONE_DAY_MILLIS)+this.start.getTime(), // TODO, not enforcing that start/end be midnight on Jan 1
+        let start = new Date(this.start,0,1),
+            time = ((doy-1)*ONE_DAY_MILLIS)+start.getTime(), // TODO, not enforcing that start/end be midnight on Jan 1
             date = new Date(time);
         return this.d3DateFormat(date);
     }
@@ -135,7 +136,7 @@ export class ScatterPlotSelection extends SiteOrSummaryVisSelection {
                 map[`${p.species.species_id}:${p.phenophase.phenophase_id}`] = p.color;
                 return map;
             },{}),
-            startYear = this.start.getFullYear(),
+            startYear = this.start,
             result = data.filter((d,i) => {
                 if(!(d.color = colorMap[colorKey(d)])) {
                     // this can happen if a phenophase id spans two species but is only plotted for one
