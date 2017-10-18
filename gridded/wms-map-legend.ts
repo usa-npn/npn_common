@@ -9,7 +9,7 @@ export class WmsMapLegend {
 
     private lformat:Function;
     private gformat:Function;
-    private title_date:any;
+    private title_data:any;
     private data:any[];
     private length:number;
 
@@ -83,7 +83,7 @@ export class WmsMapLegend {
         return this.data.map(d => d.label);
     }
 
-    getOriginalLabels():string {
+    getOriginalLabels():string[] {
         return this.data.map(d => d.original_label);
     }
 

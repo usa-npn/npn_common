@@ -1,3 +1,13 @@
+/*
+NOTE: this is currently one BIG module that includes all the visualizations.
+that's ok generally but it would be better to have each visualization be its own
+module that deals with its own dependencies so that they could be imported individually
+into an application (and simplify this module's imports).
+
+see the commented out start of such a module in ./clipped-wms-map
+
+probably should be an activity for a later date, or if time permits.
+*/
 import { NgModule } from '@angular/core';
 import { CommonModule,DatePipe } from '@angular/common';
 import { FormsModule,ReactiveFormsModule } from '@angular/forms';
@@ -8,6 +18,7 @@ import {ScatterPlotSelectionFactory,ScatterPlotComponent,ScatterPlotControls} fr
 import {CalendarSelectionFactory,CalendarComponent,CalendarControlComponent} from './calendar';
 import {ActivityCurvesSelectionFactory,ActivityCurvesComponent,CurveControlComponent,ActivityCurvesControlComponent} from './activity-curves';
 import {ClippedWmsMapComponent,ClippedWmsMapControl,ClippedWmsMapSelectionFactory} from './clipped-wms-map';
+//import {ClippedWmsMapVisModule} from './clipped-wms-map';
 import {ObserverActivitySelectionFactory,ObserverActivityComponent,ObserverActivityControl} from './observer-activity';
 import {ObservationFrequencySelectionFactory,ObservationFrequencyComponent,ObservationFrequencyControl} from './observation-frequency';
 import {VisualizationComponent} from './visualization.component';
@@ -22,19 +33,20 @@ import {MatFormFieldModule,MatButtonModule, MatCheckboxModule, MatSelectModule, 
 import {AgmCoreModule} from '@agm/core';
 
 import {NpnCommonModule} from '../common';
+import {NpnGriddedModule} from '../gridded';
 
 @NgModule({
   imports: [
     BrowserAnimationsModule,
     BrowserModule,
     CommonModule,
-    NpnCommonModule,
     FormsModule,ReactiveFormsModule,
     MatFormFieldModule,
     MatButtonModule, MatCheckboxModule,
     MatSelectModule, MatProgressSpinnerModule, MatExpansionModule,
     MatAutocompleteModule,MatInputModule,MatSliderModule,
-    AgmCoreModule
+    AgmCoreModule,
+    NpnCommonModule,NpnGriddedModule,
   ],
   declarations: [
       ScatterPlotComponent,ScatterPlotControls,

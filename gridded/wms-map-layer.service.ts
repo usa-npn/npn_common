@@ -7,8 +7,9 @@ import {} from '@types/googlemaps';
 import {DateExtentUtil} from './date-extent-util.service';
 import {CacheService} from '../common';
 import {MAP_LAYERS,WMS_CAPABILITIES_URL} from './gridded-common';
+import {WmsMapLayer} from './wms-map-layer';
 
-const DEEP_COPY (o) => JSON.parse(JSON.stringify(o));
+const DEEP_COPY = (o) => JSON.parse(JSON.stringify(o));
 
 @Injectable()
 export class WmsMapLayerService {
@@ -26,7 +27,7 @@ export class WmsMapLayerService {
                         // replace layer definitions with actual layers
                         cat.layers = cat.layers.map(l => new WmsMapLayer(map,l));
                     });
-                    resolve(this.layers = mergeLayersIntoConfig(definitions));
+                    resolve(copy);
                 })
                 .catch(reject);
         });

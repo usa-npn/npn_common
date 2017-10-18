@@ -1,5 +1,6 @@
 import {NetworkAwareVisSelection,selectionProperty,ONE_DAY_MILLIS} from '../vis-selection';
 import{CacheService} from '../../common';
+import {WmsMapLegend,WmsMapLegendService} from '../../gridded';
 
 import {DatePipe} from '@angular/common';
 import {Http} from '@angular/http';
@@ -33,11 +34,12 @@ export class ClippedWmsMapSelection extends NetworkAwareVisSelection {
     @selectionProperty()
     fwsBoundary:string;
 
+    private legend:WmsMapLegend;
     private data:DataAndBoundary;
     private overlay:ImageOverlay;
     private features:any[];
 
-    constructor(protected http: Http,protected cache: CacheService,protected datePipe: DatePipe) {
+    constructor(protected http: Http,protected cache: CacheService,protected datePipe: DatePipe,protected mapLegendService:WmsMapLegendService) {
         super();
     }
 
@@ -165,6 +167,7 @@ export class ClippedWmsMapSelection extends NetworkAwareVisSelection {
             this.data = undefined;
             this.features = undefined;
             this.overlay = undefined;
+            this.legend = undefined;
             resolve();
         });
     }
@@ -227,7 +230,13 @@ export class ClippedWmsMapSelection extends NetworkAwareVisSelection {
                             };
                         });
                     }
-                    resolve();
+                    this.mapLegendService.getLegend(data.layerClippedFrom)
+                        .then(legend => {
+                            console.debug('ClippedWmsMapSelection.legend:',legend);
+                            this.legend = legend;
+                            resolve();
+                        })
+                        .catch(reject);
                 })
                 .catch(reject);
         });
