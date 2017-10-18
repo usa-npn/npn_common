@@ -41,7 +41,7 @@ export class ObservationFrequencySelection extends StationAwareVisSelection {
                             let d = {
                                 station_id: s.station_id,
                                 station_name: s.station_name,
-                                months: [];
+                                months: []
                             };
                             let max = 13;
                             if(this.year === (new Date()).getFullYear()) {
@@ -55,7 +55,7 @@ export class ObservationFrequencySelection extends StationAwareVisSelection {
                                 });
                             }
                             return d;
-                        });
+                        })
                     };
                     resolve(response);
                 })
