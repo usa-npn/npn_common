@@ -1,0 +1,7 @@
+<div class="vis-container">
+    <div class="vis-working" *ngIf="selection.working">
+        <mat-progress-spinner mode="indeterminate"></mat-progress-spinner>
+    </div>
+    <agm-map (mapReady)="mapReady($event)"></agm-map>
+    <wms-map-legend *ngIf="!thumbnail" [legend]="selection.legend"></wms-map-legend>
+</div>

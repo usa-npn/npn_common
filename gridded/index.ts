@@ -6,6 +6,7 @@ import {WmsMapLayerService} from './wms-map-layer.service';
 import {WmsMapLegendService} from './wms-map-legend.service';
 import {NpnCommonModule} from '../common';
 import {DateExtentUtil} from './date-extent-util.service';
+import {WmsMapLegendComponent} from './wms-map-legend.component';
 
 import {LegendGddUnitsPipe,AgddDefaultTodayElevationPipe,LegendAgddAnomalyPipe,
         AgddDefaultTodayTimePipe,LegendSixAnomalyPipe,LegendDoyPipe,ExtentDatesPipe} from './pipes';
@@ -15,10 +16,10 @@ import {LegendGddUnitsPipe,AgddDefaultTodayElevationPipe,LegendAgddAnomalyPipe,
         NpnCommonModule
     ],
     declarations:[
-
+        WmsMapLegendComponent
     ],
     exports:[
-
+        WmsMapLegendComponent
     ],
     providers:[
         DatePipe,DecimalPipe,

@@ -34,7 +34,7 @@ export class ClippedWmsMapSelection extends NetworkAwareVisSelection {
     @selectionProperty()
     fwsBoundary:string;
 
-    private legend:WmsMapLegend;
+    legend:WmsMapLegend;
     private data:DataAndBoundary;
     private overlay:ImageOverlay;
     private features:any[];

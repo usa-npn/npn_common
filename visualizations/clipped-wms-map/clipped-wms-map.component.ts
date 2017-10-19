@@ -8,8 +8,8 @@ import {} from '@types/googlemaps';
 
 @Component({
     selector: 'clipped-wms-map',
-    templateUrl: '../map-visualization-base.component.html',
-    styleUrls: ['../map-visualization-base.component.scss']
+    templateUrl: './clipped-wms-map.component.html',
+    styleUrls: ['./clipped-wms-map.component.scss']
 })
 export class ClippedWmsMapComponent extends MapVisualizationBaseComponent {
     @Input() selection: ClippedWmsMapSelection;

@@ -1,4 +1,4 @@
-import { Component, Input, OnInit, OnChanges, DoCheck, SimpleChanges, AfterViewInit, HostListener, ElementRef, OnDestroy } from '@angular/core';
+import {Component, Input, AfterViewInit, HostListener, ElementRef, OnDestroy} from '@angular/core';
 
 import {Window} from '../common';
 import {VisSelection,VisSelectionEvent,REJECT_INVALID_SELECTION} from './vis-selection';
@@ -32,6 +32,7 @@ export abstract class VisualizationBaseComponent implements AfterViewInit, OnDes
 
     margins: VisualizationMargins = {top: 0, right: 0, left: 0, bottom: 0};
 
+    private resizeSubscription:any;
     private subscription:any;
 
     constructor(protected window: Window, protected rootElement: ElementRef) {}
@@ -103,7 +104,7 @@ export abstract class VisualizationBaseComponent implements AfterViewInit, OnDes
         // that should then implement its own debounce (via setTimeout)
         // and they seem to want to push the use of RxJs so this kind of thing
         // feels cleaner.
-        Observable.fromEvent(window,'resize')
+        this.resizeSubscription = Observable.fromEvent(window,'resize')
             .debounceTime(500)
             .subscribe((event) => {
                 this.resize();
@@ -130,6 +131,9 @@ export abstract class VisualizationBaseComponent implements AfterViewInit, OnDes
         console.debug('visualization.ngOnDestroy');
         if(this.subscription) {
             this.subscription.unsubscribe();
+        }
+        if(this.resizeSubscription) {
+            this.resizeSubscription.unsubscribe();
         }
     }
 
