@@ -2,6 +2,9 @@
     <div class="vis-working" *ngIf="selection.working">
         <mat-progress-spinner mode="indeterminate"></mat-progress-spinner>
     </div>
-    <agm-map (mapReady)="mapReady($event)"></agm-map>
-    <wms-map-legend *ngIf="!thumbnail" [legend]="selection.legend"></wms-map-legend>
+    <div class="map-wrapper">
+        <agm-map (mapReady)="mapReady($event)"></agm-map>
+        <wms-map-legend *ngIf="!thumbnail" [legend]="selection.legend"></wms-map-legend>
+    </div>
+    <wms-map-opacity-control *ngIf="!thumbnail" [supportsOpacity]="selection.overlay"></wms-map-opacity-control>
 </div>

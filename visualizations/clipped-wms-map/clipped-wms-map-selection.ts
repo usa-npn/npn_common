@@ -1,6 +1,6 @@
 import {NetworkAwareVisSelection,selectionProperty,ONE_DAY_MILLIS} from '../vis-selection';
 import{CacheService} from '../../common';
-import {WmsMapLegend,WmsMapLegendService} from '../../gridded';
+import {WmsMapLegend,WmsMapLegendService,WmsMapSupportsOpacity} from '../../gridded';
 
 import {DatePipe} from '@angular/common';
 import {Http} from '@angular/http';
@@ -35,8 +35,8 @@ export class ClippedWmsMapSelection extends NetworkAwareVisSelection {
     fwsBoundary:string;
 
     legend:WmsMapLegend;
+    overlay:ImageOverlay;
     private data:DataAndBoundary;
-    private overlay:ImageOverlay;
     private features:any[];
 
     constructor(protected http: Http,protected cache: CacheService,protected datePipe: DatePipe,protected mapLegendService:WmsMapLegendService) {
@@ -290,7 +290,7 @@ interface DataAndBoundary {
     boundary: any // geoJson
 };
 
-interface ImageOverlay extends google.maps.OverlayView {
+interface ImageOverlay extends google.maps.OverlayView,WmsMapSupportsOpacity {
     add();
     remove();
 }
@@ -302,6 +302,7 @@ function lazyClassLoader() {
         image: string;
         map: google.maps.Map;
         div_:any;
+        opacity:number = 0.75;
 
         constructor(bounds: google.maps.LatLngBounds, image: string, map: google.maps.Map) {
             super();
@@ -318,14 +319,25 @@ function lazyClassLoader() {
             this.setMap(null);
         }
 
+        setOpacity(o:number) {
+            this.opacity = o;
+            if(this.div_) {
+                this.div_.style.opacity = o;
+            }
+        }
+
+        getOpacity():number {
+            return this.opacity;
+        }
+
         onAdd() {
-            var div = document.createElement('div');
+            let div = document.createElement('div');
             div.style.borderStyle = 'none';
             div.style.borderWidth = '0px';
             div.style.position = 'absolute';
 
             // Create the img element and attach it to the div.
-            var img = document.createElement('img');
+            let img = document.createElement('img');
             img.src = this.image;
             img.style.width = '100%';
             img.style.height = '100%';
@@ -337,6 +349,7 @@ function lazyClassLoader() {
             // Add the element to the "overlayLayer" pane.
             var panes = this.getPanes();
             panes.overlayLayer.appendChild(div);
+            this.setOpacity(this.opacity);
         }
 
         draw() {

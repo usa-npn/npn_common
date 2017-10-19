@@ -14,7 +14,14 @@ export class WmsMapLegend {
     private length:number;
 
 
-    constructor(protected wmsPipeFactory:WmsPipeFactory, protected color_map:any,protected ldef:any,protected styleDefinition:any/* todo pipe factory*/) {
+    constructor(protected wmsPipeFactory:WmsPipeFactory,
+                protected color_map:any,
+                /*
+                NOTE: per the original implementation which binds extents directly into the definition this is public
+                may want to later revisit some abstraction, used externally via WmsMapLegendComponent
+                 */
+                public ldef:any,
+                protected styleDefinition:any) {
             console.log('WmsMapLegend.color_map',color_map);
             console.log('WmsMapLegend.ldef',ldef);
             console.log('WmsMapLegend.styleDefinition',styleDefinition);
