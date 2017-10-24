@@ -36,11 +36,12 @@ export class ObserverActivitySelection extends StationAwareVisSelection {
                 max = (new Date()).getMonth()+2
             }
             for(let i = 1; i < max; i++) {
+                let nobs = rint(0,10);
                 response.months.push({
                     month: i,
                     //month_name: 'ignore',
-                    number_new_observers: rint(0,20),
-                    number_active_observers: rint(0,30)
+                    number_new_observers: nobs,
+                    number_active_observers: rint(nobs,20)
                 });
             }
             /* doesn't make sense since the vis can calculate and doesn't include the
