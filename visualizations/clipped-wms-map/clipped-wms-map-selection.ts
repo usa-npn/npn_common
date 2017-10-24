@@ -36,7 +36,7 @@ export class ClippedWmsMapSelection extends NetworkAwareVisSelection {
 
     legend:WmsMapLegend;
     overlay:ImageOverlay;
-    private data:DataAndBoundary;
+    data:WmsMapSelectionData;
     private features:any[];
 
     constructor(protected http: Http,protected cache: CacheService,protected datePipe: DatePipe,protected mapLegendService:WmsMapLegendService) {
@@ -128,17 +128,44 @@ export class ClippedWmsMapSelection extends NetworkAwareVisSelection {
         return this.cachedGet(url,params);
     }
 
-    getDataAndBoundary(): Promise<DataAndBoundary> {
+    getStatistics(): Promise<any> {
+        return new Promise((resolve,reject) => {
+            let url = `${environment.dataApiRoot}/v0/${this.service}/area/statistics`,
+                params = {
+                    layerName: this.layer.layerName,
+                    fwsBoundary: this.fwsBoundary,
+                    date: this.apiDate,
+                    useCache: true // TODO not sure on this.
+                };
+            this.cachedGet(url,params)
+                .then(stats => {
+                    // translate the date string to a date object.
+                    let dateParts = /^(\d{4})-(\d{2})-(\d{2})/.exec(stats.date);
+                    stats.date = new Date(
+                        parseInt(dateParts[1]),
+                        parseInt(dateParts[2])-1,
+                        parseInt(dateParts[3])
+                    );
+                    resolve(stats);
+                })
+                .catch(reject);
+        });
+
+    }
+
+    getAllData(): Promise<WmsMapSelectionData> {
         return new Promise((resolve,reject) => {
             Promise.all([
                 this.getData(),
-                this.getBoundary()
+                this.getBoundary(),
+                this.getStatistics()
             ])
             .then(arr => {
                 resolve({
                     data: arr[0],
-                    boundary: arr[1]
-                })
+                    boundary: arr[1],
+                    statistics: arr[2]
+                });
             })
             .catch(reject);
         });
@@ -186,14 +213,14 @@ export class ClippedWmsMapSelection extends NetworkAwareVisSelection {
             if(this.overlay && this.features) {
                 return reject('already added to map, call removeFrom');
             }
-            this.getDataAndBoundary() // and boundary
-                .then(dAndb => {
+            this.getAllData()
+                .then(all => {
                     if(this.overlay && this.features) {
                         console.log('in promise, already have overlay and features');
                         return resolve();
                     }
-                    this.data = dAndb;
-                    let data = dAndb.data,
+                    this.data = all;
+                    let data = all.data,
                         bounds = this.toBounds(data.bbox),
                         clippedImage = data.clippedImage;
                     if(bounds) {
@@ -217,7 +244,7 @@ export class ClippedWmsMapSelection extends NetworkAwareVisSelection {
                         this.overlay = new ImageOverLayImpl(bounds,clippedImage,map);
                         this.overlay.add();
 
-                        let geoJson = dAndb.boundary;
+                        let geoJson = all.boundary;
                         console.log('MAP boundary resonse',geoJson);
                         this.features = map.data.addGeoJson(geoJson);
                         map.data.setStyle(feature => {
@@ -285,9 +312,10 @@ interface ClippedImageResponse {
     bbox: number [];
 }
 
-interface DataAndBoundary {
-    data: ClippedImageResponse,
-    boundary: any // geoJson
+interface WmsMapSelectionData {
+    data: ClippedImageResponse;
+    boundary: any; // geoJson
+    statistics: any;
 };
 
 interface ImageOverlay extends google.maps.OverlayView,WmsMapSupportsOpacity {

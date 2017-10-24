@@ -1,7 +1,10 @@
-import {Component,Input,Output,EventEmitter,OnInit} from '@angular/core';
+import {Component,Input,Output,EventEmitter,OnInit,DoCheck} from '@angular/core';
 import {FormControl} from '@angular/forms';
 
 import {Observable} from 'rxjs/Observable';
+import { Subject } from 'rxjs/Subject';
+import 'rxjs/add/observable/of';
+import 'rxjs/add/operator/debounceTime';
 import 'rxjs/add/operator/startWith';
 import 'rxjs/add/operator/map';
 
@@ -26,6 +29,7 @@ const COLORS = [
             {{s | speciesTitle}} ({{s.number_observations}})
           </mat-option>
         </mat-autocomplete>
+        <mat-progress-bar *ngIf="!speciesList || !speciesList.length" mode="query"></mat-progress-bar>
     </mat-form-field>
 
     <mat-form-field class="phenophase-input">
@@ -61,7 +65,7 @@ const COLORS = [
         }
     `]
 })
-export class SpeciesPhenophaseInputComponent implements OnInit {
+export class SpeciesPhenophaseInputComponent implements OnInit,DoCheck {
     @Input() startYear:number;
     @Input() endYear:number;
     @Input() selection:VisSelection;
@@ -82,9 +86,12 @@ export class SpeciesPhenophaseInputComponent implements OnInit {
 
     speciesControl:FormControl = new FormControl();
     filteredSpecies: Observable<Species[]>;
-    speciesList:Species[] = [];
+    speciesList:Species[];
 
     phenophaseList:Phenophase[] = [];
+
+    private lastSpeciesParams:string;
+    private speciesParams = new Subject<any>();
 
     constructor(private speciesService: SpeciesService,
                 private speciesTitle: SpeciesTitlePipe) {
@@ -98,24 +105,36 @@ export class SpeciesPhenophaseInputComponent implements OnInit {
     }
 
     ngOnInit() {
-        let params = {};
+        this.speciesParams
+            .subscribe(params => {
+                this.speciesList = undefined;
+                // load up the available species
+                this.speciesService.getAllSpecies(params)
+                    .then(species => {
+                        this.speciesList = species.sort((a,b) => {
+                            if(a.number_observations < b.number_observations) {
+                                return 1;
+                            }
+                            if(a.number_observations > b.number_observations) {
+                                return -1;
+                            }
+                            return 0;
+                        });
+                    });
+            });
+    }
+
+    ngDoCheck() {
         if(this.selection) {
+            let params = {},paramsS;
             (this.selection.networkIds||[]).forEach((id,i) => params[`network_id[${i}]`] = `${id}`);
             (this.selection.stationIds||[]).forEach((id,i) => params[`station_ids[${i}]`] = `${id}`);
+            paramsS = JSON.stringify(params);
+            if(paramsS !== this.lastSpeciesParams) {
+                this.lastSpeciesParams = paramsS;
+                this.speciesParams.next(params);
+            }
         }
-        // load up the available species
-        this.speciesService.getAllSpecies(params)
-            .then(species => {
-                this.speciesList = species.sort((a,b) => {
-                    if(a.number_observations < b.number_observations) {
-                        return 1;
-                    }
-                    if(a.number_observations > b.number_observations) {
-                        return -1;
-                    }
-                    return 0;
-                });
-            });
     }
 
     filterSpecies(s) {

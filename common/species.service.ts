@@ -19,6 +19,8 @@ export class SpeciesService {
     }
 
     getAllSpecies(params?:any): Promise<Species[]> {
+        // NOTE: when there are multiple species phenophase controls on the screen the result can
+        // be multiple simultaneous queries...
         return new Promise((resolve,reject) => {
             console.log('SpeciesService.getAllSpecies:params',params)
             let url = `${environment.apiRoot}/npn_portal/species/getSpeciesFilter.json`,

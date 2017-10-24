@@ -9,6 +9,7 @@ import {NgModule} from '@angular/core';
 import {ClippedWmsMapSelectionFactory} from './clipped-wms-map-selection-factory';
 import {ClippedWmsMapControl} from './clipped-wms-map-control.component';
 import {ClippedWmsMapComponent} from './clipped-wms-map.component';
+import {ClippedWmsMapStatisticsComponent} from './clipped-wms-map-statistics.component';
 
 @NgModule({
     imports:[
@@ -16,7 +17,8 @@ import {ClippedWmsMapComponent} from './clipped-wms-map.component';
     ],
     declarations: [
         ClippedWmsMapControl,
-        ClippedWmsMapComponent
+        ClippedWmsMapComponent,
+        ClippedWmsMapStatisticsComponent
     ],
     exports: [
         ClippedWmsMapControl,
@@ -33,3 +35,4 @@ export {ClippedWmsMapSelection} from './clipped-wms-map-selection';
 export {ClippedWmsMapSelectionFactory} from './clipped-wms-map-selection-factory';
 export {ClippedWmsMapControl} from './clipped-wms-map-control.component';
 export {ClippedWmsMapComponent} from './clipped-wms-map.component';
+export {ClippedWmsMapStatisticsComponent} from './clipped-wms-map-statistics.component';

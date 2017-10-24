@@ -17,7 +17,7 @@ import {VisualizationDownloadComponent} from './visualization-download.component
 import {ScatterPlotSelectionFactory,ScatterPlotComponent,ScatterPlotControls} from './scatter-plot';
 import {CalendarSelectionFactory,CalendarComponent,CalendarControlComponent} from './calendar';
 import {ActivityCurvesSelectionFactory,ActivityCurvesComponent,CurveControlComponent,ActivityCurvesControlComponent} from './activity-curves';
-import {ClippedWmsMapComponent,ClippedWmsMapControl,ClippedWmsMapSelectionFactory} from './clipped-wms-map';
+import {ClippedWmsMapComponent,ClippedWmsMapControl,ClippedWmsMapStatisticsComponent,ClippedWmsMapSelectionFactory} from './clipped-wms-map';
 //import {ClippedWmsMapVisModule} from './clipped-wms-map';
 import {ObserverActivitySelectionFactory,ObserverActivityComponent,ObserverActivityControl} from './observer-activity';
 import {ObservationFrequencySelectionFactory,ObservationFrequencyComponent,ObservationFrequencyControl} from './observation-frequency';
@@ -28,7 +28,9 @@ import {SpeciesPhenophaseInputComponent,YearRangeInputComponent} from './common-
 
 import {BrowserModule} from '@angular/platform-browser';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
-import {MatFormFieldModule,MatButtonModule, MatCheckboxModule, MatSelectModule, MatProgressSpinnerModule,MatExpansionModule,MatAutocompleteModule,MatInputModule,MatSliderModule} from '@angular/material';
+import {MatFormFieldModule,MatButtonModule, MatCheckboxModule, MatSelectModule,
+        MatProgressSpinnerModule,MatExpansionModule,MatAutocompleteModule,
+        MatInputModule,MatSliderModule,MatProgressBarModule} from '@angular/material';
 
 import {AgmCoreModule} from '@agm/core';
 
@@ -41,10 +43,9 @@ import {NpnGriddedModule} from '../gridded';
     BrowserModule,
     CommonModule,
     FormsModule,ReactiveFormsModule,
-    MatFormFieldModule,
-    MatButtonModule, MatCheckboxModule,
-    MatSelectModule, MatProgressSpinnerModule, MatExpansionModule,
-    MatAutocompleteModule,MatInputModule,MatSliderModule,
+    MatFormFieldModule,MatButtonModule, MatCheckboxModule,MatSelectModule,
+    MatProgressSpinnerModule, MatExpansionModule,MatAutocompleteModule,
+    MatInputModule,MatSliderModule,MatProgressBarModule,
     AgmCoreModule,
     NpnCommonModule,NpnGriddedModule,
   ],
@@ -54,7 +55,7 @@ import {NpnGriddedModule} from '../gridded';
       ActivityCurvesComponent,CurveControlComponent,ActivityCurvesControlComponent,
       ObserverActivityComponent,ObserverActivityControl,
       ObservationFrequencyComponent,ObservationFrequencyControl,
-      ClippedWmsMapComponent,ClippedWmsMapControl,
+      ClippedWmsMapComponent,ClippedWmsMapControl,ClippedWmsMapStatisticsComponent,
       VisualizationDownloadComponent,
       VisualizationComponent,
       SpeciesPhenophaseInputComponent,

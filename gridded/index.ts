@@ -21,7 +21,7 @@ import {LegendGddUnitsPipe,AgddDefaultTodayElevationPipe,LegendAgddAnomalyPipe,
     imports:[
         BrowserAnimationsModule,
         BrowserModule,
-        FormsModule,ReactiveFormsModule
+        FormsModule,ReactiveFormsModule,
         MatSliderModule,
         NpnCommonModule
     ],
