@@ -5,7 +5,7 @@
     <div class="map-wrapper">
         <agm-map (mapReady)="mapReady($event)"></agm-map>
         <wms-map-legend *ngIf="!thumbnail" [legend]="selection.legend"></wms-map-legend>
-        <clipped-wms-map-statistics *ngIf="selection && selection.data && selection.data.statistics"
+        <clipped-wms-map-statistics *ngIf="!thumbnail && selection && selection.data && selection.data.statistics"
             [statistics]="selection.data.statistics"></clipped-wms-map-statistics>
     </div>
     <wms-map-opacity-control *ngIf="!thumbnail" [supportsOpacity]="selection.overlay"></wms-map-opacity-control>
