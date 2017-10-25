@@ -1,4 +1,4 @@
-import {Component, Input, ElementRef} from '@angular/core';
+import {Component,Input,Output,ElementRef,EventEmitter,OnInit} from '@angular/core';
 
 import {Window} from '../../common';
 import {VisualizationMargins} from '../visualization-base.component';
@@ -15,10 +15,12 @@ const TITLE = 'Site visits by month';
 
 @Component({
   selector: 'observation-frequency',
-  templateUrl: '../svg-visualization-base.component.html',
+  // IMPORTANT: this template is a copy of ../svg-visualization-base.component.html so that
+  // it can have added controls.  if the former changes this one may need updates too
+  templateUrl: './observation-frequency.component.html',
   styleUrls: ['../svg-visualization-base.component.scss'],
 })
-export class ObservationFrequencyComponent extends SvgVisualizationBaseComponent {
+export class ObservationFrequencyComponent extends SvgVisualizationBaseComponent implements OnChanges {
     @Input()
     selection:ObservationFrequencySelection;
 
@@ -31,8 +33,10 @@ export class ObservationFrequencyComponent extends SvgVisualizationBaseComponent
     yAxis: Axis<number>;
 
     filename:string = 'observation-frequency.png';
-    margins: VisualizationMargins = {...DEFAULT_MARGINS, ...{top: 100,left: 80}};
+    margins: VisualizationMargins = {...DEFAULT_MARGINS, ...{top: 80,left: 80}};
 
+    stations:any[]; // to avoid null check
+    station:any; // the current station being displayed
     data:any;
 
     constructor(protected window: Window,protected rootElement: ElementRef) {
@@ -47,6 +51,7 @@ export class ObservationFrequencyComponent extends SvgVisualizationBaseComponent
     }
 
     protected reset(): void {
+        console.debug('ObservationFrequencyComponent.update');
         super.reset();
         let chart = this.chart,
             sizing = this.sizing,
@@ -56,23 +61,16 @@ export class ObservationFrequencyComponent extends SvgVisualizationBaseComponent
                      .attr('class','chart-title')
                      .append('text')
                      .attr('y', '0')
-                     .attr('dy','-4.2em')
+                     .attr('dy','-3em')
                      .attr('x', '0')
                      .style('text-anchor','start')
                      .style('font-size','18px');
 
         this.x = scaleBand<number>()
             .rangeRound([0,sizing.width])
-            .paddingInner(0.05)
-            .align(0.1)
-            .domain(d3.range(0,13)); // default domain to 12 months + total
-        this.xAxis = axisBottom<number>(this.x).tickFormat((i) => {
-            let domain = this.x.domain(),
-                label = i === domain[domain.length-1] ?
-                    'Total' :
-                    d3_month_fmt(new Date(1900,i));
-            return label;
-        });
+            .padding(0.05)
+            .domain(d3.range(0,12));
+        this.xAxis = axisBottom<number>(this.x).tickFormat(i =>  d3_month_fmt(new Date(1900,i)));
         chart.append('g')
             .attr('class', 'x axis')
             .attr('transform', 'translate(0,' + sizing.height + ')')
@@ -80,38 +78,152 @@ export class ObservationFrequencyComponent extends SvgVisualizationBaseComponent
 
         this.y = scaleLinear().range([sizing.height,0]).domain([0,20]); // just a default domain
         this.yAxis = axisLeft<number>(this.y);
+        chart.append('g')
+            .attr('class', 'y axis')
+            .call(this.yAxis)
+          .append('text')
+          .attr('fill','#000') // somehow parent g has fill="none"
+          .attr('transform', 'rotate(-90)')
+          .attr('y', '0')
+          .attr('dy','-3em')
+          .attr('x',-1*(sizing.height/2)) // looks odd but to move in the Y we need to change X because of transform
+          .style('text-anchor', 'middle')
+          .text('Site visits');
 
         this.commonUpdates();
     }
 
     protected update(): void {
+        console.debug('ObservationFrequencyComponent.update');
         this.reset();
         this.selection.getData()
             .then(data => {
                 this.data = data;
+                this.stations = data.stations;
                 this.redraw();
             })
             .catch(this.handleError);
     }
 
     protected redrawSvg(): void {
-        if(!this.data) {
+        console.debug('ObservationFrequencyComponent.redrawSvg:data',this.data);
+        if(!this.stations) {
             return;
         }
-        this.title.text(`${TITLE}, "TODO: Refuge Name", ${this.selection.year}`);
+        if(!this.station) {
+            this.station = this.stations && this.stations.length ? this.stations[0] : undefined;
+        }
+        this.redrawStation();
+        this.commonUpdates();
+    }
 
-        console.log('DATA',this.data);
-        /*
-        let data = this.data.months.slice(),
-            chart = this.chart;
-        // add a new record at the end that is the sum
-        data.push({})
-        console.log('VIS DATA',data);
+    private redrawStation():void {
+        this.title.text(`${TITLE}, "TODO: Refuge Name", ${this.selection.year}`);
+        if(!this.station) {
+            return;
+        }
+        let station = this.station;
+        console.debug('ObservationFrequencyComponent.redrawStation:station',station);
+        if(!station) {
+            return;
+        }
+
+        let sizing = this.sizing,
+            bars:any[] = station.months.slice(),
+            total = bars.reduce((sum,d) => sum+d.number_site_visits,0),
+            max = bars.reduce((max,d) => (d.number_site_visits > max ) ? d.number_site_visits : max,0);
+        this.title.text(`${TITLE}, "TODO: Refuge Name", ${this.selection.year} [Station: "${station.station_name}" Total: ${total}]`);
+        console.debug('ObservationFrequencyComponent.redrawStation:bars',bars);
 
         // update x axis with months+total
-        this.x.domain(d3.range(0,data.length));
-        this.chart.selectAll('g .x.axis').call(this.xAxis);*/
+        this.x.domain(d3.range(0,bars.length));
+        this.chart.selectAll('g .x.axis').call(this.xAxis);
+        // update y axis domain
+        this.y.domain([0,max]);
+        this.chart.selectAll('g .y.axis').call(this.yAxis);
 
-        this.commonUpdates();
+        // update bars
+        this.chart.selectAll('g .bars').remove();
+        this.chart.append('g')
+            .attr('class','bars')
+            .attr('fill','#98abc5')
+            .selectAll('rect')
+            .data(bars)
+            .enter().append('rect')
+            .attr('x',(d,i) => this.x(i))
+            .attr('y',d => this.y(d.number_site_visits)) // not right
+            .attr('title', d => d.number_site_visits)
+            .attr('height', d => sizing.height - this.y(d.number_site_visits))
+            .attr('width', this.x.bandwidth());
+
+        // update bar labels
+        this.chart.selectAll('g .bar-labels').remove();
+        this.chart.append('g')
+            .attr('class','bar-labels')
+            .attr('fill', '#000000')
+            .selectAll('text')
+            .data(bars)
+            .enter().append('text')
+                .attr('text-anchor','middle')
+                .attr('dy','-0.25em')
+                .attr('x',(d,i) => this.x(i)+(this.x.bandwidth()/2))
+                .attr('y',d => this.y(d.number_site_visits))
+                .text(d => d.number_site_visits);
+    }
+}
+
+@Component({
+    selector: 'observation-frequency-station-control',
+    template:`
+    <button mat-button (click)="prev()"
+        [disabled]="!stations || !station || stations.indexOf(station) === 0">&lt; Previous</button>
+    <mat-form-field class="station-input">
+        <mat-select placeholder="Station" [(ngModel)]="station" [disabled]="!stations || !stations.length">
+            <mat-option *ngFor="let s of stations" [value]="s">{{s.station_name}}</mat-option>
+        </mat-select>
+    </mat-form-field>
+    <button mat-button (click)="next()"
+        [disabled]="!stations || !station || stations.indexOf(station) === stations.length-1">Next &gt;</button>
+    `,
+    styles:[`
+        .station-input {
+            width: 300px;
+        }
+    `]
+})
+export class ObvervationFrequencyStationControlComponent {
+    @Input() stations:any[];
+    @Output() stationChange = new EventEmitter<any>();
+    stationValue:any;
+
+    @Output() onStationChange = new EventEmitter<any>();
+
+    @Input('station')
+    get station():any {
+        return this.stationValue;
+    }
+    set station(s) {
+        if(s !== this.stationValue) {
+            let oldValue = this.stationValue;
+            this.stationChange.emit(this.stationValue = s);
+            this.onStationChange.emit({
+                oldValue: oldValue,
+                newValue: this.stationValue
+            });
+        }
+    }
+
+    prev() {
+        let idx = this.stations.indexOf(this.station);
+        if(idx > 0) {
+            this.station = this.stations[idx-1];
+        }
+    }
+
+    next() {
+        let idx = this.stations.indexOf(this.station);
+        if(idx < this.stations.length-1) {
+            this.station = this.stations[idx+1];
+        }
     }
 }

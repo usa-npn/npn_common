@@ -20,7 +20,7 @@ import {ActivityCurvesSelectionFactory,ActivityCurvesComponent,CurveControlCompo
 import {ClippedWmsMapComponent,ClippedWmsMapControl,ClippedWmsMapStatisticsComponent,ClippedWmsMapSelectionFactory} from './clipped-wms-map';
 //import {ClippedWmsMapVisModule} from './clipped-wms-map';
 import {ObserverActivitySelectionFactory,ObserverActivityComponent,ObserverActivityControl} from './observer-activity';
-import {ObservationFrequencySelectionFactory,ObservationFrequencyComponent,ObservationFrequencyControl} from './observation-frequency';
+import {ObservationFrequencySelectionFactory,ObservationFrequencyComponent,ObservationFrequencyControl,ObvervationFrequencyStationControlComponent} from './observation-frequency';
 import {VisualizationComponent} from './visualization.component';
 
 import {VisualizationSelectionFactory} from './visualization-selection-factory.service';
@@ -54,7 +54,7 @@ import {NpnGriddedModule} from '../gridded';
       CalendarComponent,CalendarControlComponent,
       ActivityCurvesComponent,CurveControlComponent,ActivityCurvesControlComponent,
       ObserverActivityComponent,ObserverActivityControl,
-      ObservationFrequencyComponent,ObservationFrequencyControl,
+      ObservationFrequencyComponent,ObservationFrequencyControl,ObvervationFrequencyStationControlComponent /* not exported private */,
       ClippedWmsMapComponent,ClippedWmsMapControl,ClippedWmsMapStatisticsComponent,
       VisualizationDownloadComponent,
       VisualizationComponent,

@@ -39,7 +39,7 @@ export class ObserverActivityComponent extends SvgVisualizationBaseComponent {
     zDarker : ScaleOrdinal<string,string> = scaleOrdinal<string,string>()
         .domain(this.keys)
         .range(this.z.range().map(c => {
-            return d3.color(c).darker();
+            return d3.color(c).darker().toString();
         }));
 
     filename:string = 'observer-activity.png';
@@ -114,7 +114,7 @@ export class ObserverActivityComponent extends SvgVisualizationBaseComponent {
           .attr('dy','-3em')
           .attr('x',-1*(sizing.height/2)) // looks odd but to move in the Y we need to change X because of transform
           .style('text-anchor', 'middle')
-          .text(TITLE);
+          .text('New/Active Observers');
         this.commonUpdates();
     }
 
@@ -158,7 +158,7 @@ export class ObserverActivityComponent extends SvgVisualizationBaseComponent {
         this.chart.selectAll('g .y.axis').call(this.yAxis);
 
         this.chart.selectAll('g .bars').remove();
-        let rectSelection = this.chart.append('g')
+        this.chart.append('g')
             .attr('class','bars')
             .selectAll('g')
             .data(d3.stack().keys(this.keys)(data))

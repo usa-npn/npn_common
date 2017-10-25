@@ -34,6 +34,9 @@ export class ObservationFrequencySelection extends StationAwareVisSelection {
                 };
             this.networkService.getStations(this.networkIds[0])
                 .then(stations => {
+                    if(this.stationIds && this.stationIds.length) {
+                        stations = stations.filter(s => this.stationIds.indexOf(s.station_id) !== -1);
+                    }
                     let response = {
                         network_id: this.networkIds[0],
                         year: this.year,
