@@ -20,7 +20,7 @@ const TITLE = 'Site visits by month';
   templateUrl: './observation-frequency.component.html',
   styleUrls: ['../svg-visualization-base.component.scss'],
 })
-export class ObservationFrequencyComponent extends SvgVisualizationBaseComponent implements OnChanges {
+export class ObservationFrequencyComponent extends SvgVisualizationBaseComponent {
     @Input()
     selection:ObservationFrequencySelection;
 
