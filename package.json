@@ -4,6 +4,10 @@
   "description": "NPN Common Angular",
   "main": "index.js",
   "private": true,
+  "repository": {
+      "type": "git",
+      "url": "https://github.com/usa-npn/npn_common.git"
+  },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
