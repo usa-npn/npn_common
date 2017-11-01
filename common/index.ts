@@ -1,4 +1,4 @@
-import { NgModule } from '@angular/core';
+import {NgModule,InjectionToken} from '@angular/core';
 
 import {CacheService} from './cache-service';
 import {SpeciesService} from './species.service';
@@ -9,6 +9,8 @@ import {DoyPipe} from './doy.pipe';
 import {LegendDoyPipe} from './legend-doy.pipe';
 
 import {DatePipe} from '@angular/common';
+
+export const NPN_BASE_HREF = new InjectionToken<string>('npnBaseHref');
 
 @NgModule({
     declarations: [
@@ -26,7 +28,8 @@ import {DatePipe} from '@angular/common';
         SpeciesTitlePipe,
         DatePipe,
         DoyPipe,
-        LegendDoyPipe
+        LegendDoyPipe,
+        {provide: NPN_BASE_HREF, useValue: '/'}
     ]
 })
 export class NpnCommonModule {}
