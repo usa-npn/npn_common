@@ -1,7 +1,7 @@
 import {Headers,Http,URLSearchParams} from '@angular/http';
 import 'rxjs/add/operator/toPromise';
 
-import {CacheService} from '../common';
+import {CacheService,NpnConfiguration} from '../common';
 import {environment} from '../environments/environment';
 import {StationAwareVisSelection,selectionProperty} from './vis-selection';
 
@@ -13,7 +13,9 @@ export abstract class SiteOrSummaryVisSelection extends StationAwareVisSelection
     @selectionProperty()
     filterDisclaimer: string;
 
-    constructor(protected http: Http,protected cacheService: CacheService) {
+    constructor(protected http:Http,
+                protected cacheService:CacheService,
+                protected config:NpnConfiguration) {
         super();
     }
 
@@ -48,7 +50,7 @@ export abstract class SiteOrSummaryVisSelection extends StationAwareVisSelection
             return Promise.reject(this.INVALID_SELECTION);
         }
         let params = this.toURLSearchParams(), // TODO "addCommonParams"
-            url = `${environment.apiRoot}/npn_portal/observations/${this.individualPhenometrics ? 'getSummarizedData': 'getSiteLevelData'}.json`,
+            url = `${this.config.apiRoot}/npn_portal/observations/${this.individualPhenometrics ? 'getSummarizedData': 'getSiteLevelData'}.json`,
             cacheKey = {
                 u: url,
                 params: params.toString()

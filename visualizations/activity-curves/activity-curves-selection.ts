@@ -2,8 +2,7 @@ import {Headers,Http,URLSearchParams} from '@angular/http';
 import {DatePipe} from '@angular/common';
 import 'rxjs/add/operator/toPromise';
 
-import {CacheService} from '../../common';
-import {environment} from '../../environments/environment';
+import {CacheService,NpnConfiguration} from '../../common';
 
 import {INTERPOLATE,ActivityCurve} from './activity-curve';
 import {StationAwareVisSelection,selectionProperty} from '../vis-selection';
@@ -48,7 +47,10 @@ export class ActivityCurvesSelection extends StationAwareVisSelection {
     })
     private _curves:ActivityCurve[];
 
-    constructor(protected http: Http,protected cacheService: CacheService,protected datePipe: DatePipe) {
+    constructor(protected http: Http,
+                protected cacheService: CacheService,
+                protected datePipe: DatePipe,
+                protected config: NpnConfiguration) {
         super();
         this.curves = [{color:'#0000ff',orient:'left'},{color:'orange',orient:'right'}].map((o,i) => {
             let c = new ActivityCurve();
@@ -141,7 +143,7 @@ export class ActivityCurvesSelection extends StationAwareVisSelection {
                         params.set('species_id[0]',`${c.species.species_id}`);
                         params.set('phenophase_id[0]',`${c.phenophase.phenophase_id}`);
                         this.addNetworkParams(params);
-                        let url = `${environment.apiRoot}/npn_portal/observations/getMagnitudeData.json`,
+                        let url = `${this.config.apiRoot}/npn_portal/observations/getMagnitudeData.json`,
                             cacheKey = {
                                 u: url,
                                 params: params.toString()

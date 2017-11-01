@@ -6,10 +6,11 @@
 export const environment = {
   production: false,
   googleMapsApiKey: 'AIzaSyAsTM8XaktfkwpjEeDMXkNrojaiB2W5WyE',
-  apiRoot: 'http://localhost:8000',
+  /*
+  apiRoot: 'http://www-dev.usanpn.org', //'http://localhost:8000',
   dataApiRoot: 'http://data-dev.usanpn.org:3006',
-  refugeApiRoot: '/api/refuge',
-  //'https://npn-fws.firebaseio.com/refuge',
+  refugeApiRoot: '/api/refuge', //'https://npn-fws.firebaseio.com/refuge',
+  */
   cacheTTL: 3600000, // 1 hour vs 5 minutes 300000,
   appConfig: {
       // this stuff is "system wide" and may need to be rolled into how an individual visualization is displayed

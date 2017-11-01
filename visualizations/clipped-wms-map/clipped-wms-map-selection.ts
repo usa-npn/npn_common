@@ -1,5 +1,5 @@
 import {NetworkAwareVisSelection,selectionProperty,ONE_DAY_MILLIS} from '../vis-selection';
-import{CacheService} from '../../common';
+import{CacheService,NpnConfiguration} from '../../common';
 import {WmsMapLegend,WmsMapLegendService,WmsMapSupportsOpacity} from '../../gridded';
 
 import {DatePipe} from '@angular/common';
@@ -7,8 +7,6 @@ import {Http} from '@angular/http';
 import 'rxjs/add/operator/toPromise';
 
 import {} from '@types/googlemaps';
-
-import {environment} from '../../environments/environment';
 
 const SIX_LAYERS:ClippedLayerDef[] = [{
     label: 'Current Si-x leaf index',
@@ -39,7 +37,11 @@ export class ClippedWmsMapSelection extends NetworkAwareVisSelection {
     data:WmsMapSelectionData;
     private features:any[];
 
-    constructor(protected http: Http,protected cache: CacheService,protected datePipe: DatePipe,protected mapLegendService:WmsMapLegendService) {
+    constructor(protected http:Http,
+                protected cache:CacheService,
+                protected datePipe:DatePipe,
+                protected mapLegendService:WmsMapLegendService,
+                protected config:NpnConfiguration) {
         super();
     }
 
@@ -99,7 +101,7 @@ export class ClippedWmsMapSelection extends NetworkAwareVisSelection {
 
     getBoundary(): Promise<any> {
         return new Promise((resolve,reject) => {
-            let url = `${environment.dataApiRoot}/v0/${this.service}/area/boundary`,
+            let url = `${this.config.dataApiRoot}/v0/${this.service}/area/boundary`,
                 params = {
                     format: 'geojson',
                     fwsBoundary: this.fwsBoundary
@@ -117,7 +119,7 @@ export class ClippedWmsMapSelection extends NetworkAwareVisSelection {
     }
 
     getData(): Promise<any> {
-        let url = `${environment.dataApiRoot}/v0/${this.service}/area/clippedImage`,
+        let url = `${this.config.dataApiRoot}/v0/${this.service}/area/clippedImage`,
             params = {
                 layerName: this.layer.layerName,
                 fwsBoundary: this.fwsBoundary,
@@ -130,7 +132,7 @@ export class ClippedWmsMapSelection extends NetworkAwareVisSelection {
 
     getStatistics(): Promise<any> {
         return new Promise((resolve,reject) => {
-            let url = `${environment.dataApiRoot}/v0/${this.service}/area/statistics`,
+            let url = `${this.config.dataApiRoot}/v0/${this.service}/area/statistics`,
                 params = {
                     layerName: this.layer.layerName,
                     fwsBoundary: this.fwsBoundary,

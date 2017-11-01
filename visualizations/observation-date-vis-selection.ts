@@ -2,8 +2,7 @@ import {Headers,Http,URLSearchParams} from '@angular/http';
 import 'rxjs/add/operator/toPromise';
 
 import {StationAwareVisSelection,selectionProperty} from './vis-selection';
-import {CacheService,Species,Phenophase,SpeciesTitlePipe} from '../common';
-import {environment} from '../environments/environment';
+import {CacheService,Species,Phenophase,SpeciesTitlePipe,NpnConfiguration} from '../common';
 
 export class ObservationDatePlot {
     color?: String;
@@ -36,7 +35,10 @@ export abstract class ObservationDateVisSelection extends StationAwareVisSelecti
     @selectionProperty()
     plots:ObservationDatePlot[] = [];
 
-    constructor(protected http: Http,protected cacheService: CacheService, protected speciesTitle: SpeciesTitlePipe) {
+    constructor(protected http:Http,
+                protected cacheService:CacheService,
+                protected speciesTitle:SpeciesTitlePipe,
+                protected config:NpnConfiguration) {
         super();
     }
 
@@ -115,7 +117,7 @@ export abstract class ObservationDateVisSelection extends StationAwareVisSelecti
             return Promise.reject(this.INVALID_SELECTION);
         }
         let params = this.toURLSearchParams(),
-        url = `${environment.apiRoot}/npn_portal/observations/getObservationDates.json`,
+        url = `${this.config.apiRoot}/npn_portal/observations/getObservationDates.json`,
         cacheKey = {
             u: url,
             params: params.toString()

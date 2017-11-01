@@ -10,6 +10,8 @@ import {LegendDoyPipe} from './legend-doy.pipe';
 
 import {DatePipe} from '@angular/common';
 
+import {NpnConfiguration,NPN_CONFIGURATION} from './config';
+
 export const NPN_BASE_HREF = new InjectionToken<string>('npnBaseHref');
 
 @NgModule({
@@ -29,7 +31,11 @@ export const NPN_BASE_HREF = new InjectionToken<string>('npnBaseHref');
         DatePipe,
         DoyPipe,
         LegendDoyPipe,
-        {provide: NPN_BASE_HREF, useValue: '/'}
+        {provide: NPN_BASE_HREF, useValue: '/'},
+        {provide: NPN_CONFIGURATION, useValue: {
+            apiRoot: 'http://www-dev.usanpn.org',
+            dataApiRoot: 'http://data-dev.usanpn.org:3006',
+        }}
     ]
 })
 export class NpnCommonModule {}
@@ -46,3 +52,4 @@ export {SpeciesTitlePipe} from './species-title.pipe';
 export {DoyPipe} from './doy.pipe';
 export {LegendDoyPipe} from './legend-doy.pipe';
 export {Guid} from './guid';
+export * from './config';

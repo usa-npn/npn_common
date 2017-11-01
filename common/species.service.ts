@@ -1,13 +1,12 @@
-import {Injectable} from '@angular/core';
+import {Injectable,Inject} from '@angular/core';
 import {DatePipe} from '@angular/common';
 import {Headers,Http,URLSearchParams} from '@angular/http';
 import 'rxjs/add/operator/toPromise';
 
-import {environment} from '../environments/environment';
-
 import {CacheService} from './cache-service';
 import {Species} from './species';
 import {Phenophase} from './phenophase';
+import {NpnConfiguration,NPN_CONFIGURATION} from './config';
 
 const HEADERS = new Headers({'Content-Type':'application/x-www-form-urlencoded'});
 
@@ -15,7 +14,8 @@ const HEADERS = new Headers({'Content-Type':'application/x-www-form-urlencoded'}
 export class SpeciesService {
     constructor(private http:Http,
                 private cache:CacheService,
-                private datePipe: DatePipe) {
+                private datePipe: DatePipe,
+                @Inject(NPN_CONFIGURATION) private config:NpnConfiguration) {
     }
 
     getAllSpecies(params?:any): Promise<Species[]> {
@@ -23,7 +23,7 @@ export class SpeciesService {
         // be multiple simultaneous queries...
         return new Promise((resolve,reject) => {
             console.log('SpeciesService.getAllSpecies:params',params)
-            let url = `${environment.apiRoot}/npn_portal/species/getSpeciesFilter.json`,
+            let url = `${this.config.apiRoot}/npn_portal/species/getSpeciesFilter.json`,
                 cacheKey = {
                     u: url,
                     params:params
@@ -48,7 +48,7 @@ export class SpeciesService {
 
     private _getPhenophases(species:Species,date?:Date):Promise<Phenophase []> {
         return new Promise((resolve,reject) => {
-            let url = `${environment.apiRoot}/npn_portal/phenophases/getPhenophasesForSpecies.json`,
+            let url = `${this.config.apiRoot}/npn_portal/phenophases/getPhenophasesForSpecies.json`,
                 params:any = {
                     species_id: species.species_id
                 };
