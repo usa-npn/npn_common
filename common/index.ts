@@ -11,6 +11,7 @@ import {LegendDoyPipe} from './legend-doy.pipe';
 import {DatePipe} from '@angular/common';
 
 import {NpnConfiguration,NPN_CONFIGURATION} from './config';
+import {NpnServiceUtils} from './npn-service-utils.service';
 
 export const NPN_BASE_HREF = new InjectionToken<string>('npnBaseHref');
 
@@ -27,6 +28,7 @@ export const NPN_BASE_HREF = new InjectionToken<string>('npnBaseHref');
         CacheService,
         SpeciesService,
         NetworkService,
+        NpnServiceUtils,
         SpeciesTitlePipe,
         DatePipe,
         DoyPipe,
@@ -53,3 +55,4 @@ export {DoyPipe} from './doy.pipe';
 export {LegendDoyPipe} from './legend-doy.pipe';
 export {Guid} from './guid';
 export * from './config';
+export {NpnServiceUtils} from './npn-service-utils.service';

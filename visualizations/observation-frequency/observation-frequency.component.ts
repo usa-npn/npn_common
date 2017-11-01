@@ -96,6 +96,9 @@ export class ObservationFrequencyComponent extends SvgVisualizationBaseComponent
     protected update(): void {
         console.debug('ObservationFrequencyComponent.update');
         this.reset();
+        delete this.data;
+        delete this.stations;
+        delete this.station;
         this.selection.getData()
             .then(data => {
                 this.data = data;
@@ -130,9 +133,10 @@ export class ObservationFrequencyComponent extends SvgVisualizationBaseComponent
 
         let sizing = this.sizing,
             bars:any[] = station.months.slice(),
-            total = bars.reduce((sum,d) => sum+d.number_site_visits,0),
-            max = bars.reduce((max,d) => (d.number_site_visits > max ) ? d.number_site_visits : max,0);
-        this.title.text(`${TITLE}, "TODO: Refuge Name", ${this.selection.year} [Station: "${station.station_name}" Total: ${total}]`);
+            total = bars.reduce((sum,d) => sum+d,0),
+            max = bars.reduce((max,d) => (d > max ) ? d : max,0);
+
+        this.title.text(`${TITLE} (${this.selection.year}) "${station.station_name}" Total: ${total}`);
         console.debug('ObservationFrequencyComponent.redrawStation:bars',bars);
 
         // update x axis with months+total
@@ -151,9 +155,9 @@ export class ObservationFrequencyComponent extends SvgVisualizationBaseComponent
             .data(bars)
             .enter().append('rect')
             .attr('x',(d,i) => this.x(i))
-            .attr('y',d => this.y(d.number_site_visits)) // not right
-            .attr('title', d => d.number_site_visits)
-            .attr('height', d => sizing.height - this.y(d.number_site_visits))
+            .attr('y',d => this.y(d))
+            .attr('title', d => d)
+            .attr('height', d => sizing.height - this.y(d))
             .attr('width', this.x.bandwidth());
 
         // update bar labels
@@ -167,8 +171,8 @@ export class ObservationFrequencyComponent extends SvgVisualizationBaseComponent
                 .attr('text-anchor','middle')
                 .attr('dy','-0.25em')
                 .attr('x',(d,i) => this.x(i)+(this.x.bandwidth()/2))
-                .attr('y',d => this.y(d.number_site_visits))
-                .text(d => d.number_site_visits);
+                .attr('y',d => this.y(d))
+                .text(d => d);
     }
 }
 
