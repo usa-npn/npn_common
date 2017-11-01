@@ -180,13 +180,18 @@ export class ObserverActivityComponent extends SvgVisualizationBaseComponent {
             .data(d3.stack().keys(this.keys)(data))
         .enter().append('g')
           .attr('fill', d => this.zDarker(d.key))
-        .selectAll('rect')
+        .selectAll('text')
         .data(d => d as any[])
             .enter().append('text')
                 .attr('text-anchor','middle')
                 .attr('dy','-0.25em')
                 .attr('x', (d,i) => this.x(i)+(this.x.bandwidth()/2))
-                .attr('y', d => this.y(d[1]))
+                .attr('y', (d,i) => {
+                    //console.log(`y.d[${i}]`,d[1],d);
+                    // TODO when one is 0 d[1] isn't the number we're looking for
+                    // needs adjustment in text below as well.
+                    return this.y(d[1]);
+                })
                 .text(d => `${d[1]}`)
 
 

@@ -1,5 +1,4 @@
-import {Http} from '@angular/http';
-import {CacheService} from '../../common';
+import {NpnServiceUtils} from '../../common';
 import {StationAwareVisSelection,selectionProperty} from '../vis-selection';
 
 // TODO is this always network wide or can they select specific stations
@@ -7,7 +6,7 @@ export class ObserverActivitySelection extends StationAwareVisSelection {
     @selectionProperty()
     year:number;
 
-    constructor(protected http: Http,protected cacheService: CacheService) {
+    constructor(protected serviceUtils:NpnServiceUtils) {
         super();
     }
 
@@ -17,7 +16,23 @@ export class ObserverActivitySelection extends StationAwareVisSelection {
 
     dataCnt:number = 0;
     getData():Promise<any> {
-        return new Promise(resolve => {
+        // /npn_portal/networks/getObserversByMonth.json?year=2015&network_id=69
+        let url = this.serviceUtils.apiUrl('/npn_portal/networks/getObserversByMonth.json'),
+            params = {
+                year: this.year,
+                network_id: this.networkIds[0]
+            };
+        return new Promise((resolve,reject) => {
+            this.serviceUtils.cachedGet(url,params)
+                .then(data => {
+                    let months = [1,2,3,4,5,6,7,8,9,10,11,12].map(i => {
+                        return {...{month:i},...data.months[i]};
+                    });
+                    data.months = months;
+                    resolve(data);
+                })
+                .catch(reject);
+            /*
             // mocked up randomly generated response
             let response:any = {
                 network_id: this.networkIds[0],
@@ -44,13 +59,8 @@ export class ObserverActivitySelection extends StationAwareVisSelection {
                     number_active_observers: rint(nobs,20)
                 });
             }
-            /* doesn't make sense since the vis can calculate and doesn't include the
-               parallel active sum.
-            response.annual_number_new_observers = response.months.reduce((sum,month) => {
-                return sum+month.number_new_observers;
-            },0);*/
-            console.log(`${JSON.stringify(response)}`);
             resolve(response);
+            */
         });
     }
 }
