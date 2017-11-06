@@ -4,7 +4,7 @@ import {} from '@types/googlemaps';
 
 import {DateExtentUtil} from './date-extent-util.service';
 import {NpnServiceUtils} from '../common';
-import {MAP_LAYERS,WMS_CAPABILITIES_URL} from './gridded-common';
+import {MAP_LAYERS,GriddedUrls} from './gridded-common';
 import {WmsMapLayer} from './wms-map-layer';
 
 const DEEP_COPY = (o) => JSON.parse(JSON.stringify(o));
@@ -13,7 +13,9 @@ const DEEP_COPY = (o) => JSON.parse(JSON.stringify(o));
 export class WmsMapLayerService {
     private layerDefs:any;
 
-    constructor(private serviceUtils:NpnServiceUtils,private dateExtentUtil:DateExtentUtil) {
+    constructor(private serviceUtils:NpnServiceUtils,
+                private dateExtentUtil:DateExtentUtil,
+                private urls:GriddedUrls) {
     }
 
     getLayers(map:google.maps.Map):Promise<any> {
@@ -23,7 +25,7 @@ export class WmsMapLayerService {
                     let copy = DEEP_COPY(definitions);
                     copy.categories.forEach(cat => {
                         // replace layer definitions with actual layers
-                        cat.layers = cat.layers.map(l => new WmsMapLayer(map,l));
+                        cat.layers = cat.layers.map(l => new WmsMapLayer(map,l,this.urls.wmsBaseUrl));
                     });
                     resolve(copy);
                 })
@@ -53,7 +55,7 @@ export class WmsMapLayerService {
             if(this.layerDefs) {
                 resolve(this.layerDefs);
             } else {
-                this.serviceUtils.cachedGet(WMS_CAPABILITIES_URL,null,true/*as text*/)
+                this.serviceUtils.cachedGet(this.urls.wmsCapabilitiesUrl,null,true/*as text*/)
                     .then(xml => {
                         let wms_capabilities = $($.parseXML(xml));
                         console.debug('WmsMapLayerService:capabilities',wms_capabilities);

@@ -13,6 +13,7 @@ import {NpnCommonModule} from '../common';
 import {DateExtentUtil} from './date-extent-util.service';
 import {WmsMapLegendComponent} from './wms-map-legend.component';
 import {WmsMapOpacityControl} from './wms-map-opacity-control.component';
+import {GriddedUrls} from './gridded-common';
 
 import {LegendGddUnitsPipe,AgddDefaultTodayElevationPipe,LegendAgddAnomalyPipe,
         AgddDefaultTodayTimePipe,LegendSixAnomalyPipe,LegendDoyPipe,ExtentDatesPipe} from './pipes';
@@ -40,7 +41,8 @@ import {LegendGddUnitsPipe,AgddDefaultTodayElevationPipe,LegendAgddAnomalyPipe,
         AgddDefaultTodayTimePipe,LegendSixAnomalyPipe,LegendDoyPipe,ExtentDatesPipe,
         WmsPipeFactory,
         WmsMapLayerService,
-        WmsMapLegendService
+        WmsMapLegendService,
+        GriddedUrls
     ]
 })
 export class NpnGriddedModule {}

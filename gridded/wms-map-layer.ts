@@ -1,6 +1,6 @@
 import {} from '@types/googlemaps';
 
-import {BOX_SIZE,BASE_WMS_ARGS,WMS_BASE_URL} from './gridded-common';
+import {BOX_SIZE,BASE_WMS_ARGS} from './gridded-common';
 
 // this is incomplete (obviously).  after starting down this path
 // realized that WmsMapLegend could be migrated without Layer which isn't initially needed
@@ -14,7 +14,7 @@ export class WmsMapLayer {
     googleLayer: google.maps.ImageMapType;
     [x: string]: any; // allow arbitrary properties
 
-    constructor(protected map:google.maps.Map,protected layer_def:any) {
+    constructor(protected map:google.maps.Map,protected layer_def:any,protected wmsBaseUrl:string) {
         if(layer_def.extent_values_filter) {
             console.debug('layer '+layer_def.name+' has an extent_values_filter, processing',layer_def.extent_values_filter);
             let valuesFilter = $filter(layer_def.extent_values_filter.name),
@@ -60,7 +60,7 @@ export class WmsMapLayer {
                     args.sld_body = this.sldBody;
                 }
                 let all_args = {...base,...this.wmsArgs,...args};
-                return WMS_BASE_URL+'?'+encodeHttpParams(all_args);
+                return this.wmsBaseUrl+'?'+encodeHttpParams(all_args);
             },
             tileSize: new google.maps.Size(BOX_SIZE, BOX_SIZE),
             //isPng: true,

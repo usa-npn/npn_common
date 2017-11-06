@@ -1,6 +1,9 @@
+import {Inject,Injectable} from '@angular/core';
+import {NPN_CONFIGURATION,NpnConfiguration} from '../common';
+
 export const MAP_LAYERS = {
     "geo_server": {
-        "url": "//geoserver.usanpn.org/geoserver"
+        "url": "//geoserver-dev.usanpn.org/geoserver"
     },
     "description" : "",
     "categories": [{
@@ -212,6 +215,15 @@ export const BASE_WMS_ARGS = {
     srs: 'EPSG:3857' // 'EPSG:4326'
 };
 
-export const GEOSERVER_URL = MAP_LAYERS.geo_server.url; // should this go to the environment?
-export const WMS_BASE_URL = `${GEOSERVER_URL}/wms`;
-export const WMS_CAPABILITIES_URL = `${WMS_BASE_URL}?service=wms&version=${WMS_VERSION}&request=GetCapabilities`;
+@Injectable()
+export class GriddedUrls {
+    readonly geoServerUrl:string;
+    readonly wmsBaseUrl;
+    readonly wmsCapabilitiesUrl;
+
+    constructor(@Inject(NPN_CONFIGURATION) public config:NpnConfiguration) {
+        this.geoServerUrl = config.geoServerRoot;
+        this.wmsBaseUrl = `${this.geoServerUrl}/wms`;
+        this.wmsCapabilitiesUrl = `${this.wmsBaseUrl}?service=wms&version=${WMS_VERSION}&request=GetCapabilities`;
+    }
+}

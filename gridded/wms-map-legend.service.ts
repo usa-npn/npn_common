@@ -5,13 +5,16 @@ import {WmsPipeFactory} from './wms-pipe-factory.service';
 import {WmsMapLayerService} from './wms-map-layer.service';
 import {NpnServiceUtils} from '../common';
 import {WmsMapLegend} from './wms-map-legend';
-import {WMS_VERSION,WMS_BASE_URL} from './gridded-common';
+import {WMS_VERSION,GriddedUrls} from './gridded-common';
 
 @Injectable()
 export class WmsMapLegendService {
     legends:any = {};
 
-    constructor(private wmsPipeFactory:WmsPipeFactory, private serviceUtils:NpnServiceUtils,private layerService:WmsMapLayerService) {
+    constructor(private wmsPipeFactory:WmsPipeFactory,
+                private serviceUtils:NpnServiceUtils,
+                private layerService:WmsMapLayerService,
+                private urls:GriddedUrls) {
     }
 
     getLegend(layerName:string):Promise<WmsMapLegend> {
@@ -24,7 +27,7 @@ export class WmsMapLegendService {
                     if(!layerDefinition) {
                         return reject(`layer definition for ${layerName} not found.`)
                     }
-                    this.serviceUtils.cachedGet(WMS_BASE_URL,{
+                    this.serviceUtils.cachedGet(this.urls.wmsBaseUrl,{
                             service: 'wms',
                             request: 'GetStyles',
                             version: WMS_VERSION,
