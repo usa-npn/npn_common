@@ -20,7 +20,8 @@ export class NpnServiceUtils {
         return `${this.config.dataApiRoot}${suffix}`;
     }
 
-    public cachedGet(url: string, params:any): Promise<any> {
+    public cachedGet(url: string, params?:any, asText?:boolean): Promise<any> {
+        params = params||{};
         return new Promise((resolve,reject) => {
             let cacheKey = {
                 u: url,
@@ -33,7 +34,8 @@ export class NpnServiceUtils {
                 this.http.get(url,{params:params})
                     .toPromise()
                     .then(response => {
-                        data = response.json() as any;
+                        data = asText ?
+                            response.text() as any: response.json() as any;
                         this.cache.set(cacheKey,data);
                         resolve(data);
                     })

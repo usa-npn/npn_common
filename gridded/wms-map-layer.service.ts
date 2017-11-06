@@ -1,11 +1,9 @@
 import {Injectable} from '@angular/core';
-import {Http} from '@angular/http';
-import 'rxjs/add/operator/toPromise';
 import * as $ from 'jquery';
 import {} from '@types/googlemaps';
 
 import {DateExtentUtil} from './date-extent-util.service';
-import {CacheService} from '../common';
+import {NpnServiceUtils} from '../common';
 import {MAP_LAYERS,WMS_CAPABILITIES_URL} from './gridded-common';
 import {WmsMapLayer} from './wms-map-layer';
 
@@ -15,7 +13,7 @@ const DEEP_COPY = (o) => JSON.parse(JSON.stringify(o));
 export class WmsMapLayerService {
     private layerDefs:any;
 
-    constructor(private http:Http,private cache:CacheService,private dateExtentUtil:DateExtentUtil) {
+    constructor(private serviceUtils:NpnServiceUtils,private dateExtentUtil:DateExtentUtil) {
     }
 
     getLayers(map:google.maps.Map):Promise<any> {
@@ -55,10 +53,9 @@ export class WmsMapLayerService {
             if(this.layerDefs) {
                 resolve(this.layerDefs);
             } else {
-                this.http.get(WMS_CAPABILITIES_URL)
-                    .toPromise()
-                    .then(response => {
-                        let wms_capabilities = $($.parseXML(response.text()));
+                this.serviceUtils.cachedGet(WMS_CAPABILITIES_URL,null,true/*as text*/)
+                    .then(xml => {
+                        let wms_capabilities = $($.parseXML(xml));
                         console.debug('WmsMapLayerService:capabilities',wms_capabilities);
                         let wms_layer_defs = this._getLayers(wms_capabilities.find('Layer'));
                         console.debug('WmsMapLayerService:wms layer definitions',wms_layer_defs);
