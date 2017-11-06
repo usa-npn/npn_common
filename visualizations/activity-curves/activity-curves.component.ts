@@ -72,8 +72,10 @@ export class ActivityCurvesComponent extends SvgVisualizationBaseComponent {
 
     private usingCommonMetric() {
         let selection = this.selection;
-        if(selection.curves.length === 1 ||
-            selection.curves[0].metricId() === selection.curves[1].metricId()) {
+        // there are always two curves in the selection, the question is whether they are
+        // valid and share a metric
+        if((selection.curves[0].isValid() && !selection.curves[1].isValid()) ||
+            (selection.curves[0].isValid() && selection.curves[1].isValid() && selection.curves[0].metricId() === selection.curves[1].metricId())) {
             return selection.curves[0].metric;
         }
     }
@@ -269,6 +271,7 @@ export class ActivityCurvesComponent extends SvgVisualizationBaseComponent {
             .attr('y', '0')
             .attr('dy','-4em')
             .attr('x',-1*(sizing.height/2)) // looks odd but to move in the Y we need to change X because of transform
+            .attr('fill','#000')
             .style('text-anchor', 'middle')
             .text(selection.curves[0].axisLabel());
 
