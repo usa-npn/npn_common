@@ -54,7 +54,7 @@ const TODAY = new Date();
 
 export class ScatterPlotSelection extends SiteOrSummaryVisSelection {
     @selectionProperty()
-    start: number;
+    start: number = 2010;
     @selectionProperty()
     end: number;
     @selectionProperty()
