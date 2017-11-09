@@ -3,15 +3,24 @@ import {Component,Input,OnInit} from '@angular/core';
 import {CalendarSelection} from './calendar-selection';
 
 const THIS_YEAR = (new Date()).getFullYear();
+const VALID_YEARS = (function(){
+    let max = THIS_YEAR+1,
+        current = 1900,
+        years:number[] = [];
+    while(current < max) {
+        years.push(current++);
+    }
+    return years;
+})();
 
 @Component({
     selector: 'calendar-control',
     template: `
     <div>
         <div class="year-input-wrapper" *ngFor="let plotYear of selection.years;index as idx">
-            <mat-form-field class="year-input" >
-                <mat-select placeholder="Year" [(ngModel)]="selection.years[idx]" (change)="updateChange()">
-                    <mat-option *ngFor="let y of validStarts" [value]="y">{{y}}</mat-option>
+            <mat-form-field class="year-input">
+                <mat-select placeholder="Year {{idx+1}}" [(ngModel)]="selection.years[idx]" (change)="updateChange()" id="year_{{idx}}">
+                    <mat-option *ngFor="let y of selectableYears(selection.years[idx])" [value]="y">{{y}}</mat-option>
                 </mat-select>
             </mat-form-field>
             <button *ngIf="idx > 0" mat-button class="remove-year" (click)="removeYear(idx)">Remove</button>
@@ -66,15 +75,15 @@ export class CalendarControlComponent implements OnInit {
     maxYears = 5;
     updateSent:boolean = false;
 
-    validStarts:number[] = (function(){
-        let max = THIS_YEAR+1,
-            current = 1900,
-            years:number[] = [];
-        while(current < max) {
-            years.push(current++);
+    selectableYears(y:number) {
+        if(y) {
+            // validYears including y but excluding any others in the selection
+            return VALID_YEARS.filter(yr => {
+                return yr === y || this.selection.years.indexOf(yr) === -1;
+            });
         }
-        return years;
-    })();
+        return VALID_YEARS;
+    }
 
     ngOnInit() {
         if(this.selection.years.length === 0) {
@@ -116,7 +125,11 @@ export class CalendarControlComponent implements OnInit {
     }
 
     addYear() {
-        this.selection.years.push(THIS_YEAR);
+        let y = THIS_YEAR;
+        while(this.selection.years.indexOf(y) !== -1) {
+            y--;
+        }
+        this.selection.years.push(y);
         this.updateChange();
     }
 
