@@ -105,7 +105,18 @@ export abstract class SvgVisualizationBaseComponent extends VisualizationBaseCom
         this.redraw();
     }
 
+    // this used to be in ngAfterViewInit and most time it would succeed from there
+    // but very occasionally ngAfterViewInit would be called BEFORE the underlying
+    // elements exist in the DOM.  No time to understand cleanly why so these selections
+    // are now made whever asking about sizing which is the FIRST thing necessary to
+    // render an SVG visualization so it should be safe.
+    private selectElements() {
+        this.visRoot = d3.select('#'+this.id);
+        this.svg = this.visRoot.select('svg');
+    }
+
     getSizeInfo(minWidth?:number): VisualizationSizing {
+        this.selectElements();
         return super.getSizeInfo(this.minWidth);
     }
 
@@ -154,8 +165,7 @@ export abstract class SvgVisualizationBaseComponent extends VisualizationBaseCom
     protected abstract redrawSvg(): void;
 
     ngAfterViewInit() {
-        this.visRoot = d3.select('#'+this.id);
-        this.svg = this.visRoot.select('svg');
+        this.selectElements();
         // sets up common handlers
         super.ngAfterViewInit();
     }

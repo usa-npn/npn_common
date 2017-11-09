@@ -145,6 +145,10 @@ export abstract class VisSelection extends EventEmitter<VisSelectionEvent> {
     meta:any = {}; // a place for non selection specific info to be held
     debug:boolean = false;
     working:boolean = false;
+    // this flag is not persisted but can be used by a visualization if it
+    // would like to have a control pick "default state" while the visualization
+    // is being built.
+    editMode:boolean = false;
     [x: string]: any
 
     readonly INVALID_SELECTION = REJECT_INVALID_SELECTION;

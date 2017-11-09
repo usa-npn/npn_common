@@ -36,11 +36,25 @@ export class ObservationFrequencyComponent extends SvgVisualizationBaseComponent
     margins: VisualizationMargins = {...DEFAULT_MARGINS, ...{top: 80,left: 80}};
 
     stations:any[]; // to avoid null check
-    station:any; // the current station being displayed
+    _station:any; // the current station being displayed
     data:any;
 
     constructor(protected window: Window,protected rootElement: ElementRef) {
         super(window,rootElement);
+    }
+
+    set station(s:any) {
+        this._station = s;
+        if(this.selection.editMode) {
+            delete this.selection.defaultStation;
+            if(this._station) {
+                this.selection.defaultStation = this._station.station_id;
+            }
+        }
+    }
+
+    get station():any {
+        return this._station;
     }
 
     private getMonthFormat(): string {
@@ -51,7 +65,7 @@ export class ObservationFrequencyComponent extends SvgVisualizationBaseComponent
     }
 
     protected reset(): void {
-        console.debug('ObservationFrequencyComponent.update');
+        console.debug('ObservationFrequencyComponent.reset');
         super.reset();
         let chart = this.chart,
             sizing = this.sizing,
@@ -110,11 +124,18 @@ export class ObservationFrequencyComponent extends SvgVisualizationBaseComponent
 
     protected redrawSvg(): void {
         console.debug('ObservationFrequencyComponent.redrawSvg:data',this.data);
-        if(!this.stations) {
+        if(!this.stations || !this.stations.length) {
             return;
         }
         if(!this.station) {
-            this.station = this.stations && this.stations.length ? this.stations[0] : undefined;
+            if(this.selection.defaultStation) {
+                this.station = this.stations.reduce((found,s) => {
+                    return found||(s.station_id === this.selection.defaultStation ? s : undefined);
+                },undefined);
+            }
+            if(!this.station) {
+                this.station = this.stations[0];
+            }
         }
         this.redrawStation();
         this.commonUpdates();
@@ -179,15 +200,13 @@ export class ObservationFrequencyComponent extends SvgVisualizationBaseComponent
 @Component({
     selector: 'observation-frequency-station-control',
     template:`
-    <button mat-button (click)="prev()"
-        [disabled]="!stations || !station || stations.indexOf(station) === 0">&lt; Previous</button>
+    <button mat-button (click)="prev()">&lt; Previous</button>
     <mat-form-field class="station-input">
         <mat-select placeholder="Station" [(ngModel)]="station" [disabled]="!stations || !stations.length">
             <mat-option *ngFor="let s of stations" [value]="s">{{s.station_name}}</mat-option>
         </mat-select>
     </mat-form-field>
-    <button mat-button (click)="next()"
-        [disabled]="!stations || !station || stations.indexOf(station) === stations.length-1">Next &gt;</button>
+    <button mat-button (click)="next()">Next &gt;</button>
     `,
     styles:[`
         .station-input {
@@ -221,6 +240,8 @@ export class ObvervationFrequencyStationControlComponent {
         let idx = this.stations.indexOf(this.station);
         if(idx > 0) {
             this.station = this.stations[idx-1];
+        } else {
+            this.station = this.stations[this.stations.length-1]; // loop around to last station
         }
     }
 
@@ -228,6 +249,8 @@ export class ObvervationFrequencyStationControlComponent {
         let idx = this.stations.indexOf(this.station);
         if(idx < this.stations.length-1) {
             this.station = this.stations[idx+1];
+        } else {
+            this.station = this.stations[0]; // loop around to the first station.
         }
     }
 }

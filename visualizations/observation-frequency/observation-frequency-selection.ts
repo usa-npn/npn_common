@@ -1,13 +1,23 @@
 import {NpnServiceUtils,NetworkService} from '../../common';
-import {StationAwareVisSelection,selectionProperty} from '../vis-selection';
+import {NetworkAwareVisSelection,selectionProperty} from '../vis-selection';
 
-// TODO is this always network wide or can they select specific stations
-export class ObservationFrequencySelection extends StationAwareVisSelection {
+export class ObservationFrequencySelection extends NetworkAwareVisSelection {
     @selectionProperty()
-    year:number;
+    _year:number;
+    @selectionProperty()
+    defaultStation:number;
 
     constructor(protected serviceUtils:NpnServiceUtils,protected networkService: NetworkService) {
         super();
+    }
+
+    set year(y:number) {
+        this._year = y;
+        delete this.defaultStation; // reset default station if there is one.
+    }
+
+    get year():number {
+        return this._year;
     }
 
     isValid():boolean {
