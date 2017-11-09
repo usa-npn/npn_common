@@ -16,6 +16,9 @@ import {Component, Input, OnInit} from '@angular/core';
     </table>
     `,
     styles:[`
+        :host {
+            line-height: 12px;
+        }
         tr td:first-of-type {
             font-weight: bold;
             text-align: right;
