@@ -1,5 +1,5 @@
-import {Component,Input,Output,EventEmitter,OnInit,DoCheck} from '@angular/core';
-import {FormControl} from '@angular/forms';
+import {Component,Input,Output,EventEmitter,OnInit,DoCheck,OnChanges,SimpleChanges} from '@angular/core';
+import {FormControl,Validators} from '@angular/forms';
 
 import {Observable} from 'rxjs/Observable';
 import { Subject } from 'rxjs/Subject';
@@ -21,36 +21,38 @@ const COLORS = [
     selector: 'species-phenophase-input',
     template: `
     <mat-form-field class="species-input">
-        <input matInput placeholder="Species" aria-label="Species"
+        <input matInput [placeholder]="'Species'+(required ? ' *':'')" aria-label="Species"
                [matAutocomplete]="sp"
-               [formControl]="speciesControl" [(ngModel)]="species"/>
+               [formControl]="speciesControl" [(ngModel)]="species" (focus)="speciesFocus()" (blur)="speciesBlur()"/>
         <mat-autocomplete #sp="matAutocomplete" [displayWith]="speciesTitle.transform">
           <mat-option *ngFor="let s of filteredSpecies | async" [value]="s">
             {{s | speciesTitle}} ({{s.number_observations}})
           </mat-option>
         </mat-autocomplete>
+        <mat-error *ngIf="speciesControl.errors && speciesControl.errors.required">Species is required</mat-error>
         <mat-progress-bar *ngIf="!speciesList || !speciesList.length" mode="query"></mat-progress-bar>
     </mat-form-field>
 
     <mat-form-field class="phenophase-input">
-        <mat-select placeholder="Phenophase" [(ngModel)]="phenophase" [disabled]="!phenophaseList.length">
+        <mat-select placeholder="Phenophase" [(ngModel)]="phenophase" [disabled]="disabled || !phenophaseList.length">
           <mat-option *ngFor="let p of phenophaseList" [value]="p">{{p.phenophase_name}}</mat-option>
         </mat-select>
     </mat-form-field>
 
     <mat-form-field *ngIf="gatherColor" class="color-input">
-        <mat-select  placeholder="Color" [(ngModel)]="color">
+        <mat-select  [placeholder]="'Color'+(required ? ' *':'')" [(ngModel)]="color" [disabled]="disabled" [formControl]="colorControl">
           <mat-select-trigger><div class="color-swatch" [ngStyle]="{'background-color':color}"></div></mat-select-trigger>
           <mat-option *ngFor="let c of colorList" [value]="c"><div class="color-swatch" [ngStyle]="{'background-color':c}"></div></mat-option>
         </mat-select>
+        <mat-error *ngIf="colorControl.errors && colorControl.errors.required">Color is required</mat-error>
     </mat-form-field>
     `,
     styles: [`
         .species-input {
-            width: 300px;
+            width: 200px;
         }
         .phenophase-input {
-            width: 400px;
+            width: 250px;
         }
         .color-swatch {
             display: inline-block;
@@ -58,14 +60,17 @@ const COLORS = [
             height: 20px;
         }
         .color-input {
-
+            width: 60px;
         }
         .color-input /deep/ .mat-select-trigger {
             //border: 1px solid red;
         }
     `]
 })
-export class SpeciesPhenophaseInputComponent implements OnInit,DoCheck {
+export class SpeciesPhenophaseInputComponent implements OnInit,DoCheck,OnChanges {
+    @Input() required:boolean = true;
+    @Input() disabled:boolean = false;
+
     @Input() startYear:number;
     @Input() endYear:number;
     @Input() selection:VisSelection;
@@ -84,7 +89,18 @@ export class SpeciesPhenophaseInputComponent implements OnInit,DoCheck {
     @Output() onColorChange = new EventEmitter<any>();
     colorList:string[] = COLORS;
 
-    speciesControl:FormControl = new FormControl();
+    requiredValidator = (c) => {
+        if(this.required && !c.disabled && !c.value) {
+            return {
+                required: true
+            };
+        }
+        return null;
+    };
+
+    speciesControl:FormControl = new FormControl(null,this.requiredValidator);
+    colorControl:FormControl = new FormControl(null,this.requiredValidator);
+
     filteredSpecies: Observable<Species[]>;
     speciesList:Species[];
 
@@ -96,7 +112,6 @@ export class SpeciesPhenophaseInputComponent implements OnInit,DoCheck {
     constructor(private speciesService: SpeciesService,
                 private speciesTitle: SpeciesTitlePipe) {
         this.filteredSpecies = this.speciesControl.valueChanges
-            .startWith(null)
             .map(s => {
                 return s && this.speciesList ?
                     this.filterSpecies(s) :
@@ -124,6 +139,16 @@ export class SpeciesPhenophaseInputComponent implements OnInit,DoCheck {
             });
     }
 
+    ngOnChanges(changes:SimpleChanges) {
+        if(changes.disabled) {
+            if(changes.disabled.currentValue) {
+                this.speciesControl.disable();
+            } else {
+                this.speciesControl.enable();
+            }
+        }
+    }
+
     ngDoCheck() {
         if(this.selection) {
             let params = {},paramsS;
@@ -134,6 +159,17 @@ export class SpeciesPhenophaseInputComponent implements OnInit,DoCheck {
                 this.lastSpeciesParams = paramsS;
                 this.speciesParams.next(params);
             }
+        }
+    }
+
+    speciesFocus() {
+        if(this.speciesList) {
+            this.speciesControl.setValue(' ');
+        }
+    }
+    speciesBlur() {
+        if(typeof(this.speciesControl.value) === 'string' && this.speciesControl.value.trim() === '') {
+            this.speciesControl.setValue(null);
         }
     }
 

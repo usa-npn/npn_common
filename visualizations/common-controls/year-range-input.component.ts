@@ -13,7 +13,13 @@ import {Component,Input,Output,EventEmitter,OnInit} from '@angular/core';
             <mat-option *ngFor="let y of validEnds" [value]="y">{{y}}</mat-option>
         </mat-select>
     </mat-form-field>
-    `
+    `,
+    styles:[`
+        .start-year,
+        .end-year {
+            width: 75px;
+        }
+    `]
 })
 export class YearRangeInputComponent {
     @Output() startChange = new EventEmitter<number>();

@@ -12,7 +12,7 @@ import {ActivityCurvesSelection,ActivityFrequency,ACTIVITY_FREQUENCIES} from './
     </div>
     <div class="curve two">
         <label [ngStyle]="{'color': selection.curves[1].color}">Curve 2</label>
-        <curve-selection-control [selection]="selection"  [curve]="selection.curves[1]"></curve-selection-control>
+        <curve-selection-control [selection]="selection"  [curve]="selection.curves[1]" [disabled]="!selection.curves[0].isValid()" [required]="false"></curve-selection-control>
     </div>
     <div class="curve-common">
         <mat-form-field class="date-interval">

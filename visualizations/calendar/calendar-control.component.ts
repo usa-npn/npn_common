@@ -59,9 +59,11 @@ const VALID_YEARS = (function(){
             display: inline-block;
             margin-right: 15px;
         }
+        .year-input {
+            width: 60px;
+        }
         .phenophase-input-wrapper {
             display: block;
-            margin-top: 15px;
         }
         label[for="label-size-input"] {
             margin-left: 15px;

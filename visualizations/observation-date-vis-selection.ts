@@ -67,6 +67,9 @@ export abstract class ObservationDateVisSelection extends StationAwareVisSelecti
     }
 
     postProcessData(data:any[]):ObservationDateData {
+        if(!data) {
+            return data;
+        }
         let response = new ObservationDateData(),
             vPlots = this.validPlots,
             y = (vPlots.length*this.years.length)-1,

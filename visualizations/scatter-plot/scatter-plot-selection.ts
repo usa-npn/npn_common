@@ -56,7 +56,7 @@ export class ScatterPlotSelection extends SiteOrSummaryVisSelection {
     @selectionProperty()
     start: number = 2010;
     @selectionProperty()
-    end: number;
+    end: number = (new Date()).getFullYear();
     @selectionProperty()
     regressionLines: boolean = false;
     @selectionProperty()
