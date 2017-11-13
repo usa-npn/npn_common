@@ -2,5 +2,5 @@
     <div class="vis-working" *ngIf="selection.working">
         <mat-progress-spinner mode="indeterminate"></mat-progress-spinner>
     </div>
-    <agm-map (mapReady)="mapReady($event)"></agm-map>
+    <agm-map (mapReady)="mapReady($event)" [streetViewControl]="false" [styles]="mapStyles"></agm-map>
 </div>

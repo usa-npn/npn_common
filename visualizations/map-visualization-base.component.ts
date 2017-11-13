@@ -20,6 +20,24 @@ export abstract class MapVisualizationBaseComponent extends VisualizationBaseCom
         this.getMapResolver = resolve;
     });
 
+    protected mapStyles:any[] = [{
+            featureType: 'poi',
+            elementType: 'labels',
+            stylers: [{visibility:'off'}]
+        },{
+            featureType: 'transit.station',
+            elementType: 'labels',
+            stylers: [{visibility:'off'}]
+        },
+        {
+            featureType: 'poi.park',
+            stylers: [{ visibility: 'off'}]
+        },
+        {
+            featureType: 'landscape',
+            stylers: [{ visibility: 'off'}]
+        }];
+
     mapReady(map: google.maps.Map): void {
         map.addListener('resize',() => {
             console.log('resize happened');
