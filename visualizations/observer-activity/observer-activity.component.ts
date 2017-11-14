@@ -11,7 +11,7 @@ import {Selection} from 'd3-selection';
 import {ScaleBand,scaleBand,ScaleLinear,scaleLinear,ScaleOrdinal,scaleOrdinal} from 'd3-scale';
 import * as d3 from 'd3';
 
-const TITLE = 'New/Active Observers by Month';
+const TITLE = 'New/Active Observers';
 
 @Component({
   selector: 'observer-activity',
@@ -132,21 +132,23 @@ export class ObserverActivityComponent extends SvgVisualizationBaseComponent {
         if(!this.data) {
             return;
         }
-        this.title.text(`${TITLE}, "TODO: Refuge Name", ${this.selection.year}`);
+        this.title.text(`${TITLE}, ${this.data.network_name}, ${this.selection.year}`);
         console.debug('ObserverActivityComponent:data',this.data);
-        let data = this.data.months.slice(),
+        let sizing = this.sizing,
+            data = this.data.months.slice(),
             chart = this.chart,
             new_sum = data.reduce((sum,d) => sum+d.number_new_observers,0),
             active_sum = data.reduce((sum,d) => sum+d.number_active_observers,0),
             max = data.reduce((max,d) => {
-                let sum = d.number_new_observers+d.number_active_observers;
-                if(sum > max) {
-                    max = sum;
+                if(d.number_new_observers > max) {
+                    max = d.number_new_observers;
+                }
+                if(d.number_active_observers > max) {
+                    max = d.number_active_observers;
                 }
                 return max;
             },0);
         console.debug(`ObserverActivityComponent:vis data (max=${max})`,data);
-        console.debug('ObserverActivityComponent:stacked data',d3.stack().keys(this.keys)(data));
 
         // update x axis with months+total
         this.x.domain(d3.range(0,data.length));
@@ -157,43 +159,35 @@ export class ObserverActivityComponent extends SvgVisualizationBaseComponent {
         this.y.domain([0,max]);
         this.chart.selectAll('g .y.axis').call(this.yAxis);
 
-        this.chart.selectAll('g .bars').remove();
-        this.chart.append('g')
-            .attr('class','bars')
-            .selectAll('g')
-            .data(d3.stack().keys(this.keys)(data))
-        .enter().append('g')
-          .attr('fill', d => this.z(d.key))
-        .selectAll('rect')
-        .data(d => d as any[])
-            .enter().append('rect')
-              .attr('x', (d,i) => this.x(i))
-              .attr('y', d => this.y(d[1]))
-              .attr('title', d => `${d[1]}`)
-              .attr('height',d => this.y(d[0]) - this.y(d[1]))
-              .attr('width',this.x.bandwidth());
+        let bars = (key,idx) => {
+            let barWidth = this.x.bandwidth()/2;
+            this.chart.selectAll(`g .bars.${key}`).remove();
+            this.chart.append('g')
+                .attr('class', `bars ${key}`)
+                .attr('fill', d => this.z(key))
+                .selectAll('rect')
+                .data(data)
+                .enter().append('rect')
+                .attr('x', (d,i) => this.x(i)+(barWidth*idx))
+                .attr('y', d => this.y(d[key]))
+                .attr('title', d => `${d[key]}`)
+                .attr('height',d => sizing.height - this.y(d[key]))
+                .attr('width',barWidth);
 
-        this.chart.selectAll('g .bar-labels').remove();
-        this.chart.append('g')
-            .attr('class','bar-labels')
-            .selectAll('g')
-            .data(d3.stack().keys(this.keys)(data))
-        .enter().append('g')
-          .attr('fill', d => this.zDarker(d.key))
-        .selectAll('text')
-        .data(d => d as any[])
-            .enter().append('text')
+            this.chart.selectAll(`g .bar-labels.${key}`).remove();
+            this.chart.append('g')
+                .attr('class', `bar-labels ${key}`)
+                .attr('fill', d => this.z(key))
+                .selectAll('text')
+                .data(data)
+                .enter().append('text')
                 .attr('text-anchor','middle')
                 .attr('dy','-0.25em')
-                .attr('x', (d,i) => this.x(i)+(this.x.bandwidth()/2))
-                .attr('y', (d,i) => {
-                    //console.log(`y.d[${i}]`,d[1],d);
-                    // TODO when one is 0 d[1] isn't the number we're looking for
-                    // needs adjustment in text below as well.
-                    return this.y(d[1]);
-                })
-                .text(d => `${d[1]}`)
-
+                .attr('x',(d,i) => this.x(i)+(barWidth*idx)+(barWidth/2))
+                .attr('y',(d) => this.y(d[key]))
+                .text(d => `${d[key]}`);
+        };
+        this.keys.forEach((k,i) => bars(k,i));
 
         this.legend.selectAll('text')
             .each((function(nSum,aSum,labels){

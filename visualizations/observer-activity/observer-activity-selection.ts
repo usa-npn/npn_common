@@ -1,13 +1,20 @@
 import {NpnServiceUtils} from '../../common';
-import {StationAwareVisSelection,selectionProperty} from '../vis-selection';
+import {NetworkAwareVisSelection,selectionProperty} from '../vis-selection';
 
-// TODO is this always network wide or can they select specific stations
-export class ObserverActivitySelection extends StationAwareVisSelection {
+export class ObserverActivitySelection extends NetworkAwareVisSelection {
     @selectionProperty()
     year:number;
 
     constructor(protected serviceUtils:NpnServiceUtils) {
         super();
+    }
+
+    isMultiStation():boolean {
+        return this.stationIds && this.stationIds.length > 1;
+    }
+
+    isSingleStation():boolean {
+        return this.stationIds && this.stationIds.length === 1;
     }
 
     isValid():boolean {
@@ -32,35 +39,6 @@ export class ObserverActivitySelection extends StationAwareVisSelection {
                     resolve(data);
                 })
                 .catch(reject);
-            /*
-            // mocked up randomly generated response
-            let response:any = {
-                network_id: this.networkIds[0],
-                months: []
-            },
-            rint = (min,max) => {
-                min = Math.ceil(min);
-                max = Math.floor(max);
-                return Math.floor(Math.random() * (max-min)) + min;
-            };
-            // mock up a bogus response
-            // every other return a full year and then a partial year
-            let max = 13;
-            if(this.year === (new Date()).getFullYear()) {
-                // if it's this year then return up to this month
-                max = (new Date()).getMonth()+2
-            }
-            for(let i = 1; i < max; i++) {
-                let nobs = rint(0,10);
-                response.months.push({
-                    month: i,
-                    //month_name: 'ignore',
-                    number_new_observers: nobs,
-                    number_active_observers: rint(nobs,20)
-                });
-            }
-            resolve(response);
-            */
         });
     }
 }
