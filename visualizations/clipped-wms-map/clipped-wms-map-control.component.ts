@@ -12,9 +12,11 @@ import {ClippedWmsMapSelection} from './clipped-wms-map-selection';
     </mat-select>
     `,
     styles:[`
-        .map-service-input,
+        .map-service-input {
+            width: 225px;
+        }
         .map-layer-input {
-            width: 200px;
+            width: 155px;
         }
     `]
 })

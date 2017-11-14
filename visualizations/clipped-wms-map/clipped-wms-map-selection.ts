@@ -10,19 +10,47 @@ import {} from '@types/googlemaps';
 
 const SIX_LAYERS:ClippedLayerDef[] = [{
     label: 'Current Si-x leaf index',
-    layerName: 'si-x:average_leaf_ncep'
+    layerName: 'si-x:average_leaf_ncep',
+    clippingService: 'si-x/area/clippedImage',
+    statisticsService: 'si-x/area/statistics'
 },{
     label: '6-day forecast',
     layerName: 'si-x:average_leaf_ncep',
+    clippingService: 'si-x/area/clippedImage',
+    statisticsService: 'si-x/area/statistics',
     forecast: true
-}/* TODO not yet supported,{
+},{
     label: 'Anomaly',
-    layerName: 'si-x:average_leaf_ncep',
-    forecast: false
-}*/];
-const AGDD_LAYERS:ClippedLayerDef[] = [
-    // TODO add when agdd support arives
-];
+    layerName: 'si-x:leaf_anomaly',
+    clippingService: 'si-x/anomaly/area/clippedImage',
+    statisticsService: 'si-x/anomaly/area/statistics'
+}];
+const AGDD_LAYERS:ClippedLayerDef[] = [{
+    label: 'Current AGDD',
+    layerName: 'gdd:agdd',
+    clippingService: 'agdd/area/clippedImage',
+    statisticsService: 'agdd/area/statistics',
+    statsParams: {
+        useCache: false
+    }
+},{
+    label: '6-day forecast',
+    layerName: 'gdd:agdd',
+    clippingService: 'agdd/area/clippedImage',
+    statisticsService: 'agdd/area/statistics',
+    forecast: true,
+    statsParams: {
+        useCache: false
+    }
+},{
+    label: 'Anomaly',
+    layerName: 'gdd:agdd_anomaly',
+    clippingService: 'agdd/anomaly/area/clippedImage',
+    statisticsService: 'agdd/anomaly/area/statistics',
+    statsParams: {
+        useCache: false
+    }
+}];
 
 export class ClippedWmsMapSelection extends NetworkAwareVisSelection {
     @selectionProperty() // may need to use get/set pattern
@@ -101,7 +129,7 @@ export class ClippedWmsMapSelection extends NetworkAwareVisSelection {
 
     getBoundary(): Promise<any> {
         return new Promise((resolve,reject) => {
-            let url = `${this.config.dataApiRoot}/v0/${this.service}/area/boundary`,
+            let url = `${this.config.dataApiRoot}/v0/si-x/area/boundary`,
                 params = {
                     format: 'geojson',
                     fwsBoundary: this.fwsBoundary
@@ -119,7 +147,7 @@ export class ClippedWmsMapSelection extends NetworkAwareVisSelection {
     }
 
     getData(): Promise<any> {
-        let url = `${this.config.dataApiRoot}/v0/${this.service}/area/clippedImage`,
+        let url = `${this.config.dataApiRoot}/v0/${this.layer.clippingService}`,
             params = {
                 layerName: this.layer.layerName,
                 fwsBoundary: this.fwsBoundary,
@@ -132,13 +160,16 @@ export class ClippedWmsMapSelection extends NetworkAwareVisSelection {
 
     getStatistics(): Promise<any> {
         return new Promise((resolve,reject) => {
-            let url = `${this.config.dataApiRoot}/v0/${this.service}/area/statistics`,
+            let url = `${this.config.dataApiRoot}/v0/${this.layer.statisticsService}`,
                 params = {
                     layerName: this.layer.layerName,
                     fwsBoundary: this.fwsBoundary,
                     date: this.apiDate,
-                    useCache: true // TODO not sure on this.
+                    useCache: true
                 };
+            if(this.layer.statsParams) {
+                params = {...params,...this.layer.statsParams};
+            }
             this.cachedGet(url,params)
                 .then(stats => {
                     // translate the date string to a date object.
@@ -304,7 +335,10 @@ export class ClippedWmsMapSelection extends NetworkAwareVisSelection {
 interface ClippedLayerDef {
     label: string;
     layerName: string;
-    forecast?:boolean;
+    clippingService: string;
+    statisticsService: string;
+    statsParams?: any;
+    forecast?: boolean;
 }
 
 interface ClippedImageResponse {
