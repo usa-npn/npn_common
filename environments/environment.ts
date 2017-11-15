@@ -3,8 +3,13 @@
 // `ng build --env=prod` then `environment.prod.ts` will be used instead.
 // The list of which env maps to which file can be found in `.angular-cli.json`.
 
+/*
+IMPORTANT: use of environment needs to be reviewed entirely.  For some reason an
+ng build --env=prod is NOT picking up this file vs the dev version so for
+now toggling the production flag in environment.ts which is frustrating.
+ */
 export const environment = {
-  production: false,
+  production: true,
   googleMapsApiKey: 'AIzaSyAsTM8XaktfkwpjEeDMXkNrojaiB2W5WyE',
   cacheTTL: 3600000, // 1 hour vs 5 minutes 300000,
   appConfig: {

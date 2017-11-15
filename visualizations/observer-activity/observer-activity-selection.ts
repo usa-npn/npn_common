@@ -3,6 +3,9 @@ import {NetworkAwareVisSelection,selectionProperty} from '../vis-selection';
 
 export class ObserverActivitySelection extends NetworkAwareVisSelection {
     @selectionProperty()
+    $class:string = 'ObserverActivitySelection';
+
+    @selectionProperty()
     year:number;
 
     constructor(protected serviceUtils:NpnServiceUtils) {
@@ -30,12 +33,14 @@ export class ObserverActivitySelection extends NetworkAwareVisSelection {
                 network_id: this.networkIds[0]
             };
         return new Promise((resolve,reject) => {
+            this.working = true;
             this.serviceUtils.cachedGet(url,params)
                 .then(data => {
                     let months = [1,2,3,4,5,6,7,8,9,10,11,12].map(i => {
                         return {...{month:i},...data.months[i]};
                     });
                     data.months = months;
+                    this.working = false;
                     resolve(data);
                 })
                 .catch(reject);

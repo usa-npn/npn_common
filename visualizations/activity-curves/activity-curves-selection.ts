@@ -30,6 +30,9 @@ export const ACTIVITY_FREQUENCIES:ActivityFrequency[] = [
 ];
 
 export class ActivityCurvesSelection extends StationAwareVisSelection {
+    @selectionProperty()
+    $class:string = 'ActivityCurvesSelection';
+
     private headers = new Headers({'Content-Type':'application/x-www-form-urlencoded'});
     @selectionProperty()
     private _interpolate: INTERPOLATE = INTERPOLATE.monotone;

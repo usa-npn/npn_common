@@ -5,6 +5,9 @@ import {FONT_SIZE} from '../visualization-base.component';
 
 export class CalendarSelection extends ObservationDateVisSelection {
     @selectionProperty()
+    $class:string = 'CalendarSelection';
+
+    @selectionProperty()
     labelOffset:number = 4;
     @selectionProperty()
     bandPadding:number = 0.5;

@@ -53,6 +53,9 @@ const AGDD_LAYERS:ClippedLayerDef[] = [{
 }];
 
 export class ClippedWmsMapSelection extends NetworkAwareVisSelection {
+    @selectionProperty()
+    $class:string = 'ClippedWmsMapSelection';
+
     @selectionProperty() // may need to use get/set pattern
     service:string = 'si-x'; // si-x || agdd
     @selectionProperty()

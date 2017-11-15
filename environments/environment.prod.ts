@@ -1,3 +1,8 @@
+/*
+IMPORTANT: use of environment needs to be reviewed entirely.  For some reason an
+ng build --env=prod is NOT picking up this file vs the dev version so for
+now toggling the production flag in environment.ts which is frustrating.
+ */
 export const environment = {
   production: true,
   googleMapsApiKey: 'AIzaSyAsTM8XaktfkwpjEeDMXkNrojaiB2W5WyE',

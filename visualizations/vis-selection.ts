@@ -87,7 +87,8 @@ const isSelectionProperty = (target:any, propertyKey: string) => {
 // s11n/des11n functionality.
 export function GET_EXTERNAL() {
     let ext = {
-        $class: this.constructor.name
+        // see comment below on $class property
+        //$class: this.constructor.name
     };
     Object.keys(this).forEach(key => {
         let handler = isSelectionProperty(this,key);
@@ -139,6 +140,14 @@ export const REJECT_INVALID_SELECTION = 'invalid selection';
  * so technically does.  Should perhaps consider not extending Angular's EventEmitter
  */
 export abstract class VisSelection extends EventEmitter<VisSelectionEvent> {
+    /*
+    Note: Previously this.class.name was used when serializing a selection to JSON.
+    This does not work in production mode because of JavaScript minification.
+    So instead making this explicit.  All concrete VisSelection classes need to
+    add the $class @selectionProperty() and put their class name within it.
+     */
+    @selectionProperty()
+    $class:string = 'VisSelection';
     @selectionProperty()
     guid:string = Guid.newGuid();
     @selectionProperty()

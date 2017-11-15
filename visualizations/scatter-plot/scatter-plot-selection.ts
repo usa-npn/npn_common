@@ -54,6 +54,9 @@ const TODAY = new Date();
 
 export class ScatterPlotSelection extends SiteOrSummaryVisSelection {
     @selectionProperty()
+    $class:string = 'ScatterPlotSelection';
+
+    @selectionProperty()
     start: number = 2010;
     @selectionProperty()
     end: number = (new Date()).getFullYear();
