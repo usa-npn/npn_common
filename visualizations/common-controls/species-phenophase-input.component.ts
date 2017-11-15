@@ -110,7 +110,7 @@ export class SpeciesPhenophaseInputComponent implements OnInit,DoCheck,OnChanges
     private speciesParams = new Subject<any>();
 
     constructor(private speciesService: SpeciesService,
-                private speciesTitle: SpeciesTitlePipe) {
+                public speciesTitle: SpeciesTitlePipe) {
         this.filteredSpecies = this.speciesControl.valueChanges
             .map(s => {
                 return s && this.speciesList ?

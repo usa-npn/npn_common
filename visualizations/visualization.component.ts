@@ -45,12 +45,12 @@ export class VisualizationComponent implements OnInit {
     @Input()
     selection: VisSelection;
 
-    private scatter: ScatterPlotSelection;
-    private calendar: CalendarSelection;
-    private activity: ActivityCurvesSelection;
-    private observer: ObserverActivitySelection;
-    private observationFreq: ObservationFrequencySelection;
-    private clippedWmsMap: ClippedWmsMapSelection;
+    scatter: ScatterPlotSelection;
+    calendar: CalendarSelection;
+    activity: ActivityCurvesSelection;
+    observer: ObserverActivitySelection;
+    observationFreq: ObservationFrequencySelection;
+    clippedWmsMap: ClippedWmsMapSelection;
 
     ngOnInit() {
         if(this.selection instanceof ScatterPlotSelection) {

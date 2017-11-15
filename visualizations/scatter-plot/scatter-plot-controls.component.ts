@@ -64,7 +64,7 @@ export class ScatterPlotControls implements OnInit {
         }
     }
 
-    redrawChange(change) {
+    redrawChange(change?) {
         if(this.selection.isValid()) {
             if(change && !change.oldValue && change.newValue) { // e.g. no color to a color means a plot that wasn't valid is now potentially valid.
                 this.updateChange();

@@ -28,7 +28,9 @@ import {LegendGddUnitsPipe,AgddDefaultTodayElevationPipe,LegendAgddAnomalyPipe,
     ],
     declarations:[
         WmsMapLegendComponent,
-        WmsMapOpacityControl
+        WmsMapOpacityControl,
+        LegendGddUnitsPipe,AgddDefaultTodayElevationPipe,LegendAgddAnomalyPipe,
+        AgddDefaultTodayTimePipe,LegendSixAnomalyPipe,LegendDoyPipe,ExtentDatesPipe
     ],
     exports:[
         WmsMapLegendComponent,

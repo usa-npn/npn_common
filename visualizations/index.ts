@@ -21,6 +21,10 @@ import {ClippedWmsMapComponent,ClippedWmsMapControl,ClippedWmsMapStatisticsCompo
 //import {ClippedWmsMapVisModule} from './clipped-wms-map';
 import {ObserverActivitySelectionFactory,ObserverActivityComponent,ObserverActivityControl} from './observer-activity';
 import {ObservationFrequencySelectionFactory,ObservationFrequencyComponent,ObservationFrequencyControl,ObvervationFrequencyStationControlComponent} from './observation-frequency';
+
+import {VisualizationBaseComponent} from './visualization-base.component';
+import {SvgVisualizationBaseComponent} from './svg-visualization-base.component';
+import {MapVisualizationBaseComponent} from './map-visualization-base.component';
 import {VisualizationComponent} from './visualization.component';
 
 import {VisualizationSelectionFactory} from './visualization-selection-factory.service';
@@ -50,6 +54,7 @@ import {NpnGriddedModule} from '../gridded';
     NpnCommonModule,NpnGriddedModule,
   ],
   declarations: [
+      VisualizationBaseComponent,SvgVisualizationBaseComponent,MapVisualizationBaseComponent,
       ScatterPlotComponent,ScatterPlotControls,
       CalendarComponent,CalendarControlComponent,
       ActivityCurvesComponent,CurveControlComponent,ActivityCurvesControlComponent,

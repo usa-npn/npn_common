@@ -5,12 +5,15 @@ import {VisualizationBaseComponent,VisualizationSizing,VisualizationMargins} fro
 
 import {} from '@types/googlemaps';
 
+/*
+IMPORTANT: see not in VisualizationBaseComponent
+*/
 @Component({
   selector: 'map-visualization-base',
   templateUrl: './map-visualization-base.component.html',
   styleUrls: ['./map-visualization-base.component.scss']
 })
-export abstract class MapVisualizationBaseComponent extends VisualizationBaseComponent {
+export class MapVisualizationBaseComponent extends VisualizationBaseComponent {
     protected latitude:number = 38.8402805;
     protected longitude:number = -97.61142369999999
     protected zoom:number = 4;
@@ -20,7 +23,7 @@ export abstract class MapVisualizationBaseComponent extends VisualizationBaseCom
         this.getMapResolver = resolve;
     });
 
-    protected mapStyles:any[] = [{
+    mapStyles:any[] = [{
             featureType: 'poi',
             elementType: 'labels',
             stylers: [{visibility:'off'}]

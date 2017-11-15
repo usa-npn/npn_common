@@ -14,12 +14,19 @@ export const DEFAULT_MARGINS:VisualizationMargins = {top: 20, right: 30, bottom:
 export const FONT_SIZE:number = 14;
 export const FONT_SIZE_PX:string = FONT_SIZE+'px';
 
+/*
+IMPORTANT: There is a rather annoying chicken and egg problem with angular
+development vs production builds.  This "component" originally took full
+advantage of language features and was properly abstract, works great in dev.
+Production builds wouldn't allow this.  They'd complain about the component
+not being registered, comment out the @Component annotation and dev builds
+then fail.
+ */
 @Component({
   selector: 'visualization-base',
-  templateUrl: './visualization-base.component.html',
-  styleUrls: ['./visualization-base.component.scss']
+  template: '"abstract" component'
 })
-export abstract class VisualizationBaseComponent implements AfterViewInit, OnDestroy {
+export class VisualizationBaseComponent implements AfterViewInit, OnDestroy {
     @Input()
     selection: VisSelection;
     @Input()
@@ -76,24 +83,24 @@ export abstract class VisualizationBaseComponent implements AfterViewInit, OnDes
      * No asynchronous work should be done here, fetching data, etc. should happen
      * only within `update`.
      */
-    protected abstract reset(): void;
+    protected reset(): void { throw new Error('abstract'); }
 
     /**
      * Called when the visualization should be redrawn from data already in hand
      * using the current state of the selection.
      */
-    protected abstract redraw():void;
+    protected redraw():void { throw new Error('abstract'); }
 
     /**
      * Called when the visualization should go get new clean data, based on its
      * selection, and reset/redraw itself.
      */
-    protected abstract update():void;
+    protected update():void  { throw new Error('abstract'); }
 
     /**
      * Called when the visualization should resize itself.
      */
-    protected abstract resize(): void;
+    protected resize(): void  { throw new Error('abstract'); }
 
     ngAfterViewInit() {
         console.debug('visualization.ngAfterViewInit');

@@ -18,11 +18,13 @@ export const NPN_BASE_HREF = new InjectionToken<string>('npnBaseHref');
 @NgModule({
     declarations: [
         SpeciesTitlePipe,
-        LegendDoyPipe
+        LegendDoyPipe,
+        DoyPipe
     ],
     exports: [
         SpeciesTitlePipe,
-        LegendDoyPipe
+        LegendDoyPipe,
+        DoyPipe
     ],
     providers: [
         CacheService,

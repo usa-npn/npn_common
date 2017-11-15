@@ -10,12 +10,15 @@ export const DEFAULT_MARGINS:VisualizationMargins = {top: 20, right: 30, bottom:
 export const FONT_SIZE:number = 14;
 export const FONT_SIZE_PX:string = FONT_SIZE+'px';
 
+/*
+IMPORTANT: see not in VisualizationBaseComponent
+*/
 @Component({
   selector: 'svg-visualization-base',
   templateUrl: './svg-visualization-base.component.html',
   styleUrls: ['./svg-visualization-base.component.scss']
 })
-export abstract class SvgVisualizationBaseComponent extends VisualizationBaseComponent {
+export class SvgVisualizationBaseComponent extends VisualizationBaseComponent {
     record: any;
 
     disclaimer: string;
@@ -162,7 +165,7 @@ export abstract class SvgVisualizationBaseComponent extends VisualizationBaseCom
     /**
      * SVG replacement for the redraw function.
      */
-    protected abstract redrawSvg(): void;
+    protected redrawSvg(): void { throw new Error('abstract'); }
 
     ngAfterViewInit() {
         this.selectElements();
