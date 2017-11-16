@@ -62,6 +62,8 @@ export class ClippedWmsMapSelection extends NetworkAwareVisSelection {
     layer:ClippedLayerDef = SIX_LAYERS[0];
     @selectionProperty()
     fwsBoundary:string;
+    @selectionProperty()
+    useBufferedBoundary:boolean = false;
 
     legend:WmsMapLegend;
     overlay:ImageOverlay;
@@ -155,6 +157,7 @@ export class ClippedWmsMapSelection extends NetworkAwareVisSelection {
                 layerName: this.layer.layerName,
                 fwsBoundary: this.fwsBoundary,
                 date: this.apiDate,
+                useBufferedBoundary: this.useBufferedBoundary,
                 style: true,
                 fileFormat: 'png'
             };

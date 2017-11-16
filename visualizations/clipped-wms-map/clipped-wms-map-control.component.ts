@@ -10,6 +10,7 @@ import {ClippedWmsMapSelection} from './clipped-wms-map-selection';
     <mat-select class="map-layer-input" placeholder="Layer" [(ngModel)]="selection.layer" (change)="layerChange()">
         <mat-option *ngFor="let l of validLayers" [value]="l">{{l.label}}</mat-option>
     </mat-select>
+    <mat-checkbox [(ngModel)]="selection.useBufferedBoundary" (change)="layerChange()">Use Buffered Boundary</mat-checkbox>
     `,
     styles:[`
         .map-service-input {
