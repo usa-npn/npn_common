@@ -171,6 +171,7 @@ export class ClippedWmsMapSelection extends NetworkAwareVisSelection {
                     layerName: this.layer.layerName,
                     fwsBoundary: this.fwsBoundary,
                     date: this.apiDate,
+                    useBufferedBoundary: this.useBufferedBoundary,
                     useCache: true
                 };
             if(this.layer.statsParams) {
