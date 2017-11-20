@@ -1,11 +1,8 @@
 import {NetworkAwareVisSelection,selectionProperty,ONE_DAY_MILLIS} from '../vis-selection';
-import{CacheService,NpnConfiguration} from '../../common';
+import{NpnConfiguration,NpnServiceUtils} from '../../common';
 import {WmsMapLegend,WmsMapLegendService,WmsMapSupportsOpacity} from '../../gridded';
 
 import {DatePipe} from '@angular/common';
-import {Http} from '@angular/http';
-import 'rxjs/add/operator/toPromise';
-
 import {} from '@types/googlemaps';
 
 const SIX_LAYERS:ClippedLayerDef[] = [{
@@ -30,26 +27,17 @@ const AGDD_LAYERS:ClippedLayerDef[] = [{
     layerName: 'gdd:agdd',
     clippingService: 'agdd/area/clippedImage',
     statisticsService: 'agdd/area/statistics',
-    statsParams: {
-        useCache: false
-    }
 },{
     label: '6-day forecast',
     layerName: 'gdd:agdd',
     clippingService: 'agdd/area/clippedImage',
     statisticsService: 'agdd/area/statistics',
     forecast: true,
-    statsParams: {
-        useCache: false
-    }
 },{
     label: 'Anomaly',
     layerName: 'gdd:agdd_anomaly',
     clippingService: 'agdd/anomaly/area/clippedImage',
     statisticsService: 'agdd/anomaly/area/statistics',
-    statsParams: {
-        useCache: false
-    }
 }];
 
 export class ClippedWmsMapSelection extends NetworkAwareVisSelection {
@@ -70,8 +58,7 @@ export class ClippedWmsMapSelection extends NetworkAwareVisSelection {
     data:WmsMapSelectionData;
     private features:any[];
 
-    constructor(protected http:Http,
-                protected cache:CacheService,
+    constructor(protected serviceUtils:NpnServiceUtils,
                 protected datePipe:DatePipe,
                 protected mapLegendService:WmsMapLegendService,
                 protected config:NpnConfiguration) {
@@ -110,28 +97,6 @@ export class ClippedWmsMapSelection extends NetworkAwareVisSelection {
         return this.datePipe.transform(d,'y-MM-dd');
     }
 
-    private cachedGet(url: string, params:any): Promise<any> {
-        return new Promise((resolve,reject) => {
-            let cacheKey = {
-                u: url,
-                params: params
-            },
-            data:any = this.cache.get(cacheKey);
-            if(data) {
-                resolve(data);
-            } else {
-                this.http.get(url,{params:params})
-                    .toPromise()
-                    .then(response => {
-                        data = response.json() as any;
-                        this.cache.set(cacheKey,data);
-                        resolve(data);
-                    })
-                    .catch(reject);
-            }
-        });
-    }
-
     getBoundary(): Promise<any> {
         return new Promise((resolve,reject) => {
             let url = `${this.config.dataApiRoot}/v0/si-x/area/boundary`,
@@ -139,10 +104,10 @@ export class ClippedWmsMapSelection extends NetworkAwareVisSelection {
                     format: 'geojson',
                     fwsBoundary: this.fwsBoundary
                 };
-            this.cachedGet(url,params)
+            this.serviceUtils.cachedGet(url,params)
                 .then(response => {
                     if(response && response.boundary) {
-                        this.cachedGet(response.boundary,{}).then(resolve).catch(reject);
+                        this.serviceUtils.cachedGet(response.boundary,{}).then(resolve).catch(reject);
                     } else {
                         reject('missing boundary in response.');
                     }
@@ -161,7 +126,7 @@ export class ClippedWmsMapSelection extends NetworkAwareVisSelection {
                 style: true,
                 fileFormat: 'png'
             };
-        return this.cachedGet(url,params);
+        return this.serviceUtils.cachedGet(url,params);
     }
 
     getStatistics(): Promise<any> {
@@ -174,10 +139,11 @@ export class ClippedWmsMapSelection extends NetworkAwareVisSelection {
                     useBufferedBoundary: this.useBufferedBoundary,
                     useCache: true
                 };
-            if(this.layer.statsParams) {
-                params = {...params,...this.layer.statsParams};
-            }
-            this.cachedGet(url,params)
+            params.useCache =
+                typeof(this.config.dataApiUseStatisticsCache) === 'boolean' ?
+                    this.config.dataApiUseStatisticsCache :
+                    false;
+            this.serviceUtils.cachedGet(url,params)
                 .then(stats => {
                     // translate the date string to a date object.
                     let dateParts = /^(\d{4})-(\d{2})-(\d{2})/.exec(stats.date);
@@ -344,7 +310,6 @@ interface ClippedLayerDef {
     layerName: string;
     clippingService: string;
     statisticsService: string;
-    statsParams?: any;
     forecast?: boolean;
 }
 

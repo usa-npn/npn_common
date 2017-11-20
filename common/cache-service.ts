@@ -1,10 +1,22 @@
-import {Injectable} from '@angular/core';
+import {Injectable,Inject} from '@angular/core';
+import {NpnConfiguration,NPN_CONFIGURATION} from './config';
 import {environment} from '../environments/environment';
 import {Md5} from 'ts-md5/dist/md5';
 
 @Injectable()
 export class CacheService {
-    ttl: number = environment.cacheTTL;
+    ttl: number = (60 * 60 * 1000); // default 1 hour
+
+    constructor(@Inject(NPN_CONFIGURATION) public config:NpnConfiguration) {
+        if((typeof(config.cacheTTL)) === 'number') {
+            this.ttl = config.cacheTTL * 60 * 1000; // value in minutes
+        }
+        console.log(`CacheService Time To Live ${this.ttl / 60000} minutes`);
+        if(this.ttl === 0) {
+            console.log('Caching disabled clearing local session storage');
+            sessionStorage.clear();
+        }
+    }
 
     private cacheKey(key:any): string {
         if(typeof(key) !== 'string') {
@@ -15,7 +27,7 @@ export class CacheService {
     }
 
     get(key:any): any {
-        if(environment.cacheTTL <= 0) {
+        if(this.ttl <= 0) {
             return null; // caching disabled
         }
         let ck = this.cacheKey(key),
@@ -35,13 +47,13 @@ export class CacheService {
     }
 
     set(key:any,data:any):void {
-        if(environment.cacheTTL <= 0) {
+        if(this.ttl <= 0) {
             return null; // caching disabled
         }
         let ck = this.cacheKey(key);
         if(data) {
             let entry:CacheEntry = {
-                    expiry: (Date.now()+environment.cacheTTL),
+                    expiry: (Date.now()+this.ttl),
                     data: data
                 };
             console.log('caching',ck,data);
