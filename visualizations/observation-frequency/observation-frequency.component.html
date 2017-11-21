@@ -3,7 +3,7 @@
         <mat-progress-spinner mode="indeterminate"></mat-progress-spinner>
     </div>
     <div class="chart-container">
-        <visualization-download *ngIf="!thumbnail" svgWrapperId="{{id}}" filename="{{filename}}"></visualization-download>
+        <visualization-download *ngIf="!thumbnail && !mobileMode" svgWrapperId="{{id}}" filename="{{filename}}"></visualization-download>
         <div [class]="clazz" id="{{id}}" [hidden]="thumbnailSrc"><svg class="svg-visualization"></svg></div>
         <div [hidden]="!thumbnailSrc">
             <canvas class="thumbnail-canvas" style="display: none;"></canvas>

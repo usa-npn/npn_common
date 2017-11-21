@@ -1,5 +1,7 @@
 import {Component, Input, ElementRef} from '@angular/core';
 
+import { ObservableMedia } from "@angular/flex-layout";
+
 import {Window,LegendDoyPipe} from '../../common';
 import {VisualizationMargins} from '../visualization-base.component';
 import {ONE_DAY_MILLIS} from '../vis-selection';
@@ -66,8 +68,8 @@ export class ActivityCurvesComponent extends SvgVisualizationBaseComponent {
     filename:string = 'activity-curves.png';
     margins: VisualizationMargins = {top: 80,left: 80,right: 80,bottom: 80};
 
-    constructor(protected window: Window, protected rootElement: ElementRef,private legendDoyPipe: LegendDoyPipe) {
-        super(window,rootElement);
+    constructor(protected window: Window, protected rootElement: ElementRef,protected media:ObservableMedia,private legendDoyPipe: LegendDoyPipe) {
+        super(window,rootElement,media);
     }
 
     private usingCommonMetric() {

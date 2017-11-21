@@ -37,6 +37,7 @@ import {MatFormFieldModule,MatButtonModule, MatCheckboxModule, MatSelectModule,
         MatInputModule,MatSliderModule,MatProgressBarModule} from '@angular/material';
 
 import {AgmCoreModule} from '@agm/core';
+import { FlexLayoutModule } from '@angular/flex-layout';
 
 import {NpnCommonModule} from '../common';
 import {NpnGriddedModule} from '../gridded';
@@ -51,7 +52,8 @@ import {NpnGriddedModule} from '../gridded';
     MatProgressSpinnerModule, MatExpansionModule,MatAutocompleteModule,
     MatInputModule,MatSliderModule,MatProgressBarModule,
     AgmCoreModule,
-    NpnCommonModule,NpnGriddedModule,
+    FlexLayoutModule,
+    NpnCommonModule,NpnGriddedModule
   ],
   declarations: [
       VisualizationBaseComponent,SvgVisualizationBaseComponent,MapVisualizationBaseComponent,

@@ -7,6 +7,8 @@ import {Observable} from 'rxjs/Observable';
 import 'rxjs/add/observable/fromEvent';
 import 'rxjs/add/operator/debounceTime';
 
+import { MediaChange, ObservableMedia } from "@angular/flex-layout";
+
 import {Selection} from 'd3-selection';
 import * as d3 from 'd3';
 
@@ -38,11 +40,17 @@ export class VisualizationBaseComponent implements AfterViewInit, OnDestroy {
     clazz: string = 'visualization '+this.constructor.name;
 
     margins: VisualizationMargins = {top: 0, right: 0, left: 0, bottom: 0};
+    mobileMode:boolean = false;
 
     private resizeSubscription:any;
+    private mediaSubscription:any;
     private subscription:any;
 
-    constructor(protected window: Window, protected rootElement: ElementRef) {}
+    constructor(protected window: Window, protected rootElement: ElementRef,protected media:ObservableMedia) {
+        this.mediaSubscription = this.media.subscribe((mediaChange:MediaChange) => {
+                this.mobileMode = mediaChange.mqAlias === 'xs' || mediaChange.mqAlias === 'sm'    ;
+            });
+    }
 
     /**
      * Calculates the dimensions (width based) that the visualization should
@@ -141,6 +149,9 @@ export class VisualizationBaseComponent implements AfterViewInit, OnDestroy {
         }
         if(this.resizeSubscription) {
             this.resizeSubscription.unsubscribe();
+        }
+        if(this.mediaSubscription) {
+            this.mediaSubscription.unsubscribe();
         }
     }
 

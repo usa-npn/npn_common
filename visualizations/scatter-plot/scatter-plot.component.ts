@@ -1,5 +1,7 @@
 import {Component, Input, ElementRef} from '@angular/core';
 
+import { ObservableMedia } from "@angular/flex-layout";
+
 import {Window,SpeciesTitlePipe} from '../../common';
 import {VisualizationMargins} from '../visualization-base.component';
 import {SvgVisualizationBaseComponent,DEFAULT_MARGINS,FONT_SIZE,FONT_SIZE_PX} from '../svg-visualization-base.component';
@@ -42,8 +44,8 @@ export class ScatterPlotComponent extends SvgVisualizationBaseComponent {
 
     private data:any[];
 
-    constructor(protected window: Window, protected rootElement: ElementRef, protected speciesTitle: SpeciesTitlePipe) {
-        super(window,rootElement);
+    constructor(protected window: Window, protected rootElement: ElementRef, protected media:ObservableMedia, protected speciesTitle: SpeciesTitlePipe) {
+        super(window,rootElement,media);
     }
 
     protected reset(): void {
