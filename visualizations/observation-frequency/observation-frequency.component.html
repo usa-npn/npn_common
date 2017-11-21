@@ -10,7 +10,7 @@
             <img class="thumbnail-image" />
         </div>
     </div>
-    <observation-frequency-station-control *ngIf="!thumbnail && stations && stations.length > 1" [stations]="stations" [(station)]="station" (onStationChange)="redrawSvg()"></observation-frequency-station-control>
+    <observation-frequency-station-control *ngIf="!thumbnail && stations && stations.length > 1" [stations]="stations" [(station)]="station" (onStationChange)="redraw()"></observation-frequency-station-control>
     <div *ngIf="stations && stations.length > 1 && selection.editMode" class="vis-disclaimer">Note: The station selected here will be the initial station shown for visitors.</div>
 </div>
 <!--pre *ngIf="record">{{record | json}}</pre-->

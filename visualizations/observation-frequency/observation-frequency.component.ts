@@ -195,19 +195,15 @@ export class ObservationFrequencyComponent extends SvgVisualizationBaseComponent
 @Component({
     selector: 'observation-frequency-station-control',
     template:`
-    <button mat-button (click)="prev()">&lt; Previous</button>
+    <button class="prev" mat-button (click)="prev()">&lt; Previous</button>
     <mat-form-field class="station-input">
         <mat-select placeholder="Station" [(ngModel)]="station" [disabled]="!stations || !stations.length">
             <mat-option *ngFor="let s of stations" [value]="s">{{s.station_name}}</mat-option>
         </mat-select>
     </mat-form-field>
-    <button mat-button (click)="next()">Next &gt;</button>
+    <button class="next" mat-button (click)="next()">Next &gt;</button>
     `,
-    styles:[`
-        .station-input {
-            width: 300px;
-        }
-    `]
+    styleUrls:['./station-control.scss']
 })
 export class ObvervationFrequencyStationControlComponent {
     @Input() stations:any[];
