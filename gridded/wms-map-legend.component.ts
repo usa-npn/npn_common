@@ -16,6 +16,12 @@ import * as d3 from 'd3';
     <svg class="gridded-legend"></svg>
     `,
     styles:[`
+        :host {
+            display: block;
+        }
+        .gridded-legend {
+            width: 100%;
+        }
     `]
 })
 export class WmsMapLegendComponent implements AfterViewInit, OnDestroy, OnChanges {
@@ -149,13 +155,13 @@ export class WmsMapLegendComponent implements AfterViewInit, OnDestroy, OnChange
                  .attr('stroke-width','1');
              cell.append('text')
                  .attr('dx',(cell_width/2))
-                 .attr('dy','3.8em'/*cell_height+tick_length+(2*tick_padding)*/) // need to know line height of text
+                 .attr('dy','4em'/*cell_height+tick_length+(2*tick_padding)*/) // need to know line height of text
                  .style('text-anchor',anchor)
                  .text(label);
          }
-         label_cell(d3.select('g.cell.first'),data[0].label,'start');
-         label_cell(d3.select('g.cell.middle'),data[mid_idx].label,'middle');
-         label_cell(d3.select('g.cell.last'),data[data.length-1].label,'end');
+         label_cell(svg.select('g.cell.first'),data[0].label,'start');
+         label_cell(svg.select('g.cell.middle'),data[mid_idx].label,'middle');
+         label_cell(svg.select('g.cell.last'),data[data.length-1].label,'end');
 
          if(legend.ldef.legend_units) {
              svg.append('g')
