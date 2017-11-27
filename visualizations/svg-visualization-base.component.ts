@@ -39,6 +39,7 @@ export class SvgVisualizationBaseComponent extends VisualizationBaseComponent {
 
     baseFontSize(withPx?:boolean): number | string {
         let fs = FONT_SIZE;
+        /*
         if(this.sizing) {
             if(this.sizing.width < 650) {
                 fs -=2;
@@ -46,7 +47,7 @@ export class SvgVisualizationBaseComponent extends VisualizationBaseComponent {
             if(this.sizing.width < 400) {
                 fs -= 2;
             }
-        }
+        }*/
         return withPx ? `${fs}px` : fs;
     }
 

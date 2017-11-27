@@ -51,13 +51,15 @@ export class ScatterPlotComponent extends SvgVisualizationBaseComponent {
     protected reset(): void {
         super.reset();
         let chart = this.chart,
-            sizing = this.sizing;
+            sizing = this.sizing,
+            titleX = sizing.width < this.minWidth ?
+                (2*(this.sizing.width/3)) : (this.sizing.width/2);
         this.title =  chart.append('g')
                      .attr('class','chart-title')
                      .append('text')
                      .attr('y', '0')
                      .attr('dy','-3em')
-                     .attr('x', (this.sizing.width/2))
+                     .attr('x', titleX)
                      .style('text-anchor','middle')
                      .style('font-size','18px');
         this.x = scaleLinear().range([0,sizing.width]).domain([0,100]);
