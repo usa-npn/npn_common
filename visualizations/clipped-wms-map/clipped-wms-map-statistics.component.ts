@@ -9,7 +9,8 @@ const SIX_TOOLTIPS = {
     mean: 'Mean day of year of the onset of the first leaf index for the pixels displayed',
     stdDev: 'The standard deviation of the mean day of year of the onset of the first leaf index for the pixels displayed',
     min: 'Minimum day of year of the onset of the first leaf index for the pixels displayed',
-    max: 'Maximum day of year of the onset of the first leaf index for the pixels displayed'
+    max: 'Maximum day of year of the onset of the first leaf index for the pixels displayed',
+    complete: 'Percent of pixels that have reached the requirements for the Spring Index.'
 };
 const AGDD_TOOLTIPS = {
     count: COUNT_TT,
@@ -29,7 +30,7 @@ const AGDD_TOOLTIPS = {
             <tr [matTooltip]="tooltips['stdDev']"><td>Std Dev</td><td>{{statistics.stddev | number:'1.3-3'}}</td></tr>
             <tr [matTooltip]="tooltips['min']"><td>Min</td><td>{{statistics.min  | number:'1.0-3'}}</td></tr>
             <tr [matTooltip]="tooltips['max']"><td>Max</td><td>{{statistics.max  | number:'1.0-3'}}</td></tr>
-            <tr *ngIf="!gdd"><td>Complete</td><td>{{statistics.percentComplete | number:'1.0-2'}}%</td></tr>
+            <tr *ngIf="!gdd" [matTooltip]="tooltips['complete']"><td>Complete</td><td>{{statistics.percentComplete | number:'1.0-2'}}%</td></tr>
         </tbody>
     </table>
     `,
