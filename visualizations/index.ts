@@ -34,7 +34,7 @@ import {BrowserModule} from '@angular/platform-browser';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import {MatFormFieldModule,MatButtonModule, MatCheckboxModule, MatSelectModule,
         MatProgressSpinnerModule,MatExpansionModule,MatAutocompleteModule,
-        MatInputModule,MatSliderModule,MatProgressBarModule} from '@angular/material';
+        MatInputModule, MatSliderModule, MatProgressBarModule, MatTooltipModule} from '@angular/material';
 
 import {AgmCoreModule} from '@agm/core';
 import { FlexLayoutModule } from '@angular/flex-layout';
@@ -50,7 +50,7 @@ import {NpnGriddedModule} from '../gridded';
     FormsModule,ReactiveFormsModule,
     MatFormFieldModule,MatButtonModule, MatCheckboxModule,MatSelectModule,
     MatProgressSpinnerModule, MatExpansionModule,MatAutocompleteModule,
-    MatInputModule,MatSliderModule,MatProgressBarModule,
+    MatInputModule, MatSliderModule, MatProgressBarModule, MatTooltipModule,
     AgmCoreModule,
     FlexLayoutModule,
     NpnCommonModule,NpnGriddedModule
