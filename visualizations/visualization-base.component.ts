@@ -1,6 +1,6 @@
 import {Component, Input, AfterViewInit, HostListener, ElementRef, OnDestroy} from '@angular/core';
 
-import {Window} from '../common';
+import {Window,detectIE} from '../common';
 import {VisSelection,VisSelectionEvent,REJECT_INVALID_SELECTION} from './vis-selection';
 
 import {Observable} from 'rxjs/Observable';
@@ -45,11 +45,13 @@ export class VisualizationBaseComponent implements AfterViewInit, OnDestroy {
     private resizeSubscription:any;
     private mediaSubscription:any;
     private subscription:any;
+    protected isIE:boolean;
 
     constructor(protected window: Window, protected rootElement: ElementRef,protected media:ObservableMedia) {
         this.mediaSubscription = this.media.subscribe((mediaChange:MediaChange) => {
                 this.mobileMode = mediaChange.mqAlias === 'xs' || mediaChange.mqAlias === 'sm'    ;
             });
+        this.isIE = !!detectIE();
     }
 
     /**

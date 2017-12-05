@@ -7,8 +7,9 @@ import 'rxjs/add/observable/of';
 import 'rxjs/add/operator/debounceTime';
 import 'rxjs/add/operator/startWith';
 import 'rxjs/add/operator/map';
+import 'rxjs/add/operator/filter';
 
-import {Species,Phenophase,SpeciesService,SpeciesTitlePipe} from '../../common';
+import {Species,Phenophase,SpeciesService,SpeciesTitlePipe,detectIE} from '../../common';
 import {VisSelection} from '../vis-selection';
 
 const COLORS = [
@@ -23,7 +24,7 @@ const COLORS = [
     <mat-form-field class="species-input">
         <input matInput [placeholder]="'Species'+(required ? ' *':'')" aria-label="Species"
                [matAutocomplete]="sp"
-               [formControl]="speciesControl" [(ngModel)]="species" (focus)="speciesFocus()" (blur)="speciesBlur()"/>
+               [formControl]="speciesControl" [(ngModel)]="species" (focus)="speciesFocus()" />
         <mat-autocomplete #sp="matAutocomplete" [displayWith]="speciesTitle.transform">
           <mat-option *ngFor="let s of filteredSpecies | async" [value]="s">
             {{s | speciesTitle}} ({{s.number_observations}})
@@ -40,7 +41,7 @@ const COLORS = [
     </mat-form-field>
 
     <mat-form-field *ngIf="gatherColor" class="color-input">
-        <mat-select  [placeholder]="'Color'+(required ? ' *':'')" [(ngModel)]="color" [disabled]="disabled" [formControl]="colorControl">
+        <mat-select  [placeholder]="'Color'+(required ? ' *':'')" [(ngModel)]="color" [formControl]="colorControl">
           <mat-select-trigger><div class="color-swatch" [ngStyle]="{'background-color':color}"></div></mat-select-trigger>
           <mat-option *ngFor="let c of colorList" [value]="c"><div class="color-swatch" [ngStyle]="{'background-color':c}"></div></mat-option>
         </mat-select>
@@ -109,14 +110,19 @@ export class SpeciesPhenophaseInputComponent implements OnInit,DoCheck,OnChanges
     private lastSpeciesParams:string;
     private speciesParams = new Subject<any>();
 
+    private isIE:boolean;
+
     constructor(private speciesService: SpeciesService,
                 public speciesTitle: SpeciesTitlePipe) {
         this.filteredSpecies = this.speciesControl.valueChanges
+            .debounceTime(500)
+            .filter(s => typeof(s) === 'string')
             .map(s => {
                 return s && this.speciesList ?
                     this.filterSpecies(s) :
                     this.speciesList ? this.speciesList.slice() : []
             });
+        this.isIE = !!detectIE();
     }
 
     ngOnInit() {
@@ -143,8 +149,10 @@ export class SpeciesPhenophaseInputComponent implements OnInit,DoCheck,OnChanges
         if(changes.disabled) {
             if(changes.disabled.currentValue) {
                 this.speciesControl.disable();
+                this.colorControl.disable();
             } else {
                 this.speciesControl.enable();
+                this.colorControl.enable();
             }
         }
     }
@@ -162,37 +170,21 @@ export class SpeciesPhenophaseInputComponent implements OnInit,DoCheck,OnChanges
         }
     }
 
+    // this kicks speciesControl.valueChanges to display a list of
+    // all species on focus
     speciesFocus() {
-        if(this.speciesList) {
+        if(!this.isIE && this.speciesList) {
             this.speciesControl.setValue(' ');
-        }
-    }
-    speciesBlur() {
-        if(typeof(this.speciesControl.value) === 'string' && this.speciesControl.value.trim() === '') {
-            this.speciesControl.setValue(null);
         }
     }
 
     filterSpecies(s) {
-        if(typeof(s) === 'string') {
-            s = s.trim().toLowerCase();
-            return s !== '' ?
-                (this.speciesList||[]).filter(sp => {
-                    let title = this.speciesTitle.transform(sp).toLowerCase();;
-                    return title.indexOf(s) !== -1;
-                }) : (this.speciesList||[]);
-        }
-        return [s];
-    }
-
-    filterPhenophases(s) {
-        if(typeof(s) === 'string') {
-            s = s.toLowerCase();
-            return (this.phenophaseList||[]).filter(p => {
-                return p.phenophase_name.toLowerCase().indexOf(s) !== -1;
-            });
-        }
-        return [s];
+        s = s.trim().toLowerCase();
+        return s !== '' ?
+            (this.speciesList||[]).filter(sp => {
+                let title = this.speciesTitle.transform(sp).toLowerCase();;
+                return title.indexOf(s) !== -1;
+            }) : (this.speciesList||[]);
     }
 
     displayPhenophase(p) {

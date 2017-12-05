@@ -35,7 +35,7 @@ export class CacheService {
         if(entry) {
             entry = JSON.parse(entry) as CacheEntry;
             if(Date.now() < entry.expiry) {
-                console.log('cache hit',ck,entry.data);
+                console.log('cache hit',ck,key);
                 return entry.data;
             }
             console.log('cache expired',ck);

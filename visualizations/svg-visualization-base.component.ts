@@ -80,12 +80,16 @@ export class SvgVisualizationBaseComponent extends VisualizationBaseComponent {
      */
     protected reset(): void {
         let sizing = this.getSizeInfo(),
-            svg = this.svg;
+            svg = this.svg,
+            width = sizing.width + sizing.margin.left + sizing.margin.right,
+            height = sizing.height + sizing.margin.top + sizing.margin.bottom;
         // remove all children
         svg.selectAll('*').remove();
         // set size
-        svg.attr('width', sizing.width + sizing.margin.left + sizing.margin.right)
-            .attr('height', sizing.height + sizing.margin.top + sizing.margin.bottom);
+        svg.attr('width', width)
+            .attr('height', height)
+            .attr('viewBox', `0 0 ${width} ${height}`)
+            .attr('preserveAspectRatio','xMidYMid meet');
         svg.append('g')
             .attr('class','vis-background')
             .append('rect')
@@ -139,6 +143,16 @@ export class SvgVisualizationBaseComponent extends VisualizationBaseComponent {
             let native = this.rootElement.nativeElement as HTMLElement,
                 svg = native.querySelector('svg.svg-visualization') as SVGElement,
                 wrappedSvg = d3.select(svg),
+                cHeight = +wrappedSvg.attr('height'),
+                aspectMult = sizeInfo.scaledWidth/this.minWidth;
+            wrappedSvg.attr('width',sizeInfo.scaledWidth);
+            wrappedSvg.attr('height',Math.round(cHeight*aspectMult));
+            /*  MSIE has issues with this approach of using an image so
+                instead scaling the SVG down which seems better.
+                TODO: The markup supporting the PNG approach remains
+            let native = this.rootElement.nativeElement as HTMLElement,
+                svg = native.querySelector('svg.svg-visualization') as SVGElement,
+                wrappedSvg = d3.select(svg),
                 canvas = native.querySelector('canvas.thumbnail-canvas') as HTMLCanvasElement,
                 img = native.querySelector('img.thumbnail-image') as HTMLImageElement,
                 wrappedImg = d3.select(img),
@@ -151,13 +165,19 @@ export class SvgVisualizationBaseComponent extends VisualizationBaseComponent {
             canvas.width = +wrappedSvg.attr('width');
             canvas.height = +wrappedSvg.attr('height');
             wrappedImg.attr('width',sizeInfo.scaledWidth);
-            let context = canvas.getContext('2d'),
-                image = new Image();
-            image.onload = () => {
-                context.drawImage(image,0,0);
-                this.thumbnailSrc = img.src = canvas.toDataURL('image/png');
-            };
-            image.src = 'data:image/svg+xml;base64,'+ window.btoa(html);
+            try {
+                let context = canvas.getContext('2d'),
+                    image = new Image();
+                image.setAttribute('crossOrigin','anonymous');
+                image.onload = () => {
+                    context.drawImage(image,0,0);
+                    this.thumbnailSrc = img.src = canvas.toDataURL('image/png');
+                };
+                image.src = 'data:image/svg+xml;base64,'+ window.btoa(html);
+            } catch(imageError) {
+                console.error(imageError);
+            }
+            */
         } else {
             this.thumbnailSrc = undefined;
         }

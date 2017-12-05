@@ -193,16 +193,25 @@ export class ScatterPlotComponent extends SvgVisualizationBaseComponent {
                 title = this.speciesTitle.transform(plot.species)+'/'+plot.phenophase.phenophase_name;
             if(plot.regressionLine && typeof(plot.regressionLine.r2) === 'number') {
                 // NOTE: the baseline-shift doesn't appear to work on Firefox
-                title += ` (R<tspan style="baseline-shift: super; font-size: 0.65em;">2</tspan> ${plot.regressionLine.r2.toFixed(2)})`;
+                if(this.isIE) {
+                    title += ` (R2 ${plot.regressionLine.r2.toFixed(2)})`;
+                } else {
+                    title += ` (R<tspan style="baseline-shift: super; font-size: 0.65em;">2</tspan> ${plot.regressionLine.r2.toFixed(2)})`;
+                }
             }
             row.append('circle')
                 .attr('r',r)
                 .attr('fill',plot.color);
-            row.append('text')
+            let text = row.append('text')
                 .style('font-size',this.baseFontSize(true))
                 .attr('x',(2*4))
-                .attr('y',(r/2))
-                .html(title);
+                .attr('y',(r/2));
+            if(this.isIE) {
+                text.text(title);
+            } else {
+                text.html(title);
+            }
+
         });
 
         this.commonUpdates();
