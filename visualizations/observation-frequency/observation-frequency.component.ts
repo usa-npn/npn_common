@@ -197,7 +197,7 @@ export class ObservationFrequencyComponent extends SvgVisualizationBaseComponent
     template:`
     <button class="prev" mat-button (click)="prev()">&lt; Previous</button>
     <mat-form-field class="station-input">
-        <mat-select placeholder="Station" [(ngModel)]="station" [disabled]="!stations || !stations.length">
+        <mat-select placeholder="Site" [(ngModel)]="station" [disabled]="!stations || !stations.length">
             <mat-option *ngFor="let s of stations" [value]="s">{{s.station_name}}</mat-option>
         </mat-select>
     </mat-form-field>
