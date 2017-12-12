@@ -86,7 +86,7 @@ export class ObservationFrequencyComponent extends SvgVisualizationBaseComponent
             .call(this.xAxis);
 
         this.y = scaleLinear().range([sizing.height,0]).domain([0,20]); // just a default domain
-        this.yAxis = axisLeft<number>(this.y);
+        this.yAxis = axisLeft<number>(this.y).tickFormat(d3.format('.0d'));
         chart.append('g')
             .attr('class', 'y axis')
             .call(this.yAxis)
@@ -160,6 +160,7 @@ export class ObservationFrequencyComponent extends SvgVisualizationBaseComponent
         this.chart.selectAll('g .x.axis').call(this.xAxis);
         // update y axis domain
         this.y.domain([0,max]);
+        this.yAxis.ticks(max < 11 ? max : 10); // at most 10 ticks
         this.chart.selectAll('g .y.axis').call(this.yAxis);
 
         // update bars
