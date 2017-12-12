@@ -102,7 +102,7 @@ export class ObserverActivityComponent extends SvgVisualizationBaseComponent {
         this.yAxis = axisLeft<number>(this.y);
         chart.append('g')
             .attr('class', 'y axis')
-            .call(this.yAxis)
+            .call(this.yAxis).tickFormat(d3.format('.0'))
           .append('text')
           .attr('fill','#000') // somehow parent g has fill="none"
           .attr('transform', 'rotate(-90)')
