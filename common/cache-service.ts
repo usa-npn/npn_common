@@ -57,7 +57,21 @@ export class CacheService {
                     data: data
                 };
             console.log('caching',ck,data);
-            sessionStorage.setItem(ck,JSON.stringify(entry));
+            try {
+                sessionStorage.setItem(ck,JSON.stringify(entry));
+            } catch (ex) {
+                console.log('error storing item in cache',ex);
+                // the assumption here is that this has happened because
+                // we've stored too much, do the simplest thing
+                // wipe it clean and try again.
+                console.log('clearing');
+                sessionStorage.clear();
+                try {
+                    sessionStorage.setItem(ck,JSON.stringify(entry));
+                } catch (ex) {
+                    console.log('error on second store attempt (giving up).',ex);
+                }
+            }
         } else {
             console.log('removing from cache',ck);
             sessionStorage.removeItem(ck);
