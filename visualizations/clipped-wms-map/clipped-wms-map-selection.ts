@@ -6,34 +6,40 @@ import {DatePipe} from '@angular/common';
 import {} from '@types/googlemaps';
 
 const SIX_LAYERS:ClippedLayerDef[] = [{
+    id: 'current',
     label: 'Current Si-x leaf index',
     layerName: 'si-x:average_leaf_ncep',
     clippingService: 'si-x/area/clippedImage',
     statisticsService: 'si-x/area/statistics'
 },{
+    id: 'forecast',
     label: '6-day forecast',
     layerName: 'si-x:average_leaf_ncep',
     clippingService: 'si-x/area/clippedImage',
     statisticsService: 'si-x/area/statistics',
     forecast: true
 },{
+    id: 'anomaly',
     label: 'Anomaly',
     layerName: 'si-x:leaf_anomaly',
     clippingService: 'si-x/anomaly/area/clippedImage',
     statisticsService: 'si-x/anomaly/area/statistics'
 }];
 const AGDD_LAYERS:ClippedLayerDef[] = [{
+    id: 'current',
     label: 'Current AGDD',
     layerName: 'gdd:agdd',
     clippingService: 'agdd/area/clippedImage',
     statisticsService: 'agdd/area/statistics',
 },{
+    id: 'forecast',
     label: '6-day forecast',
     layerName: 'gdd:agdd',
     clippingService: 'agdd/area/clippedImage',
     statisticsService: 'agdd/area/statistics',
     forecast: true,
 },{
+    id: 'anomaly',
     label: 'Anomaly',
     layerName: 'gdd:agdd_anomaly',
     clippingService: 'agdd/anomaly/area/clippedImage',
@@ -57,6 +63,11 @@ export class ClippedWmsMapSelection extends NetworkAwareVisSelection {
     overlay:ImageOverlay;
     data:WmsMapSelectionData;
     private features:any[];
+
+    // these are not persisted but status of spring dashboard or
+    // other components can tailor them.
+    public explicitDate:Date;
+    public forecastDays:number = 6;
 
     constructor(protected serviceUtils:NpnServiceUtils,
                 protected datePipe:DatePipe,
@@ -90,9 +101,10 @@ export class ClippedWmsMapSelection extends NetworkAwareVisSelection {
 
     get apiDate(): string {
         // always "today" or 6 days in the future for forecast
-        let d = new Date();
+        let d = this.explicitDate ?
+            new Date(this.explicitDate.getTime()) : new Date();
         if(this.layer && this.layer.forecast) {
-            d.setTime(d.getTime()+(6*ONE_DAY_MILLIS));
+            d.setTime(d.getTime()+(this.forecastDays*ONE_DAY_MILLIS));
         }
         return this.datePipe.transform(d,'y-MM-dd');
     }
@@ -306,6 +318,7 @@ export class ClippedWmsMapSelection extends NetworkAwareVisSelection {
 }
 
 interface ClippedLayerDef {
+    id: string;
     label: string;
     layerName: string;
     clippingService: string;

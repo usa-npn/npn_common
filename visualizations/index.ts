@@ -75,7 +75,7 @@ import {NpnGriddedModule} from '../gridded';
       ObserverActivityComponent,ObserverActivityControl,
       ObservationFrequencyComponent,ObservationFrequencyControl,
       CalendarComponent,CalendarControlComponent,
-      ClippedWmsMapComponent,ClippedWmsMapControl,
+      ClippedWmsMapComponent,ClippedWmsMapControl,ClippedWmsMapStatisticsComponent,
       VisualizationComponent,
       SpeciesPhenophaseInputComponent
   ],
