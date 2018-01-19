@@ -4,7 +4,7 @@
     </div>
     <div class="map-wrapper">
         <agm-map (mapReady)="mapReady($event)"  [streetViewControl]="false"  [styles]="mapStyles" [scrollwheel]="false"></agm-map>
-        <wms-map-legend *ngIf="!thumbnail" [legend]="selection.legend"></wms-map-legend>
+        <wms-map-legend *ngIf="!thumbnail && selection.legend && selection.data && selection.data.statistics && selection.data.statistics.count !== 0" [legend]="selection.legend"></wms-map-legend>
         <clipped-wms-map-statistics *ngIf="!thumbnail && selection && selection.data && selection.data.statistics"
             [selection]="selection"></clipped-wms-map-statistics>
     </div>

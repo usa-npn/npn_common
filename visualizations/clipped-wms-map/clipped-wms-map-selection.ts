@@ -1,29 +1,34 @@
 import {NetworkAwareVisSelection,selectionProperty,ONE_DAY_MILLIS} from '../vis-selection';
 import{NpnConfiguration,NpnServiceUtils} from '../../common';
-import {WmsMapLegend,WmsMapLegendService,WmsMapSupportsOpacity} from '../../gridded';
+import {WmsMapLegend,WmsMapLegendService,WmsMapSupportsOpacity,googleFeatureBounds} from '../../gridded';
 
 import {DatePipe} from '@angular/common';
 import {} from '@types/googlemaps';
+
+const SIX_NODATA_DISCLAIMER = `This Refuge has not yet met the requirements for the Spring Leaf Index model. Check back later in the year.`;
 
 const SIX_LAYERS:ClippedLayerDef[] = [{
     id: 'current',
     label: 'Current Si-x leaf index',
     layerName: 'si-x:average_leaf_ncep',
     clippingService: 'si-x/area/clippedImage',
-    statisticsService: 'si-x/area/statistics'
+    statisticsService: 'si-x/area/statistics',
+    noDataDisclaimer: SIX_NODATA_DISCLAIMER
 },{
     id: 'forecast',
     label: '6-day forecast',
     layerName: 'si-x:average_leaf_ncep',
     clippingService: 'si-x/area/clippedImage',
     statisticsService: 'si-x/area/statistics',
-    forecast: true
+    forecast: true,
+    noDataDisclaimer: SIX_NODATA_DISCLAIMER
 },{
     id: 'anomaly',
     label: 'Anomaly',
     layerName: 'si-x:leaf_anomaly',
     clippingService: 'si-x/anomaly/area/clippedImage',
-    statisticsService: 'si-x/anomaly/area/statistics'
+    statisticsService: 'si-x/anomaly/area/statistics',
+    noDataDisclaimer: SIX_NODATA_DISCLAIMER
 }];
 const AGDD_LAYERS:ClippedLayerDef[] = [{
     id: 'current',
@@ -237,6 +242,10 @@ export class ClippedWmsMapSelection extends NetworkAwareVisSelection {
                         console.log('in promise, already have overlay and features');
                         return resolve();
                     }
+                    // have to do this so that the google api classes aren't
+                    // touched too early and our class extension invalid
+                    lazyClassLoader();
+
                     this.data = all;
                     let data = all.data,
                         bounds = this.toBounds(data.bbox),
@@ -255,25 +264,32 @@ export class ClippedWmsMapSelection extends NetworkAwareVisSelection {
                         });*/
                         map.fitBounds(bounds);
 
-                        // have to do this so that the google api classes aren't
-                        // touched too early and our class extension invalid
-                        lazyClassLoader();
-
                         this.overlay = new ImageOverLayImpl(bounds,clippedImage,map);
                         this.overlay.add();
+                    }
 
-                        let geoJson = all.boundary;
-                        console.log('MAP boundary resonse',geoJson);
-                        this.features = map.data.addGeoJson(geoJson);
-                        map.data.setStyle(feature => {
-                            return {
-                                strokeColor: '#000000',
-                                strokeOpacity: 0.8,
-                                strokeWeight: 2,
-                                fillColor: '#FF0000',
-                                fillOpacity: 0.0,
-                            };
-                        });
+                    let geoJson = all.boundary;
+                    console.log('MAP boundary resonse',geoJson);
+                    this.features = map.data.addGeoJson(geoJson);
+                    map.data.setStyle(feature => {
+                        return {
+                            strokeColor: '#000000',
+                            strokeOpacity: 0.8,
+                            strokeWeight: 2,
+                            fillColor: '#FF0000',
+                            fillOpacity: 0.0,
+                        };
+                    });
+                    if(!bounds) { // no bounds/overlay, calculate bounds from the feature/s
+                        let allBounds = this.features.map(f => googleFeatureBounds(f)).filter(b => !!b);
+                        if(allBounds.length) {
+                            let bounds = allBounds[0];
+                            if(allBounds.length > 1) {
+                                // union in the others
+                                allBounds.slice(1).forEach(b => bounds.union(b));
+                            }
+                            map.fitBounds(bounds);
+                        }
                     }
                     this.mapLegendService.getLegend(data.layerClippedFrom)
                         .then(legend => {
@@ -323,6 +339,7 @@ interface ClippedLayerDef {
     layerName: string;
     clippingService: string;
     statisticsService: string;
+    noDataDisclaimer?: string;
     forecast?: boolean;
 }
 
