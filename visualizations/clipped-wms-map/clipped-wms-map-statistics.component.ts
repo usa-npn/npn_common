@@ -3,6 +3,8 @@ import {Component, Input, OnInit} from '@angular/core';
 import { ClippedWmsMapSelection } from './clipped-wms-map-selection';
 
 const COUNT_TT = 'Number of pixels included in the calculations';
+const SIX_COMPLETE = 'Percent of pixels that have reached the requirements for the Spring Index.';
+const AGDD_COMPLETE = 'Maximum Accumulated Growing Degree Day value for the pixels displayed';
 
 const SIX_TOOLTIPS = {
     count: COUNT_TT,
@@ -10,14 +12,30 @@ const SIX_TOOLTIPS = {
     stdDev: 'The standard deviation of the mean day of year of the onset of the first leaf index for the pixels displayed',
     min: 'Minimum day of year of the onset of the first leaf index for the pixels displayed',
     max: 'Maximum day of year of the onset of the first leaf index for the pixels displayed',
-    complete: 'Percent of pixels that have reached the requirements for the Spring Index.'
+    complete: SIX_COMPLETE
 };
 const AGDD_TOOLTIPS = {
     count: COUNT_TT,
     mean: 'Mean Accumulated Growing Degree Day value for the pixels displayed',
     stdDev: 'The standard deviation of the Accumulated Growing Degree Day value for the pixels displayed',
     min: 'Minimum Accumulated Growing Degree Day value for the pixels displayed',
-    max: 'Maximum Accumulated Growing Degree Day value for the pixels displayed'
+    max: AGDD_COMPLETE
+};
+const SIX_ANOMALY_TOOLTIPS = {
+    count: COUNT_TT,
+    mean: 'Mean number of days different from a long-term average (1981-2010) for the pixels displayed',
+    stdDev: 'The standard deviation of the mean number of days different from a long-term average (1981-2010) for the pixels displayed',
+    min: 'Earliest day compared to a long-term average (1981-2010) for the pixels displayed',
+    max: 'Latest day compared to a long-term average (1981-2010) for the pixels displayed',
+    complete: SIX_COMPLETE
+};
+const AGDD_ANOMALY_TOOLTIPS = {
+    count: COUNT_TT,
+    mean: 'Mean Growing Degree Day difference from a long-term average (1981-2010) for the pixels displayed',
+    stdDev: 'The standard deviation of the mean Growing Degree Day difference from a long-term average (1981-2010) for the pixels displayed',
+    min: 'Lowest Growing Degree Day compared to a long-term average (1981-2010) for the pixels displayed',
+    max: 'Highest Growing Degree Day compared to a long-term average (1981-2010) for the pixels displayed',
+    complete: AGDD_COMPLETE
 };
 @Component({
     selector: 'clipped-wms-map-statistics',
@@ -70,7 +88,9 @@ export class ClippedWmsMapStatisticsComponent {
         if(this.selection && this.selection.data && this.selection.data.statistics) {
             this.statistics = this.selection.data.statistics;
             this.gdd = this.selection && /^gdd/.test(this.selection.layer.layerName);
-            this.tooltips = this.gdd ? AGDD_TOOLTIPS : SIX_TOOLTIPS;
+            this.tooltips = this.gdd ?
+                (this.selection.layer.id === 'anomaly' ? AGDD_ANOMALY_TOOLTIPS : AGDD_TOOLTIPS) :
+                (this.selection.layer.id === 'anomaly' ? SIX_ANOMALY_TOOLTIPS : SIX_TOOLTIPS);
         }
     }
 }
