@@ -194,14 +194,30 @@ export class ClippedWmsMapSelection extends NetworkAwareVisSelection {
         });
     }
 
+    fitBounds(map: google.maps.Map) {
+        let bounds = undefined;
+        if(this.data && this.data.data) {
+            bounds = this.toBounds(this.data.data.bbox);
+            if(bounds) {
+                map.fitBounds(bounds);
+            }
+        }
+        if(!bounds && this.features && this.features.length) {
+            let allBounds = this.features.map(f => googleFeatureBounds(f)).filter(b => !!b);
+            if(allBounds.length) {
+                let bounds = allBounds[0];
+                if(allBounds.length > 1) {
+                    // union in the others
+                    allBounds.slice(1).forEach(b => bounds.union(b));
+                }
+                map.fitBounds(bounds);
+            }
+        }
+    }
+
     resizeMap(map: google.maps.Map): Promise<any> {
         return new Promise(resolve => {
-            if(this.data) {
-                let bounds = this.toBounds(this.data.data.bbox);
-                if(bounds) {
-                    map.fitBounds(bounds);
-                }
-            }
+            this.fitBounds(map);
             resolve();
         });
     }
@@ -268,29 +284,8 @@ export class ClippedWmsMapSelection extends NetworkAwareVisSelection {
                         this.overlay.add();
                     }
 
-                    let geoJson = all.boundary;
-                    console.log('MAP boundary resonse',geoJson);
-                    this.features = map.data.addGeoJson(geoJson);
-                    map.data.setStyle(feature => {
-                        return {
-                            strokeColor: '#000000',
-                            strokeOpacity: 0.8,
-                            strokeWeight: 2,
-                            fillColor: '#FF0000',
-                            fillOpacity: 0.0,
-                        };
-                    });
-                    if(!bounds) { // no bounds/overlay, calculate bounds from the feature/s
-                        let allBounds = this.features.map(f => googleFeatureBounds(f)).filter(b => !!b);
-                        if(allBounds.length) {
-                            let bounds = allBounds[0];
-                            if(allBounds.length > 1) {
-                                // union in the others
-                                allBounds.slice(1).forEach(b => bounds.union(b));
-                            }
-                            map.fitBounds(bounds);
-                        }
-                    }
+                    this.addBoundary(map,all.boundary);
+
                     this.mapLegendService.getLegend(data.layerClippedFrom)
                         .then(legend => {
                             console.debug('ClippedWmsMapSelection.legend:',legend);
@@ -302,6 +297,21 @@ export class ClippedWmsMapSelection extends NetworkAwareVisSelection {
                 .catch(reject);
         });
 
+    }
+
+    addBoundary(map: google.maps.Map,geoJson:any) {
+        console.log('ClippedWmsMapSelection.addBoundary',geoJson);
+        this.features = map.data.addGeoJson(geoJson);
+        map.data.setStyle(feature => {
+            return {
+                strokeColor: '#000000',
+                strokeOpacity: 0.8,
+                strokeWeight: 2,
+                fillColor: '#FF0000',
+                fillOpacity: 0.0,
+            };
+        });
+        this.fitBounds(map);
     }
 
     private toBounds(bbox:number[]): google.maps.LatLngBounds {

@@ -61,8 +61,6 @@ const AGDD_TOOLTIPS = {
 export class ClippedWmsMapStatisticsComponent {
     @Input()
     selection:ClippedWmsMapSelection;
-    @Input()
-    noDataDisclaimer:string;
 
     statistics:any;
     gdd:boolean;
