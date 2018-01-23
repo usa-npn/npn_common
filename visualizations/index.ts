@@ -17,7 +17,7 @@ import {VisualizationDownloadComponent} from './visualization-download.component
 import {ScatterPlotSelectionFactory,ScatterPlotComponent,ScatterPlotControls} from './scatter-plot';
 import {CalendarSelectionFactory,CalendarComponent,CalendarControlComponent} from './calendar';
 import {ActivityCurvesSelectionFactory,ActivityCurvesComponent,CurveControlComponent,ActivityCurvesControlComponent} from './activity-curves';
-import {ClippedWmsMapComponent,ClippedWmsMapControl,ClippedWmsMapStatisticsComponent,ClippedWmsMapSelectionFactory} from './clipped-wms-map';
+import {ClippedWmsMapComponent,ClippedWmsMapControl,ClippedWmsMapStatisticsComponent,ClippedStatValuePipe,ClippedWmsMapSelectionFactory} from './clipped-wms-map';
 //import {ClippedWmsMapVisModule} from './clipped-wms-map';
 import {ObserverActivitySelectionFactory,ObserverActivityComponent,ObserverActivityControl} from './observer-activity';
 import {ObservationFrequencySelectionFactory,ObservationFrequencyComponent,ObservationFrequencyControl,ObvervationFrequencyStationControlComponent} from './observation-frequency';
@@ -62,7 +62,7 @@ import {NpnGriddedModule} from '../gridded';
       ActivityCurvesComponent,CurveControlComponent,ActivityCurvesControlComponent,
       ObserverActivityComponent,ObserverActivityControl,
       ObservationFrequencyComponent,ObservationFrequencyControl,ObvervationFrequencyStationControlComponent /* not exported private */,
-      ClippedWmsMapComponent,ClippedWmsMapControl,ClippedWmsMapStatisticsComponent,
+      ClippedWmsMapComponent,ClippedWmsMapControl,ClippedWmsMapStatisticsComponent,ClippedStatValuePipe /* not exported */,
       VisualizationDownloadComponent,
       VisualizationComponent,
       SpeciesPhenophaseInputComponent,

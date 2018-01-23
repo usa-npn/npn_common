@@ -1,6 +1,26 @@
-import {Component, Input, OnInit} from '@angular/core';
+import {Component, Input, OnInit, Pipe, PipeTransform} from '@angular/core';
+import { DecimalPipe } from '@angular/common';
 
-import { ClippedWmsMapSelection } from './clipped-wms-map-selection';
+import { ClippedWmsMapSelection, ClippedLayerDef } from './clipped-wms-map-selection';
+
+// wraps DecimalPipe and supplies custom formatting for specific layers for mean/min/max
+@Pipe({
+    name: 'clippedStatValue'
+})
+export class ClippedStatValuePipe implements PipeTransform {
+    constructor(private decimalPipe:DecimalPipe) {}
+    transform(value:any,nFormat:string,layer:ClippedLayerDef):any {
+        if(layer && layer.layerName === 'si-x:leaf_anomaly') {
+            let transformed = this.decimalPipe.transform(Math.abs(value),nFormat);
+            if(value < 0) {
+                return `${transformed} days early`;
+            } else {
+                return `${transformed} days late`;
+            }
+        }
+        return this.decimalPipe.transform(value,nFormat);
+    }
+}
 
 const COUNT_TT = 'Number of pixels included in the calculations';
 const SIX_COMPLETE = 'Percent of pixels that have reached the requirements for the Spring Index.';
@@ -44,10 +64,10 @@ const AGDD_ANOMALY_TOOLTIPS = {
         <tbody>
             <tr><td>Date</td><td>{{statistics.date | date:'longDate'}}</td></tr>
             <tr *ngIf="statistics.count !== 0" [matTooltip]="tooltips['count']"><td>Count</td><td>{{statistics.count}}</td></tr>
-            <tr *ngIf="statistics.count !== 0" [matTooltip]="tooltips['mean']"><td>Mean</td><td>{{statistics.mean | number:'1.3-3'}}</td></tr>
+            <tr *ngIf="statistics.count !== 0" [matTooltip]="tooltips['mean']"><td>Mean</td><td>{{statistics.mean | clippedStatValue:'1.3-3':selection.layer}}</td></tr>
             <tr *ngIf="statistics.count !== 0" [matTooltip]="tooltips['stdDev']"><td>Std Dev</td><td>{{statistics.stddev | number:'1.3-3'}}</td></tr>
-            <tr *ngIf="statistics.count !== 0" [matTooltip]="tooltips['min']"><td>Min</td><td>{{statistics.min  | number:'1.0-3'}}</td></tr>
-            <tr *ngIf="statistics.count !== 0" [matTooltip]="tooltips['max']"><td>Max</td><td>{{statistics.max  | number:'1.0-3'}}</td></tr>
+            <tr *ngIf="statistics.count !== 0" [matTooltip]="tooltips['min']"><td>Min</td><td>{{statistics.min  | clippedStatValue:'1.0-3':selection.layer}}</td></tr>
+            <tr *ngIf="statistics.count !== 0" [matTooltip]="tooltips['max']"><td>Max</td><td>{{statistics.max  | clippedStatValue:'1.0-3':selection.layer}}</td></tr>
             <tr *ngIf="!gdd && statistics.count !== 0" [matTooltip]="tooltips['complete']"><td>Complete</td><td>{{statistics.percentComplete | number:'1.0-2'}}%</td></tr>
             <tr><td *ngIf="statistics.count === 0 && selection.layer.noDataDisclaimer" colspan="2" class="no-data-disclaimer">{{selection.layer.noDataDisclaimer}}</td></tr>
         </tbody>
@@ -74,7 +94,8 @@ const AGDD_ANOMALY_TOOLTIPS = {
         tr td.no-data-disclaimer:after {
             content: '';
         }
-    `]
+    `],
+    providers: [ClippedStatValuePipe]
 })
 export class ClippedWmsMapStatisticsComponent {
     @Input()

@@ -343,7 +343,7 @@ export class ClippedWmsMapSelection extends NetworkAwareVisSelection {
     // lng + E of meridian - W of meridian
 }
 
-interface ClippedLayerDef {
+export interface ClippedLayerDef {
     id: string;
     label: string;
     layerName: string;
