@@ -128,4 +128,10 @@ export class GriddedInfoWindowHandler {
                 this.infoWindow.open(this.map);
             });
     }
+
+    close() {
+        if(this.infoWindow) {
+            this.infoWindow.close();
+        }
+    }
 }

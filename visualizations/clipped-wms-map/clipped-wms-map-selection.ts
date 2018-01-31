@@ -75,6 +75,7 @@ export class ClippedWmsMapSelection extends NetworkAwareVisSelection {
     data:WmsMapSelectionData;
     private features:any[];
     private listeners:any[];
+    private infoWindowHandler:GriddedInfoWindowHandler;
 
     // these are not persisted but status of spring dashboard or
     // other components can tailor them.
@@ -234,9 +235,13 @@ export class ClippedWmsMapSelection extends NetworkAwareVisSelection {
                 map.data.remove(f);
             });
             (this.listeners||[]).forEach(l => google.maps.event.removeListener(l));
+            if(this.infoWindowHandler) {
+                this.infoWindowHandler.close();
+            }
             this.data = undefined;
             this.features = undefined;
             this.listeners = undefined;
+            this.infoWindowHandler = undefined;
             this.overlay = undefined;
             this.legend = undefined;
             resolve();
@@ -287,15 +292,15 @@ export class ClippedWmsMapSelection extends NetworkAwareVisSelection {
 
                         this.overlay = new ImageOverLayImpl(bounds,clippedImage,map);
                         this.overlay.add();
-                        let infoWindowHandler = this.dataService.newInfoWindowHandler(map),
-                            wcsDateArg = `http://www.opengis.net/def/axis/OGC/0/time("${this.apiDate}T00:00:00.000Z")`,
+                        this.infoWindowHandler = this.dataService.newInfoWindowHandler(map);
+                        let wcsDateArg = `http://www.opengis.net/def/axis/OGC/0/time("${this.apiDate}T00:00:00.000Z")`,
                             wcsParamAugmenter = (params:any) => {
                                 params.subset = params.subset||[];
                                 params.subset.push(wcsDateArg);
                             };
                         this.listeners = this.listeners||[];
                         this.listeners.push(map.addListener('click',(event) =>
-                            infoWindowHandler.open(event.latLng,this.layer.layerName,this.legend,wcsParamAugmenter)));
+                            this.infoWindowHandler.open(event.latLng,this.layer.layerName,this.legend,wcsParamAugmenter)));
                     }
 
                     this.addBoundary(map,all.boundary);
