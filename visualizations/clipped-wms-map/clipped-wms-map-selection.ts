@@ -1,6 +1,12 @@
 import {NetworkAwareVisSelection,selectionProperty,ONE_DAY_MILLIS} from '../vis-selection';
 import{NpnConfiguration,NpnServiceUtils} from '../../common';
-import {WmsMapLegend,WmsMapLegendService,WmsMapSupportsOpacity,googleFeatureBounds} from '../../gridded';
+import {
+    WmsMapLegend,
+    WmsMapLegendService,
+    WmsMapSupportsOpacity,
+    googleFeatureBounds,
+    WcsDataService,
+    GriddedInfoWindowHandler} from '../../gridded';
 
 import {DatePipe} from '@angular/common';
 import {} from '@types/googlemaps';
@@ -68,6 +74,7 @@ export class ClippedWmsMapSelection extends NetworkAwareVisSelection {
     overlay:ImageOverlay;
     data:WmsMapSelectionData;
     private features:any[];
+    private listeners:any[];
 
     // these are not persisted but status of spring dashboard or
     // other components can tailor them.
@@ -77,7 +84,7 @@ export class ClippedWmsMapSelection extends NetworkAwareVisSelection {
     constructor(protected serviceUtils:NpnServiceUtils,
                 protected datePipe:DatePipe,
                 protected mapLegendService:WmsMapLegendService,
-                protected config:NpnConfiguration) {
+                protected dataService:WcsDataService) {
         super();
     }
 
@@ -116,7 +123,7 @@ export class ClippedWmsMapSelection extends NetworkAwareVisSelection {
 
     getBoundary(): Promise<any> {
         return new Promise((resolve,reject) => {
-            let url = `${this.config.dataApiRoot}/v0/si-x/area/boundary`,
+            let url = this.serviceUtils.dataApiUrl('/v0/si-x/area/boundary'),
                 params = {
                     format: 'geojson',
                     fwsBoundary: this.fwsBoundary
@@ -134,7 +141,7 @@ export class ClippedWmsMapSelection extends NetworkAwareVisSelection {
     }
 
     getData(): Promise<any> {
-        let url = `${this.config.dataApiRoot}/v0/${this.layer.clippingService}`,
+        let url = this.serviceUtils.dataApiUrl(`/v0/${this.layer.clippingService}`),
             params = {
                 layerName: this.layer.layerName,
                 fwsBoundary: this.fwsBoundary,
@@ -148,18 +155,14 @@ export class ClippedWmsMapSelection extends NetworkAwareVisSelection {
 
     getStatistics(): Promise<any> {
         return new Promise((resolve,reject) => {
-            let url = `${this.config.dataApiRoot}/v0/${this.layer.statisticsService}`,
+            let url = this.serviceUtils.dataApiUrl(`/v0/${this.layer.statisticsService}`),
                 params = {
                     layerName: this.layer.layerName,
                     fwsBoundary: this.fwsBoundary,
                     date: this.apiDate,
                     useBufferedBoundary: this.useBufferedBoundary,
-                    useCache: true
+                    useCache: this.serviceUtils.dataApiUseStatisticsCache
                 };
-            params.useCache =
-                typeof(this.config.dataApiUseStatisticsCache) === 'boolean' ?
-                    this.config.dataApiUseStatisticsCache :
-                    false;
             this.serviceUtils.cachedGet(url,params)
                 .then(stats => {
                     // translate the date string to a date object.
@@ -230,8 +233,10 @@ export class ClippedWmsMapSelection extends NetworkAwareVisSelection {
             (this.features||[]).forEach(f => {
                 map.data.remove(f);
             });
+            (this.listeners||[]).forEach(l => google.maps.event.removeListener(l));
             this.data = undefined;
             this.features = undefined;
+            this.listeners = undefined;
             this.overlay = undefined;
             this.legend = undefined;
             resolve();
@@ -282,6 +287,15 @@ export class ClippedWmsMapSelection extends NetworkAwareVisSelection {
 
                         this.overlay = new ImageOverLayImpl(bounds,clippedImage,map);
                         this.overlay.add();
+                        let infoWindowHandler = this.dataService.newInfoWindowHandler(map),
+                            wcsDateArg = `http://www.opengis.net/def/axis/OGC/0/time("${this.apiDate}T00:00:00.000Z")`,
+                            wcsParamAugmenter = (params:any) => {
+                                params.subset = params.subset||[];
+                                params.subset.push(wcsDateArg);
+                            };
+                        this.listeners = this.listeners||[];
+                        this.listeners.push(map.addListener('click',(event) =>
+                            infoWindowHandler.open(event.latLng,this.layer.layerName,this.legend,wcsParamAugmenter)));
                     }
 
                     this.addBoundary(map,all.boundary);
@@ -309,6 +323,7 @@ export class ClippedWmsMapSelection extends NetworkAwareVisSelection {
                 strokeWeight: 2,
                 fillColor: '#FF0000',
                 fillOpacity: 0.0,
+                clickable: false,
             };
         });
         this.fitBounds(map);

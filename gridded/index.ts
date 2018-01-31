@@ -14,6 +14,7 @@ import {DateExtentUtil} from './date-extent-util.service';
 import {WmsMapLegendComponent} from './wms-map-legend.component';
 import {WmsMapOpacityControl} from './wms-map-opacity-control.component';
 import {GriddedUrls} from './gridded-common';
+import {WcsDataService} from './wcs-data.service';
 
 import {LegendGddUnitsPipe,AgddDefaultTodayElevationPipe,LegendAgddAnomalyPipe,
         AgddDefaultTodayTimePipe,LegendSixAnomalyPipe,LegendDoyPipe,ExtentDatesPipe} from './pipes';
@@ -44,7 +45,8 @@ import {LegendGddUnitsPipe,AgddDefaultTodayElevationPipe,LegendAgddAnomalyPipe,
         WmsPipeFactory,
         WmsMapLayerService,
         WmsMapLegendService,
-        GriddedUrls
+        GriddedUrls,
+        WcsDataService
     ]
 })
 export class NpnGriddedModule {}
@@ -53,6 +55,7 @@ export class NpnGriddedModule {}
 export * from './wms-map-layer.service';
 export * from './wms-map-legend';
 export * from './wms-map-legend.service';
+export * from './wcs-data.service';
 export {WmsMapSupportsOpacity} from './wms-map-opacity-control.component';
 
 // this may not be the best or final home for this functionality...

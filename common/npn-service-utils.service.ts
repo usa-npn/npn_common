@@ -20,6 +20,11 @@ export class NpnServiceUtils {
         return `${this.config.dataApiRoot}${suffix}`;
     }
 
+    get dataApiUseStatisticsCache():boolean {
+        return typeof(this.config.dataApiUseStatisticsCache) === 'boolean' ?
+            this.config.dataApiUseStatisticsCache : false;
+    }
+
     public cachedGet(url: string, params?:any, asText?:boolean): Promise<any> {
         params = params||{};
         return new Promise((resolve,reject) => {
@@ -34,8 +39,7 @@ export class NpnServiceUtils {
                 this.http.get(url,{params:params})
                     .toPromise()
                     .then(response => {
-                        data = asText ?
-                            response.text() as any: response.json() as any;
+                        data = asText ? response.text() as any: response.json() as any;
                         this.cache.set(cacheKey,data);
                         resolve(data);
                     })
