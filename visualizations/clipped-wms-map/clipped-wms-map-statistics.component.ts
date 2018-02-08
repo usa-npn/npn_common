@@ -64,11 +64,11 @@ const AGDD_ANOMALY_TOOLTIPS = {
         <tbody>
             <tr><td>Date</td><td>{{statistics.date | date:'longDate'}}</td></tr>
             <tr *ngIf="statistics.count !== 0" [matTooltip]="tooltips['count']"><td>Count</td><td>{{statistics.count}}</td></tr>
-            <tr *ngIf="statistics.count !== 0" [matTooltip]="tooltips['mean']"><td>Mean</td><td>{{statistics.mean | clippedStatValue:'1.3-3':selection.layer}}</td></tr>
-            <tr *ngIf="statistics.count !== 0" [matTooltip]="tooltips['stdDev']"><td>Std Dev</td><td>{{statistics.stddev | number:'1.3-3'}}</td></tr>
-            <tr *ngIf="statistics.count !== 0" [matTooltip]="tooltips['min']"><td>Min</td><td>{{statistics.min  | clippedStatValue:'1.0-3':selection.layer}}</td></tr>
-            <tr *ngIf="statistics.count !== 0" [matTooltip]="tooltips['max']"><td>Max</td><td>{{statistics.max  | clippedStatValue:'1.0-3':selection.layer}}</td></tr>
-            <tr *ngIf="!gdd && statistics.count !== 0" [matTooltip]="tooltips['complete']"><td>Complete</td><td>{{statistics.percentComplete | number:'1.0-2'}}%</td></tr>
+            <tr *ngIf="statistics.count !== 0" [matTooltip]="tooltips['mean']"><td>Mean</td><td>{{statistics.mean | clippedStatValue:'1.1-1':selection.layer}}</td></tr>
+            <tr *ngIf="statistics.count !== 0" [matTooltip]="tooltips['stdDev']"><td>Std Dev</td><td>{{statistics.stddev | number:'1.1-1'}}</td></tr>
+            <tr *ngIf="statistics.count !== 0" [matTooltip]="tooltips['min']"><td>Min</td><td>{{statistics.min  | clippedStatValue:'1.0-1':selection.layer}}</td></tr>
+            <tr *ngIf="statistics.count !== 0" [matTooltip]="tooltips['max']"><td>Max</td><td>{{statistics.max  | clippedStatValue:'1.0-1':selection.layer}}</td></tr>
+            <tr *ngIf="!gdd && statistics.count !== 0" [matTooltip]="tooltips['complete']"><td>Complete</td><td>{{statistics.percentComplete | number:'1.0-1'}}%</td></tr>
             <tr><td *ngIf="statistics.count === 0 && selection.layer.noDataDisclaimer" colspan="2" class="no-data-disclaimer">{{selection.layer.noDataDisclaimer}}</td></tr>
         </tbody>
     </table>
