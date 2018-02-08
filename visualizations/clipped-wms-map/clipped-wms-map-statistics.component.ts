@@ -22,39 +22,39 @@ export class ClippedStatValuePipe implements PipeTransform {
     }
 }
 
-const COUNT_TT = 'Number of pixels included in the calculations';
-const SIX_COMPLETE = 'Percent of pixels that have reached the requirements for the Spring Index.';
-const AGDD_COMPLETE = 'Maximum Accumulated Growing Degree Day value for the pixels displayed';
+const COUNT_TT = 'Number of map pixels included in the calculations';
+const SIX_COMPLETE = 'Proportion of area that has reached the First Leaf Index';
+const AGDD_COMPLETE = 'Highest amount of warmth accumulated since Jan 1 in the area, measured in growing degree days (GDDs)';
 
 const SIX_TOOLTIPS = {
     count: COUNT_TT,
-    mean: 'Mean day of year of the onset of the first leaf index for the pixels displayed',
-    stdDev: 'The standard deviation of the mean day of year of the onset of the first leaf index for the pixels displayed',
-    min: 'Minimum day of year of the onset of the first leaf index for the pixels displayed',
-    max: 'Maximum day of year of the onset of the first leaf index for the pixels displayed',
+    mean: 'Mean day of year First Leaf Index was reached',
+    stdDev: 'Standard deviation of mean day of year First Leaf Index was reached',
+    min: 'Earliest day of year First Leaf Index was reached',
+    max: 'Latest day of year First Leaf Index was reached',
     complete: SIX_COMPLETE
 };
 const AGDD_TOOLTIPS = {
     count: COUNT_TT,
-    mean: 'Mean Accumulated Growing Degree Day value for the pixels displayed',
-    stdDev: 'The standard deviation of the Accumulated Growing Degree Day value for the pixels displayed',
-    min: 'Minimum Accumulated Growing Degree Day value for the pixels displayed',
+    mean: 'Warmth accumulated since Jan 1, averaged across the area, measured in growing degree days (GDDs)',
+    stdDev: 'Standard deviation in warmth accumulated since Jan 1, averaged across the area, measured in growing degree days (GDDs)',
+    min: 'Lowest amount of warmth accumulated since Jan 1 in the area, measured in growing degree days (GDDs)',
     max: AGDD_COMPLETE
 };
 const SIX_ANOMALY_TOOLTIPS = {
     count: COUNT_TT,
-    mean: 'Mean number of days different from a long-term average (1981-2010) for the pixels displayed',
-    stdDev: 'The standard deviation of the mean number of days different from a long-term average (1981-2010) for the pixels displayed',
+    mean: 'Measure of how early or late spring arrived in this area this year compared to long-term average. Calculated as average of values for pixels displayed',
+    stdDev: 'The standard deviation of the average number of days different from a long-term average (1981-2010) for the pixels displayed',
     min: 'Earliest day compared to a long-term average (1981-2010) for the pixels displayed',
     max: 'Latest day compared to a long-term average (1981-2010) for the pixels displayed',
     complete: SIX_COMPLETE
 };
 const AGDD_ANOMALY_TOOLTIPS = {
     count: COUNT_TT,
-    mean: 'Mean Growing Degree Day difference from a long-term average (1981-2010) for the pixels displayed',
-    stdDev: 'The standard deviation of the mean Growing Degree Day difference from a long-term average (1981-2010) for the pixels displayed',
-    min: 'Lowest Growing Degree Day compared to a long-term average (1981-2010) for the pixels displayed',
-    max: 'Highest Growing Degree Day compared to a long-term average (1981-2010) for the pixels displayed',
+    mean: 'Difference in the warmth accumulated since Jan 1 from a long-term average (1981-2010), measured in growing degree days (GDDs)',
+    stdDev: 'Standard deviation in difference in the warmth accumulated since Jan 1 from a long-term average (1981-2010), measured in growing degree days (GDDs)',
+    min: 'Lowest difference in the warmth accumulated since Jan 1 from a long-term average (1981-2010), measured in growing degree days (GDDs)',
+    max: 'Highest difference in the warmth accumulated since Jan 1 from a long-term average (1981-2010), measured in growing degree days (GDDs)',
     complete: AGDD_COMPLETE
 };
 @Component({
