@@ -32,7 +32,7 @@ export class ObserverActivityComponent extends SvgVisualizationBaseComponent {
     yAxis: Axis<number>;
 
     keyLabels:string[] = ['New observers','Active observers'];
-    keys:string[] = ['number_new_observers','number_active_observers'];
+    keys:string[] = ['new_observers','active_observers'];
     z: ScaleOrdinal<string,string> = scaleOrdinal<string,string>()
         .domain(this.keys)
         .range(["#98abc5", "#d0743c"]);
@@ -133,18 +133,32 @@ export class ObserverActivityComponent extends SvgVisualizationBaseComponent {
         let sizing = this.sizing,
             data = this.data.months.slice(),
             chart = this.chart,
-            new_sum = data.reduce((sum,d) => sum+d.number_new_observers,0),
-            active_sum = data.reduce((sum,d) => sum+d.number_active_observers,0),
+            new_accessor = d => d.new_observers,
+            active_accessor = d => d.active_observers,
+            generate_set = (accessor) => data.reduce((set,d) => {
+                    accessor(d).forEach(id => {
+                            if(set.indexOf(id) === -1) {
+                                set.push(id);
+                            }
+                        });
+                    return set;
+                },[]),
+            new_set = generate_set(new_accessor),
+            active_set = generate_set(active_accessor),
+            new_sum = new_set.length,
+            active_sum = active_set.length,
             max = data.reduce((max,d) => {
-                if(d.number_new_observers > max) {
-                    max = d.number_new_observers;
+                if(d.new_observers.length > max) {
+                    max = d.new_observers.length;
                 }
-                if(d.number_active_observers > max) {
-                    max = d.number_active_observers;
+                if(d.active_observers.length > max) {
+                    max = d.active_observers.length;
                 }
                 return max;
             },0);
         console.debug(`ObserverActivityComponent:vis data (max=${max})`,data);
+        console.debug(`ObserverActivityComponent:new_set`,new_set);
+        console.debug(`ObserverActivityComponent:active_set`,active_set);
 
         // update x axis with months+total
         this.x.domain(d3.range(0,data.length));
@@ -166,9 +180,9 @@ export class ObserverActivityComponent extends SvgVisualizationBaseComponent {
                 .data(data)
                 .enter().append('rect')
                 .attr('x', (d,i) => this.x(i)+(barWidth*idx))
-                .attr('y', d => this.y(d[key]))
-                .attr('title', d => `${d[key]}`)
-                .attr('height',d => sizing.height - this.y(d[key]))
+                .attr('y', d => this.y(d[key].length))
+                .attr('title', d => `${d[key].length}`)
+                .attr('height',d => sizing.height - this.y(d[key].length))
                 .attr('width',barWidth);
 
             this.chart.selectAll(`g .bar-labels.${key}`).remove();
@@ -181,8 +195,8 @@ export class ObserverActivityComponent extends SvgVisualizationBaseComponent {
                 .attr('text-anchor','middle')
                 .attr('dy','-0.25em')
                 .attr('x',(d,i) => this.x(i)+(barWidth*idx)+(barWidth/2))
-                .attr('y',(d) => this.y(d[key]))
-                .text(d => `${d[key]}`);
+                .attr('y',(d) => this.y(d[key].length))
+                .text(d => `${d[key].length}`);
         };
         this.keys.forEach((k,i) => bars(k,i));
 
