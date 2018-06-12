@@ -20,9 +20,26 @@ export class NpnServiceUtils {
         return `${this.config.dataApiRoot}${suffix}`;
     }
 
+    public geoServerUrl(suffix:string) {
+        return `${this.config.geoServerRoot}${suffix}`;
+    }
+
     get dataApiUseStatisticsCache():boolean {
         return typeof(this.config.dataApiUseStatisticsCache) === 'boolean' ?
             this.config.dataApiUseStatisticsCache : false;
+    }
+
+    public get(url: string, params?:any, asText?:boolean): Promise<any> {
+        params = params||{};
+        return new Promise((resolve,reject) => {
+            this.http.get(url,{params:params})
+                .toPromise()
+                .then(response => {
+                    const data = asText ? response.text() as any: response.json() as any;
+                    resolve(data);
+                })
+                .catch(reject);
+        });
     }
 
     public cachedGet(url: string, params?:any, asText?:boolean): Promise<any> {
