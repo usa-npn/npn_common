@@ -26,6 +26,8 @@ import * as d3 from 'd3';
 })
 export class WmsMapLegendComponent implements AfterViewInit, OnDestroy, OnChanges {
     @Input()
+    legendTitle:string;
+    @Input()
     legend:WmsMapLegend;
 
     private svg: Selection<any,any,any,any>;
@@ -171,10 +173,17 @@ export class WmsMapLegendComponent implements AfterViewInit, OnDestroy, OnChange
                 .attr('text-anchor','middle')
                 .text(legend.ldef.legend_units);
          }
-
-        let legend_title = legend.ldef.title;
-        if(legend.ldef.extent && legend.ldef.extent.current) {
-            legend_title += `, ${legend.ldef.extent.current.label}`
+        
+        // if given an explicit title use it o/w use the info from the
+        // legend definition, etc.
+        let legend_title;
+        if(this.legendTitle) {
+            legend_title = this.legendTitle;
+        } else {
+            legend_title = legend.ldef.title;
+            if(legend.ldef.extent && legend.ldef.extent.current) {
+                legend_title += `, ${legend.ldef.extent.current.label}`
+            }
         }
 		svg.append('g').append('text').attr('dx',5)
             .attr('dy',100+top_pad)
