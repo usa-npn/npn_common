@@ -10,7 +10,7 @@ import { NpnServiceUtils } from '../common';
 
 const TO_RADIANS = (degrees:number) => degrees * Math.PI / 180;
 const TO_DEGREES = (radians:number) => radians * 180 / Math.PI;
-const DESTINATION_POINT = (latLng:google.maps.LatLng,brng:number,dist:number):google.maps.LatLng => {
+export const DESTINATION_POINT = (latLng:google.maps.LatLng,brng:number,dist:number):google.maps.LatLng => {
     // 0=N,90=E,180=S,270=W dist in km
     dist = dist / 6371;
     brng = TO_RADIANS(brng);
