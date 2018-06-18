@@ -2,12 +2,14 @@ import {Component, Input, OnInit, Pipe, PipeTransform} from '@angular/core';
 import { DecimalPipe } from '@angular/common';
 
 import { ClippedWmsMapSelection, ClippedLayerDef } from './clipped-wms-map-selection';
+import * as d3 from 'd3';
 
 // wraps DecimalPipe and supplies custom formatting for specific layers for mean/min/max
 @Pipe({
     name: 'clippedStatValue'
 })
 export class ClippedStatValuePipe implements PipeTransform {
+    readonly dateFormat = d3.timeFormat('%B %e');
     constructor(private decimalPipe:DecimalPipe) {}
     transform(value:any,nFormat:string,layer:ClippedLayerDef):any {
         if(layer && layer.layerName === 'si-x:leaf_anomaly') {
@@ -18,7 +20,16 @@ export class ClippedStatValuePipe implements PipeTransform {
                 return `${transformed} days late`;
             }
         }
-        return this.decimalPipe.transform(value,nFormat);
+        // for non-anomaly maps value is DOY, display as date with DOY in parens.
+        const rounded = Math.floor(value);
+        const dateFmt = this.dateFormat(this.getDate(rounded));
+        return `${dateFmt} (${rounded})`;
+    }
+
+    private getDate(rounded:number):Date {
+        const d = new Date(2010,0,1); // 2010 not a leap year
+        d.setTime(d.getTime()+((rounded-1)*24*60*60*1000));
+        return d;
     }
 }
 
