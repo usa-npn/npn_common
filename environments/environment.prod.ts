@@ -5,7 +5,7 @@ now toggling the production flag in environment.ts which is frustrating.
  */
 export const environment = {
   production: true,
-  googleMapsApiKey: 'AIzaSyAsTM8XaktfkwpjEeDMXkNrojaiB2W5WyE',
+  googleMapsApiKey: 'AIzaSyC3jyxxwpe16ahPurnsbQCrKCWEzqlxR_U',
   appConfig: {
       // this stuff is "system wide" and may need to be rolled into how an individual visualization is displayed
       // i.e. what someone wants one visualization on their dashbord with filterLqdSummary:true and another false
